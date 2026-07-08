@@ -18,41 +18,86 @@ export type Database = {
         Row: {
           created_at: string
           current_class: string
-          email: string
+          email: string | null
           id: string
           name: string
           notes: string | null
           phone: string
-          prep_status: string
+          plan: string | null
+          prep_status: string | null
+          problems: string[] | null
+          source: string | null
           status: string
-          subjects: string[]
-          target_year: string
+          subjects: string[] | null
+          target_year: string | null
         }
         Insert: {
           created_at?: string
           current_class: string
-          email: string
+          email?: string | null
           id?: string
           name: string
           notes?: string | null
           phone: string
-          prep_status: string
+          plan?: string | null
+          prep_status?: string | null
+          problems?: string[] | null
+          source?: string | null
           status?: string
-          subjects?: string[]
-          target_year: string
+          subjects?: string[] | null
+          target_year?: string | null
         }
         Update: {
           created_at?: string
           current_class?: string
-          email?: string
+          email?: string | null
           id?: string
           name?: string
           notes?: string | null
           phone?: string
-          prep_status?: string
+          plan?: string | null
+          prep_status?: string | null
+          problems?: string[] | null
+          source?: string | null
           status?: string
-          subjects?: string[]
-          target_year?: string
+          subjects?: string[] | null
+          target_year?: string | null
+        }
+        Relationships: []
+      }
+      mentor_applications: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          iit_name: string | null
+          jee_rank: number
+          name: string
+          phone: string
+          status: string
+          year_of_study: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          iit_name?: string | null
+          jee_rank: number
+          name: string
+          phone: string
+          status?: string
+          year_of_study?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          iit_name?: string | null
+          jee_rank?: number
+          name?: string
+          phone?: string
+          status?: string
+          year_of_study?: string | null
         }
         Relationships: []
       }

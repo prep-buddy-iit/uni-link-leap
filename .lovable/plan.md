@@ -1,57 +1,90 @@
-# JEE Mentor Connect — Lead Capture Site
+# PrepBuddy Marketing Site — Build Plan
 
-A single-page, high-energy landing site that captures aspirant leads and routes them to be matched with IITian mentors. Sunset Energy palette (#ff6b35, #f7931e, #e84393, #6c5ce7) with bold typography and gradient accents.
+Full rebuild of the current landing page. We keep the existing Lovable Cloud + `leads` table backend and reuse the Sunset backend plumbing (`src/lib/leads.functions.ts` pattern) but replace visual system, sections, and copy end-to-end.
 
-## Pages & Sections
+## Design system (src/styles.css)
 
-Single route (`/`) with these sections:
-1. **Hero** — Headline ("Get mentored by IITians who cracked JEE"), subheadline, primary CTA scrolls to form, social proof strip (e.g., "Mentors from IIT Bombay, Delhi, Madras, Kanpur").
-2. **Why a Mentor** — 3–4 benefit cards (personalized strategy, doubt-solving, motivation, time management).
-3. **How It Works** — 3 steps (Submit details → Get matched → Start 1:1 sessions).
-4. **Stats / Trust band** — gradient band with numbers (mentors, hours, aspirants helped).
-5. **Lead Form** — the conversion point (details below).
-6. **FAQ** — short accordion (cost, time commitment, mentor verification, etc.).
-7. **Footer** — brand, contact email, socials.
+Replace Sunset tokens with PrepBuddy palette:
+- `--primary` #2A4FE0, `--primary-light` #5B7CFF, `--secondary` #8B5CF6, `--accent` #FF7A45, `--accent-pink` #FF5C8A
+- `--background` #F5F6FC, `--ink` #14162B, `--ink-muted` #565973
+- `--gradient-primary` 135° blue→purple, `--gradient-accent` 135° orange→pink
+- Glass surface tokens: `--glass-bg` rgba(255,255,255,.7), `--glass-border` rgba(255,255,255,.9), `--shadow-glass`
 
-## Lead Form Fields
+Fonts via `<link>` in `src/routes/__root.tsx` head:
+- Space Grotesk (600/700) → `--font-display`
+- Inter (400–700) → `--font-sans`
+- JetBrains Mono (500/600) → `--font-mono` (eyebrows uppercase + tracked, stat numbers)
 
-- Full name (required)
-- Phone (required, 10-digit validation)
-- Email (required, email validation)
-- Class / Target year — select: Class 11, Class 12, Dropper; Target: JEE 2026 / 2027 / 2028
-- Current prep status — select: Self-study, Coaching (offline), Coaching (online), Just starting
-- Preferred mentor/subject — multi-select chips: Physics, Chemistry, Maths, General strategy, IIT branch guidance
-- Anything else (optional textarea, 500 char max)
+Utilities: `glass-card`, `gradient-primary`, `gradient-accent`, `text-gradient-primary`, `pill-btn`, `float-slow` (5s ease-in-out), `reveal` (fade + 24px up via IntersectionObserver hook), respect `prefers-reduced-motion`.
 
-Client-side Zod validation + clear inline errors. Submit button shows loading state, then success screen ("We'll reach out within 24 hours") with option to submit another.
+## Page structure (`src/routes/index.tsx`)
 
-## Backend
+Order: UrgencyStrip → Navbar → Hero → TrustBar → WhyMentorship → HowItWorks → Plans → TrialBanner → SessionBanner → Mentors → Testimonials → Community → KnowledgeHub → FAQ → BecomeMentorForm → Footer.
 
-Enable **Lovable Cloud** and create:
+Content, copy, prices, and CTAs follow the spec verbatim (₹99 trial, ₹1,599/₹3,999/₹5,999 plans, ₹999 session; 5 Why cards; 4 How-It-Works steps; 4–5 mentor cards; 3 testimonials without rank numbers; 6 hub cards; 8 FAQ questions; footer with Platform/Company/Trust/Contact + Hyderabad · India).
 
-- Table `public.leads` with all form fields + `created_at`, `status` (default 'new').
-- RLS: anon INSERT only (rate-limited via simple per-IP/email dedupe check); SELECT restricted to admin role.
-- Server function `submitLead` — validates with Zod server-side, inserts row, then triggers email notification.
-- Email notification via **Lovable Emails** (built-in): on each new lead, send a transactional email to the site owner with all lead details. Requires email domain setup (prompted during build).
-- Owner notification email address captured as a project secret (`OWNER_NOTIFY_EMAIL`).
+Hero right column: glass-framed thumbnail card, centered gradient play button, floating "▶ 2 min watch" glass badge (float-slow), caption "See how a real mentorship week works →". Clicking opens a lightweight modal with `<iframe>` YouTube embed (placeholder ID `dQw4w9WgXcQ`). Thumbnail image generated with imagegen (mentor + student on a video call, glassy premium feel).
 
-## Design Direction
+Trust bar: 4 counters animated 0→target over ~1s when in view (custom `useCountUp` hook + IntersectionObserver). Numbers: 3200, 180, 4.8, <2h.
 
-- **Palette**: Sunset Energy — orange #ff6b35 primary, amber #f7931e secondary, magenta #e84393 accent, indigo #6c5ce7 deep accent. Light cream background (#fffaf5) with deep ink text.
-- **Typography**: Bold display (Sora / Space Grotesk) for headlines, clean sans (Inter / Manrope) for body.
-- **Visuals**: gradient hero (orange→magenta→indigo), subtle grain, large numbers, rounded-2xl cards with soft shadow, accent underlines on key words.
-- All colors as semantic tokens in `src/styles.css` (HSL/oklch), no hardcoded hex in components.
+FAQ: single-open accordion (reuse shadcn `Accordion type="single" collapsible`), plus icon → × via CSS rotate. Questions worded per spec (feeds FAQPage JSON-LD).
 
-## Technical Notes
+Plans: 3 glass pricing cards, middle "Most Chosen", right "Best Value". Each `Choose Plan` opens shared modal with plan preset.
 
-- TanStack Start route at `src/routes/index.tsx` only.
-- Form component in `src/components/LeadForm.tsx`; section components in `src/components/sections/`.
-- Server fn in `src/lib/leads.functions.ts` (public, with built-in rate-limit guard by recent email duplicates).
-- SEO: unique title, description, og tags on index route.
-- No auth required for visitors; admin lead viewing can be added later if needed.
+Trial + Session banners: distinct full-width sections (dark gradient / warm gradient) — each appears once, right after Plans.
 
-## Out of Scope (for now)
+Become a Mentor: inline form (name, phone, JEE Adv rank, category, IIT, year of study). JS validation with inline red errors; on success show green inline confirmation. Stored in a new `mentor_applications` table (see backend).
 
-- Mentor profile pages
-- Admin dashboard to view leads (leads viewable in Cloud DB; can add later)
-- Payments / booking flow
+## Shared application modal (`src/components/ApplicationModal.tsx`)
+
+Global context/provider (`ApplicationModalProvider` in `__root.tsx`) exposing `openApplication({ plan })`. Every CTA (hero primary, pricing cards, trial banner, session banner, navbar CTA) calls it with the correct pre-selected plan.
+
+Fields: name, phone, class, plan (preset from trigger), problems faced (multi-checkbox), source. JS-only validation — no `required` attributes. On submit → insert into `leads` table (reuse existing schema; add columns via migration for `plan`, `problems`, `source`). Swap form view for thank-you view: heading, message, WhatsApp + Telegram glass cards, Done button. Reset to form on next open.
+
+Small trust line above submit: "🔒 Your data is never shared or sold."
+
+## Backend (migration)
+
+Alter `public.leads`:
+- Add `plan text`, `problems text[]`, `source text` (nullable)
+- Keep existing anon INSERT policy; extend CHECK where safe
+
+New table `public.mentor_applications`:
+- Columns: name, phone, jee_rank int, category, iit_name, year_of_study
+- GRANT INSERT to anon, SELECT to admin (has_role), full to service_role
+- RLS enabled with anon-insert-only policy
+
+Both writes go through Supabase client directly (matches current LeadForm pattern) — no new server fn required.
+
+## SEO / AEO (`src/routes/index.tsx` head + `__root.tsx`)
+
+- `<title>` and meta description per spec
+- OG + canonical (relative `/`)
+- One `<h1>` in hero, semantic `<header>/<nav>/<main>/<footer>`
+- JSON-LD via route `scripts`:
+  - `EducationalOrganization` with `knowsAbout`, `areaServed: "IN"`, five `makesOffer` entries (INR)
+  - `FAQPage` mirroring visible Q&A verbatim
+- Lazy-load hero thumbnail; reserve space for floating badge to avoid CLS
+- Alt text on mentor + thumbnail images
+
+## Files touched
+
+- `src/styles.css` — new tokens + utilities (replace Sunset)
+- `src/routes/__root.tsx` — font `<link>`s, ApplicationModalProvider, site-wide OG defaults
+- `src/routes/index.tsx` — all sections + head meta + JSON-LD
+- `src/components/ApplicationModal.tsx` — new
+- `src/components/BecomeMentorForm.tsx` — new
+- `src/components/VideoLightbox.tsx` — new
+- `src/components/sections/*` — split large sections for readability
+- `src/hooks/useCountUp.ts`, `src/hooks/useReveal.ts` — new
+- `src/lib/application-modal.tsx` — context/provider
+- `supabase/migrations/*` — alter `leads` + create `mentor_applications`
+- Delete/replace `src/components/LeadForm.tsx` (superseded by ApplicationModal + BecomeMentorForm)
+- One generated hero thumbnail image via imagegen
+
+## Out of scope
+
+- Real YouTube video ID (placeholder used, swappable)
+- Countdown auto-computation (static "218 days" as spec allows)
+- Payment integration (form submission only; team follows up)
+- Individual Knowledge Hub article pages (preview cards only, no routes yet)
