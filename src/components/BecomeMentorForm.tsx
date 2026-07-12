@@ -4,13 +4,15 @@ import { CheckCircle2, Loader2 } from "lucide-react";
 
 const CATEGORIES = ["General", "OBC-NCL", "SC", "ST", "EWS", "Other"];
 const YEARS = ["1st Year", "2nd Year", "3rd Year", "4th Year", "5th Year", "Graduated"];
+const EXAMS = ["JEE", "NEET", "Both"];
 
 export function BecomeMentorForm() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [exam, setExam] = useState("");
   const [rank, setRank] = useState("");
   const [category, setCategory] = useState("");
-  const [iit, setIit] = useState("");
+  const [institute, setInstitute] = useState("");
   const [year, setYear] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -22,7 +24,7 @@ export function BecomeMentorForm() {
     if (name.trim().length < 2) errs.name = "Please enter your full name.";
     if (!/^[0-9+\-\s]{10,15}$/.test(phone.trim())) errs.phone = "Please enter a valid phone number.";
     const rankNum = parseInt(rank, 10);
-    if (!rankNum || rankNum < 1) errs.rank = "Please enter your JEE Advanced rank.";
+    if (!rankNum || rankNum < 1) errs.rank = "Please enter your rank.";
     setErrors(errs);
     if (Object.keys(errs).length) return;
 
@@ -31,8 +33,9 @@ export function BecomeMentorForm() {
       name: name.trim(),
       phone: phone.trim(),
       jee_rank: rankNum,
+      exam: exam || null,
       category: category || null,
-      iit_name: iit.trim() || null,
+      iit_name: institute.trim() || null,
       year_of_study: year || null,
     });
     setSubmitting(false);
@@ -43,7 +46,7 @@ export function BecomeMentorForm() {
       return;
     }
     setDone(true);
-    setName(""); setPhone(""); setRank(""); setCategory(""); setIit(""); setYear("");
+    setName(""); setPhone(""); setExam(""); setRank(""); setCategory(""); setInstitute(""); setYear("");
   }
 
   if (done) {
@@ -56,12 +59,15 @@ export function BecomeMentorForm() {
         <p className="mt-2 text-ink-muted">
           Our team reviews mentor applications weekly. You'll hear from us on the number you shared.
         </p>
-        <button
-          onClick={() => setDone(false)}
-          className="mt-5 pill-btn border border-input text-ink hover:border-primary"
-        >
-          Submit another
-        </button>
+        <p className="mt-4 mono text-xs text-emerald-700 bg-emerald-50 inline-block px-3 py-1.5 rounded-full">
+          ✓ Submitted successfully
+        </p>
+        <div className="mt-5">
+          <button onClick={() => setDone(false)}
+            className="pill-btn border border-input text-ink hover:border-primary">
+            Submit another
+          </button>
+        </div>
       </div>
     );
   }
@@ -79,21 +85,23 @@ export function BecomeMentorForm() {
         </Field>
       </div>
       <div className="grid sm:grid-cols-2 gap-4">
-        <Field label="JEE Advanced Rank" error={errors.rank}>
+        <Field label="Exam you want to mentor for">
+          <select value={exam} onChange={(e) => setExam(e.target.value)} className={inputCls(false)}>
+            <option value="">Select</option>
+            {EXAMS.map((x) => <option key={x} value={x}>{x}</option>)}
+          </select>
+        </Field>
+        <Field label="Rank (JEE Advanced / NEET AIR)" error={errors.rank}>
           <input value={rank} onChange={(e) => setRank(e.target.value)} inputMode="numeric"
             className={inputCls(!!errors.rank)} placeholder="e.g. 312" />
         </Field>
+      </div>
+      <div className="grid sm:grid-cols-2 gap-4">
         <Field label="Category">
           <select value={category} onChange={(e) => setCategory(e.target.value)} className={inputCls(false)}>
             <option value="">Select</option>
             {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
-        </Field>
-      </div>
-      <div className="grid sm:grid-cols-2 gap-4">
-        <Field label="IIT name">
-          <input value={iit} onChange={(e) => setIit(e.target.value)}
-            className={inputCls(false)} placeholder="e.g. IIT Bombay" />
         </Field>
         <Field label="Year of study">
           <select value={year} onChange={(e) => setYear(e.target.value)} className={inputCls(false)}>
@@ -102,14 +110,15 @@ export function BecomeMentorForm() {
           </select>
         </Field>
       </div>
+      <Field label="Institute name (IIT or medical college)">
+        <input value={institute} onChange={(e) => setInstitute(e.target.value)}
+          className={inputCls(false)} placeholder="e.g. IIT Bombay / AIIMS Delhi" />
+      </Field>
 
       {errors._root && <p className="text-sm text-destructive">{errors._root}</p>}
 
-      <button
-        type="submit"
-        disabled={submitting}
-        className="w-full pill-btn pill-btn-primary pill-btn-primary-hover h-12 text-base disabled:opacity-70"
-      >
+      <button type="submit" disabled={submitting}
+        className="w-full pill-btn pill-btn-primary pill-btn-primary-hover h-12 text-base disabled:opacity-70">
         {submitting ? (
           <><Loader2 className="h-4 w-4 animate-spin" /> Submitting…</>
         ) : (
