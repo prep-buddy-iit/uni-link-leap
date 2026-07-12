@@ -9,8 +9,38 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as NeetRouteImport } from './routes/neet'
+import { Route as JeeRouteImport } from './routes/jee'
+import { Route as FindAMentorRouteImport } from './routes/find-a-mentor'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as BecomeAMentorRouteImport } from './routes/become-a-mentor'
 import { Route as IndexRouteImport } from './routes/index'
 
+const NeetRoute = NeetRouteImport.update({
+  id: '/neet',
+  path: '/neet',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JeeRoute = JeeRouteImport.update({
+  id: '/jee',
+  path: '/jee',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FindAMentorRoute = FindAMentorRouteImport.update({
+  id: '/find-a-mentor',
+  path: '/find-a-mentor',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BecomeAMentorRoute = BecomeAMentorRouteImport.update({
+  id: '/become-a-mentor',
+  path: '/become-a-mentor',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +49,102 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/become-a-mentor': typeof BecomeAMentorRoute
+  '/contact': typeof ContactRoute
+  '/find-a-mentor': typeof FindAMentorRoute
+  '/jee': typeof JeeRoute
+  '/neet': typeof NeetRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/become-a-mentor': typeof BecomeAMentorRoute
+  '/contact': typeof ContactRoute
+  '/find-a-mentor': typeof FindAMentorRoute
+  '/jee': typeof JeeRoute
+  '/neet': typeof NeetRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/become-a-mentor': typeof BecomeAMentorRoute
+  '/contact': typeof ContactRoute
+  '/find-a-mentor': typeof FindAMentorRoute
+  '/jee': typeof JeeRoute
+  '/neet': typeof NeetRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/become-a-mentor'
+    | '/contact'
+    | '/find-a-mentor'
+    | '/jee'
+    | '/neet'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/become-a-mentor'
+    | '/contact'
+    | '/find-a-mentor'
+    | '/jee'
+    | '/neet'
+  id:
+    | '__root__'
+    | '/'
+    | '/become-a-mentor'
+    | '/contact'
+    | '/find-a-mentor'
+    | '/jee'
+    | '/neet'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BecomeAMentorRoute: typeof BecomeAMentorRoute
+  ContactRoute: typeof ContactRoute
+  FindAMentorRoute: typeof FindAMentorRoute
+  JeeRoute: typeof JeeRoute
+  NeetRoute: typeof NeetRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/neet': {
+      id: '/neet'
+      path: '/neet'
+      fullPath: '/neet'
+      preLoaderRoute: typeof NeetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/jee': {
+      id: '/jee'
+      path: '/jee'
+      fullPath: '/jee'
+      preLoaderRoute: typeof JeeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/find-a-mentor': {
+      id: '/find-a-mentor'
+      path: '/find-a-mentor'
+      fullPath: '/find-a-mentor'
+      preLoaderRoute: typeof FindAMentorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/become-a-mentor': {
+      id: '/become-a-mentor'
+      path: '/become-a-mentor'
+      fullPath: '/become-a-mentor'
+      preLoaderRoute: typeof BecomeAMentorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +157,11 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BecomeAMentorRoute: BecomeAMentorRoute,
+  ContactRoute: ContactRoute,
+  FindAMentorRoute: FindAMentorRoute,
+  JeeRoute: JeeRoute,
+  NeetRoute: NeetRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
