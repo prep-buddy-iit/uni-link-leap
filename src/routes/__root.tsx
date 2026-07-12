@@ -101,6 +101,36 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap",
       },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "PrepBuddy",
+          url: "/",
+          logo: "/favicon.ico",
+          description:
+            "1-on-1 mentorship for JEE and NEET aspirants — IITians for JEE, AIIMS/medical students for NEET. Personalized plans, daily accountability, weekly review calls.",
+          areaServed: "IN",
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Hyderabad",
+            addressRegion: "Telangana",
+            addressCountry: "IN",
+          },
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "PrepBuddy",
+          url: "/",
+        }),
+      },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
