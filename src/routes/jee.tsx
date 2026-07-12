@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
+import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 import { useApplicationModal } from "@/lib/application-modal";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
@@ -107,6 +108,7 @@ function JeePage() {
     <div className="relative min-h-screen overflow-x-clip bg-background">
       <Navbar />
       <main>
+        <Breadcrumbs items={[{ label: "JEE Mentorship" }]} />
         <section className="relative">
           <PageBackdrop />
           <div className="mx-auto max-w-7xl px-5 pt-14 sm:pt-20 pb-16 grid lg:grid-cols-[1.05fr_1fr] items-center gap-10 lg:gap-14">
