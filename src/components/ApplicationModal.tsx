@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { X, Loader2, MessageCircle, Send } from "lucide-react";
+import { COMMUNITIES } from "@/lib/exam-content";
 
-export type PlanKey =
-  | "trial"
-  | "month1"
-  | "month3"
-  | "month6"
-  | "session";
+export type PlanKey = "trial" | "month1" | "month3" | "month6" | "session";
+export type ExamKey = "jee" | "neet";
 
 const PLAN_LABEL: Record<PlanKey, string> = {
   trial: "₹99 — 3-Day Trial",
@@ -40,9 +37,6 @@ const SOURCES = [
 
 const CLASSES = ["Class 11", "Class 12", "Dropper"];
 
-const WHATSAPP_URL = "https://chat.whatsapp.com/";
-const TELEGRAM_URL = "https://t.me/";
-
 type State = {
   name: string;
   phone: string;
@@ -53,29 +47,22 @@ type State = {
 };
 
 const empty = (plan: PlanKey = "trial"): State => ({
-  name: "",
-  phone: "",
-  current_class: "",
-  plan,
-  problems: [],
-  source: "",
+  name: "", phone: "", current_class: "", plan, problems: [], source: "",
 });
 
 export function ApplicationModal({
-  open,
-  onOpenChange,
-  initialPlan,
+  open, onOpenChange, initialPlan, initialExam,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   initialPlan?: PlanKey;
+  initialExam?: ExamKey;
 }) {
   const [form, setForm] = useState<State>(empty(initialPlan ?? "trial"));
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  // Reset every fresh open, with correct pre-selected plan.
   useEffect(() => {
     if (open) {
       setForm(empty(initialPlan ?? "trial"));
@@ -84,7 +71,6 @@ export function ApplicationModal({
     }
   }, [open, initialPlan]);
 
-  // Prevent background scroll while open.
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
@@ -93,6 +79,10 @@ export function ApplicationModal({
   }, [open]);
 
   if (!open) return null;
+
+  const exam: ExamKey | undefined = initialExam;
+  const examLabel = exam === "neet" ? "NEET" : exam === "jee" ? "JEE" : null;
+  const community = exam ? COMMUNITIES[exam] : null;
 
   function update<K extends keyof State>(k: K, v: State[K]) {
     setForm((f) => ({ ...f, [k]: v }));
@@ -117,13 +107,14 @@ export function ApplicationModal({
     setSubmitting(true);
     const { error } = await supabase.from("leads").insert({
       name: form.name.trim(),
-      phone: phone,
+      phone,
       email: "",
       current_class: form.current_class || "Not specified",
       plan: PLAN_LABEL[form.plan],
       problems: form.problems,
       source: form.source || null,
       subjects: [],
+      exam: exam ?? null,
     });
     setSubmitting(false);
 
@@ -137,9 +128,8 @@ export function ApplicationModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-ink/50 backdrop-blur-sm p-0 sm:p-6 animate-in fade-in"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-ink/50 backdrop-blur-sm p-0 sm:p-6"
       onClick={() => onOpenChange(false)}
-      style={{ ["--tw-bg-opacity" as never]: 0.5 }}
     >
       <div
         className="relative w-full sm:max-w-lg max-h-[92vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl bg-white shadow-lift"
@@ -157,46 +147,29 @@ export function ApplicationModal({
 
         {!submitted ? (
           <form onSubmit={onSubmit} noValidate className="p-6 sm:p-8">
-            <p className="eyebrow">Application</p>
+            <p className="eyebrow">{examLabel ? `${examLabel} Application` : "Application"}</p>
             <h2 className="mt-1 font-display text-2xl font-bold">
-              Get matched with your <span className="text-gradient-primary">IITian mentor</span>
+              Get matched with your{" "}
+              <span className="text-gradient-primary">
+                {exam === "neet" ? "AIIMS/medical mentor" : exam === "jee" ? "IITian mentor" : "topper mentor"}
+              </span>
             </h2>
             <p className="mt-2 text-sm text-ink-muted">
               A human from our team responds within 4 hours.
             </p>
 
             <div className="mt-6 space-y-4">
-              <FieldInput
-                label="Full name"
-                value={form.name}
-                onChange={(v) => update("name", v)}
-                error={errors.name}
-                placeholder="e.g. Aarav Sharma"
-              />
-              <FieldInput
-                label="Phone number"
-                value={form.phone}
-                onChange={(v) => update("phone", v)}
-                error={errors.phone}
-                type="tel"
-                inputMode="tel"
-                placeholder="98XXXXXXXX"
-              />
+              <FieldInput label="Full name" value={form.name} onChange={(v) => update("name", v)}
+                error={errors.name} placeholder="e.g. Aarav Sharma" />
+              <FieldInput label="Phone number" value={form.phone} onChange={(v) => update("phone", v)}
+                error={errors.phone} type="tel" inputMode="tel" placeholder="98XXXXXXXX" />
 
-              <FieldSelect
-                label="Class"
-                value={form.current_class}
-                onChange={(v) => update("current_class", v)}
-                options={CLASSES}
-                placeholder="Select your class"
-              />
+              <FieldSelect label="Class" value={form.current_class}
+                onChange={(v) => update("current_class", v)} options={CLASSES} placeholder="Select your class" />
 
-              <FieldSelect
-                label="Plan interested in"
-                value={form.plan}
+              <FieldSelect label="Plan interested in" value={form.plan}
                 onChange={(v) => update("plan", v as PlanKey)}
-                options={PLAN_OPTIONS.map((k) => ({ value: k, label: PLAN_LABEL[k] }))}
-              />
+                options={PLAN_OPTIONS.map((k) => ({ value: k, label: PLAN_LABEL[k] }))} />
 
               <div>
                 <label className="block text-sm font-medium text-ink mb-2">
@@ -206,10 +179,7 @@ export function ApplicationModal({
                   {PROBLEMS.map((p) => {
                     const active = form.problems.includes(p);
                     return (
-                      <button
-                        type="button"
-                        key={p}
-                        onClick={() => toggleProblem(p)}
+                      <button type="button" key={p} onClick={() => toggleProblem(p)}
                         className={
                           "rounded-full border px-3.5 py-1.5 text-sm transition " +
                           (active
@@ -224,13 +194,8 @@ export function ApplicationModal({
                 </div>
               </div>
 
-              <FieldSelect
-                label="How did you find PrepBuddy?"
-                value={form.source}
-                onChange={(v) => update("source", v)}
-                options={SOURCES}
-                placeholder="Select one"
-              />
+              <FieldSelect label="How did you find PrepBuddy?" value={form.source}
+                onChange={(v) => update("source", v)} options={SOURCES} placeholder="Select one" />
             </div>
 
             {errors._root && (
@@ -239,9 +204,7 @@ export function ApplicationModal({
               </p>
             )}
 
-            <button
-              type="submit"
-              disabled={submitting}
+            <button type="submit" disabled={submitting}
               className="mt-6 w-full pill-btn pill-btn-primary pill-btn-primary-hover h-12 text-base disabled:opacity-70"
             >
               {submitting ? (
@@ -266,38 +229,30 @@ export function ApplicationModal({
             </p>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2 text-left">
-              <a
-                href={WHATSAPP_URL}
-                target="_blank"
-                rel="noreferrer"
+              <a href={community?.whatsapp ?? "https://chat.whatsapp.com/"} target="_blank" rel="noreferrer"
                 className="group rounded-2xl p-4 text-white card-lift"
                 style={{ backgroundImage: "linear-gradient(135deg,#22c35e,#12a04a)" }}
               >
                 <div className="flex items-center gap-2 font-semibold">
-                  <MessageCircle className="h-5 w-5" /> WhatsApp Community
+                  <MessageCircle className="h-5 w-5" /> {examLabel ? `${examLabel} WhatsApp` : "WhatsApp Community"}
                 </div>
                 <p className="mt-1 text-sm opacity-90">Daily study prompts & doubt-solving.</p>
                 <p className="mt-3 text-sm font-semibold">Join →</p>
               </a>
-              <a
-                href={TELEGRAM_URL}
-                target="_blank"
-                rel="noreferrer"
+              <a href={community?.telegram ?? "https://t.me/"} target="_blank" rel="noreferrer"
                 className="group rounded-2xl p-4 text-white card-lift"
                 style={{ backgroundImage: "linear-gradient(135deg,#2AABEE,#1e7fbf)" }}
               >
                 <div className="flex items-center gap-2 font-semibold">
-                  <Send className="h-5 w-5" /> Telegram Community
+                  <Send className="h-5 w-5" /> {examLabel ? `${examLabel} Telegram` : "Telegram Community"}
                 </div>
                 <p className="mt-1 text-sm opacity-90">Mock discussions, mentor AMAs, notes.</p>
                 <p className="mt-3 text-sm font-semibold">Join →</p>
               </a>
             </div>
 
-            <button
-              onClick={() => onOpenChange(false)}
-              className="mt-6 pill-btn pill-btn-primary pill-btn-primary-hover px-8"
-            >
+            <button onClick={() => onOpenChange(false)}
+              className="mt-6 pill-btn pill-btn-primary pill-btn-primary-hover px-8">
               Done
             </button>
           </div>
@@ -310,28 +265,18 @@ export function ApplicationModal({
 function FieldInput({
   label, value, onChange, error, type = "text", placeholder, inputMode,
 }: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  error?: string;
-  type?: string;
-  placeholder?: string;
-  inputMode?: "text" | "tel" | "email" | "numeric";
+  label: string; value: string; onChange: (v: string) => void; error?: string;
+  type?: string; placeholder?: string; inputMode?: "text" | "tel" | "email" | "numeric";
 }) {
   return (
     <div>
       <label className="block text-sm font-medium text-ink mb-1.5">{label}</label>
-      <input
-        type={type}
-        value={value}
-        inputMode={inputMode}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
+      <input type={type} value={value} inputMode={inputMode}
+        onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
         className={
           "w-full rounded-xl border bg-white px-4 py-3 text-ink outline-none transition " +
           (error ? "border-destructive" : "border-input focus:border-primary focus:ring-4 focus:ring-primary/15")
-        }
-      />
+        } />
       {error && <p className="mt-1.5 text-xs text-destructive">{error}</p>}
     </div>
   );
@@ -342,20 +287,14 @@ type Option = string | { value: string; label: string };
 function FieldSelect({
   label, value, onChange, options, placeholder,
 }: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  options: Option[];
-  placeholder?: string;
+  label: string; value: string; onChange: (v: string) => void;
+  options: Option[]; placeholder?: string;
 }) {
   return (
     <div>
       <label className="block text-sm font-medium text-ink mb-1.5">{label}</label>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-xl border border-input bg-white px-4 py-3 text-ink outline-none focus:border-primary focus:ring-4 focus:ring-primary/15"
-      >
+      <select value={value} onChange={(e) => onChange(e.target.value)}
+        className="w-full rounded-xl border border-input bg-white px-4 py-3 text-ink outline-none focus:border-primary focus:ring-4 focus:ring-primary/15">
         {placeholder && <option value="">{placeholder}</option>}
         {options.map((o) => {
           const val = typeof o === "string" ? o : o.value;

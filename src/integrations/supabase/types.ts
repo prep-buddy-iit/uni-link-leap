@@ -14,11 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      contact_submissions: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          message: string
+          name: string
+          phone: string | null
+          status: string
+          topic: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          message: string
+          name: string
+          phone?: string | null
+          status?: string
+          topic?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          message?: string
+          name?: string
+          phone?: string | null
+          status?: string
+          topic?: string | null
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           created_at: string
           current_class: string
           email: string | null
+          exam: string | null
           id: string
           name: string
           notes: string | null
@@ -35,6 +69,7 @@ export type Database = {
           created_at?: string
           current_class: string
           email?: string | null
+          exam?: string | null
           id?: string
           name: string
           notes?: string | null
@@ -51,6 +86,7 @@ export type Database = {
           created_at?: string
           current_class?: string
           email?: string | null
+          exam?: string | null
           id?: string
           name?: string
           notes?: string | null
@@ -69,6 +105,7 @@ export type Database = {
         Row: {
           category: string | null
           created_at: string
+          exam: string | null
           id: string
           iit_name: string | null
           jee_rank: number
@@ -80,6 +117,7 @@ export type Database = {
         Insert: {
           category?: string | null
           created_at?: string
+          exam?: string | null
           id?: string
           iit_name?: string | null
           jee_rank: number
@@ -91,6 +129,7 @@ export type Database = {
         Update: {
           category?: string | null
           created_at?: string
+          exam?: string | null
           id?: string
           iit_name?: string | null
           jee_rank?: number

@@ -76,19 +76,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "PrepBuddy — Best JEE Mentorship, Guidance & Strategy for Class 11, 12 & Droppers" },
+      { title: "PrepBuddy — 1-on-1 Mentorship for JEE & NEET | Class 11, 12 & Droppers" },
       {
         name: "description",
         content:
-          "PrepBuddy pairs Class 11, 12 and JEE Droppers with a dedicated IITian mentor — a personalized JEE preparation strategy, daily check-ins and weekly review calls. Try 3 days for ₹99.",
+          "PrepBuddy pairs Class 11, 12 and Droppers with a dedicated topper-mentor — IITians for JEE, AIIMS/medical students for NEET. Personalized plans, daily accountability, weekly review calls.",
       },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "PrepBuddy" },
-      { property: "og:title", content: "PrepBuddy — 1:1 JEE Mentorship from IITians" },
+      { property: "og:title", content: "PrepBuddy — 1-on-1 Mentorship for JEE & NEET" },
       {
         property: "og:description",
         content:
-          "One dedicated IITian mentor, a study plan built from your mock scores, and a daily accountability check-in. Class 11, 12 and Droppers.",
+          "One dedicated mentor, a study plan built from your mock scores, and daily accountability — for JEE and NEET aspirants, Class 11 through Droppers.",
       },
       { name: "twitter:card", content: "summary_large_image" },
     ],
