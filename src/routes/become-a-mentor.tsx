@@ -42,6 +42,7 @@ function BecomeMentorPage() {
     <div className="relative min-h-screen overflow-x-clip bg-background">
       <Navbar />
       <main>
+        <Breadcrumbs items={[{ label: "Become a Mentor" }]} />
         <section className="relative">
           <PageBackdrop />
           <div className="mx-auto max-w-4xl px-5 pt-14 sm:pt-20 pb-10 text-center">
