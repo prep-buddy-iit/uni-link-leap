@@ -5,6 +5,7 @@ import { Footer } from "@/components/site/Footer";
 import { TrustBar } from "@/components/site/TrustBar";
 import { BecomeMentorForm } from "@/components/BecomeMentorForm";
 import { PageBackdrop } from "@/components/site/PageBackdrop";
+import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 
 const TITLE = "Become a Mentor — PrepBuddy | Mentor JEE & NEET Students as an IITian or AIIMS/Medical Student";
 const DESC = "Paid, flexible 1-on-1 mentorship for JEE and NEET aspirants. We work with IITians and AIIMS/medical students who cleared their exam recently. 2–4 hours/week, remote.";
@@ -19,6 +20,19 @@ export const Route = createFileRoute("/become-a-mentor")({
       { property: "og:url", content: "/become-a-mentor" },
     ],
     links: [{ rel: "canonical", href: "/become-a-mentor" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: "/" },
+            { "@type": "ListItem", position: 2, name: "Become a Mentor", item: "/become-a-mentor" },
+          ],
+        }),
+      },
+    ],
   }),
   component: BecomeMentorPage,
 });

@@ -4,6 +4,7 @@ import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { ContactForm } from "@/components/ContactForm";
 import { PageBackdrop } from "@/components/site/PageBackdrop";
+import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 
 const TITLE = "Contact Us — PrepBuddy JEE & NEET Mentorship";
 const DESC = "Questions about PrepBuddy's 1-on-1 JEE and NEET mentorship? Reach us on WhatsApp, email, or send us a message.";
@@ -18,6 +19,37 @@ export const Route = createFileRoute("/contact")({
       { property: "og:url", content: "/contact" },
     ],
     links: [{ rel: "canonical", href: "/contact" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: "/" },
+            { "@type": "ListItem", position: 2, name: "Contact", item: "/contact" },
+          ],
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "LocalBusiness",
+          name: "PrepBuddy",
+          description: "1-on-1 mentorship for JEE and NEET aspirants, delivered online across India.",
+          url: "/",
+          email: "hello@prepbuddy.co",
+          areaServed: "IN",
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Hyderabad",
+            addressRegion: "Telangana",
+            addressCountry: "IN",
+          },
+        }),
+      },
+    ],
   }),
   component: ContactPage,
 });
@@ -27,6 +59,7 @@ function ContactPage() {
     <div className="relative min-h-screen overflow-x-clip bg-background">
       <Navbar />
       <main>
+        <Breadcrumbs items={[{ label: "Contact" }]} />
         <section className="relative">
           <PageBackdrop />
           <div className="mx-auto max-w-4xl px-5 pt-14 sm:pt-20 pb-10 text-center">
