@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
+import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 import { useApplicationModal } from "@/lib/application-modal";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
