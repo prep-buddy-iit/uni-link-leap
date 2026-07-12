@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as NeetRouteImport } from './routes/neet'
 import { Route as JeeRouteImport } from './routes/jee'
 import { Route as FindAMentorRouteImport } from './routes/find-a-mentor'
@@ -16,6 +17,11 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BecomeAMentorRouteImport } from './routes/become-a-mentor'
 import { Route as IndexRouteImport } from './routes/index'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NeetRoute = NeetRouteImport.update({
   id: '/neet',
   path: '/neet',
@@ -54,6 +60,7 @@ export interface FileRoutesByFullPath {
   '/find-a-mentor': typeof FindAMentorRoute
   '/jee': typeof JeeRoute
   '/neet': typeof NeetRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,6 +69,7 @@ export interface FileRoutesByTo {
   '/find-a-mentor': typeof FindAMentorRoute
   '/jee': typeof JeeRoute
   '/neet': typeof NeetRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,6 +79,7 @@ export interface FileRoutesById {
   '/find-a-mentor': typeof FindAMentorRoute
   '/jee': typeof JeeRoute
   '/neet': typeof NeetRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -81,6 +90,7 @@ export interface FileRouteTypes {
     | '/find-a-mentor'
     | '/jee'
     | '/neet'
+    | '/sitemap.xml'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -89,6 +99,7 @@ export interface FileRouteTypes {
     | '/find-a-mentor'
     | '/jee'
     | '/neet'
+    | '/sitemap.xml'
   id:
     | '__root__'
     | '/'
@@ -97,6 +108,7 @@ export interface FileRouteTypes {
     | '/find-a-mentor'
     | '/jee'
     | '/neet'
+    | '/sitemap.xml'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -106,10 +118,18 @@ export interface RootRouteChildren {
   FindAMentorRoute: typeof FindAMentorRoute
   JeeRoute: typeof JeeRoute
   NeetRoute: typeof NeetRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/neet': {
       id: '/neet'
       path: '/neet'
@@ -162,6 +182,7 @@ const rootRouteChildren: RootRouteChildren = {
   FindAMentorRoute: FindAMentorRoute,
   JeeRoute: JeeRoute,
   NeetRoute: NeetRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

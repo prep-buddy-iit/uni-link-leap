@@ -21,15 +21,14 @@ function NotFoundComponent() {
         <h1 className="text-7xl font-bold text-foreground">404</h1>
         <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+          The page you're looking for doesn't exist or has been moved. Try one of these:
         </p>
-        <div className="mt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold text-white gradient-primary"
-          >
-            Back to PrepBuddy
-          </Link>
+        <div className="mt-6 flex flex-wrap justify-center gap-2">
+          <Link to="/" className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold text-white gradient-primary">Home</Link>
+          <Link to="/jee" className="inline-flex items-center justify-center rounded-full border border-input bg-white px-5 py-2.5 text-sm font-semibold text-ink">JEE Mentorship</Link>
+          <Link to="/neet" className="inline-flex items-center justify-center rounded-full border border-input bg-white px-5 py-2.5 text-sm font-semibold text-ink">NEET Mentorship</Link>
+          <Link to="/find-a-mentor" className="inline-flex items-center justify-center rounded-full border border-input bg-white px-5 py-2.5 text-sm font-semibold text-ink">Meet Mentors</Link>
+          <Link to="/contact" className="inline-flex items-center justify-center rounded-full border border-input bg-white px-5 py-2.5 text-sm font-semibold text-ink">Contact</Link>
         </div>
       </div>
     </div>
