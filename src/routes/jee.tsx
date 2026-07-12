@@ -60,6 +60,42 @@ export const Route = createFileRoute("/jee")({
           })),
         }),
       },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: "/" },
+            { "@type": "ListItem", position: 2, name: "JEE Mentorship", item: "/jee" },
+          ],
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "VideoObject",
+          name: "How PrepBuddy JEE mentorship works",
+          description: "A 2-minute walkthrough of a real week of 1-on-1 JEE mentorship at PrepBuddy.",
+          thumbnailUrl: "/favicon.ico",
+          uploadDate: "2026-01-01",
+          embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify(
+          ex.mentors.map((m) => ({
+            "@context": "https://schema.org",
+            "@type": "Person",
+            name: m.name,
+            jobTitle: "JEE Mentor",
+            alumniOf: { "@type": "CollegeOrUniversity", name: m.institute },
+            description: `${m.rank} · ${m.specialty}`,
+          })),
+        ),
+      },
     ],
   }),
   component: JeePage,
