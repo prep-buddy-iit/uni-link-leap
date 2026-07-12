@@ -21,15 +21,14 @@ function NotFoundComponent() {
         <h1 className="text-7xl font-bold text-foreground">404</h1>
         <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+          The page you're looking for doesn't exist or has been moved. Try one of these:
         </p>
-        <div className="mt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold text-white gradient-primary"
-          >
-            Back to PrepBuddy
-          </Link>
+        <div className="mt-6 flex flex-wrap justify-center gap-2">
+          <Link to="/" className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold text-white gradient-primary">Home</Link>
+          <Link to="/jee" className="inline-flex items-center justify-center rounded-full border border-input bg-white px-5 py-2.5 text-sm font-semibold text-ink">JEE Mentorship</Link>
+          <Link to="/neet" className="inline-flex items-center justify-center rounded-full border border-input bg-white px-5 py-2.5 text-sm font-semibold text-ink">NEET Mentorship</Link>
+          <Link to="/find-a-mentor" className="inline-flex items-center justify-center rounded-full border border-input bg-white px-5 py-2.5 text-sm font-semibold text-ink">Meet Mentors</Link>
+          <Link to="/contact" className="inline-flex items-center justify-center rounded-full border border-input bg-white px-5 py-2.5 text-sm font-semibold text-ink">Contact</Link>
         </div>
       </div>
     </div>
@@ -100,6 +99,36 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap",
+      },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "PrepBuddy",
+          url: "/",
+          logo: "/favicon.ico",
+          description:
+            "1-on-1 mentorship for JEE and NEET aspirants — IITians for JEE, AIIMS/medical students for NEET. Personalized plans, daily accountability, weekly review calls.",
+          areaServed: "IN",
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Hyderabad",
+            addressRegion: "Telangana",
+            addressCountry: "IN",
+          },
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "PrepBuddy",
+          url: "/",
+        }),
       },
     ],
   }),

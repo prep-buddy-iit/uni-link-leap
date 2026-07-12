@@ -1,0 +1,34 @@
+# PrepBuddy
+
+> 1-on-1 mentorship for India's JEE (Main + Advanced) and NEET UG aspirants. Every student is paired with a dedicated topper-mentor — an IITian for JEE, an AIIMS or top medical-college student for NEET — who builds a personalized study plan from real mock scores and runs daily accountability check-ins.
+
+PrepBuddy is not a coaching institute. It does not teach syllabus content, run batches, or replace NCERT/coaching. It replaces the missing layer between content and results: a mentor who plans your week, watches your mocks, catches recurring errors, and keeps you consistent. Students typically use PrepBuddy alongside their existing self-study or coaching.
+
+## Core facts
+
+- Audience: Class 11, Class 12, and Droppers preparing for JEE or NEET UG in India.
+- Mentors: JEE mentors are IITians; NEET mentors are AIIMS or top medical-college students. Every mentor passes a 4-stage selection (application, subject screener, mock mentoring session, final interview).
+- Format: 1-on-1 (never batches). Daily short check-ins + one deeper weekly review call. Plans are rebuilt weekly from the student's real mock scores.
+- Base: Hyderabad, India. Mentorship is delivered fully online, nationwide.
+
+## Pricing (INR)
+
+- 3-day trial: ₹99. One mentor call, a personalized 3-day plan built from the last mock, daily check-ins.
+- 1-hour 1:1 session: ₹999. Second-opinion / one-topic strategy call, no ongoing plan required.
+- 1 month mentorship: ₹1,599.
+- 3 months mentorship: ₹3,999.
+- 6 months mentorship: ₹5,999.
+- Cancellation: students can cancel any ongoing plan at any time. Mentor re-match is offered before cancellation.
+
+## Key pages
+
+- [Home](/): overview of PrepBuddy, exam selector for JEE / NEET.
+- [JEE Mentorship](/jee): mentorship for JEE Main + Advanced, IITian mentors, JEE-specific FAQs and plans.
+- [NEET Mentorship](/neet): mentorship for NEET UG, AIIMS / medical-college mentors, NEET-specific FAQs and plans.
+- [Find a Mentor](/find-a-mentor): mentor profiles (credentialed toppers) across both exams.
+- [Become a Mentor](/become-a-mentor): application page for IITians and AIIMS/medical students who want to mentor.
+- [Contact](/contact): WhatsApp, email, contact form.
+
+## Optional
+
+- [Sitemap](/sitemap.xml)

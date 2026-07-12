@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
+import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 import { useApplicationModal } from "@/lib/application-modal";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
@@ -60,6 +61,42 @@ export const Route = createFileRoute("/neet")({
           })),
         }),
       },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: "/" },
+            { "@type": "ListItem", position: 2, name: "NEET Mentorship", item: "/neet" },
+          ],
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "VideoObject",
+          name: "How PrepBuddy NEET mentorship works",
+          description: "A 2-minute walkthrough of a real week of 1-on-1 NEET mentorship at PrepBuddy.",
+          thumbnailUrl: "/favicon.ico",
+          uploadDate: "2026-01-01",
+          embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify(
+          ex.mentors.map((m) => ({
+            "@context": "https://schema.org",
+            "@type": "Person",
+            name: m.name,
+            jobTitle: "NEET Mentor",
+            alumniOf: { "@type": "CollegeOrUniversity", name: m.institute },
+            description: `${m.rank} · ${m.specialty}`,
+          })),
+        ),
+      },
     ],
   }),
   component: NeetPage,
@@ -71,6 +108,7 @@ function NeetPage() {
     <div className="relative min-h-screen overflow-x-clip bg-background">
       <Navbar />
       <main>
+        <Breadcrumbs items={[{ label: "NEET Mentorship" }]} />
         <section className="relative">
           <PageBackdrop />
           <div className="mx-auto max-w-7xl px-5 pt-14 sm:pt-20 pb-16 grid lg:grid-cols-[1.05fr_1fr] items-center gap-10 lg:gap-14">

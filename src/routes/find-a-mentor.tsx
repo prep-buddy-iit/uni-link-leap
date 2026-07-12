@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { PageBackdrop } from "@/components/site/PageBackdrop";
+import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 import { ALL_MENTORS } from "@/lib/exam-content";
 import type { ExamKey } from "@/components/ApplicationModal";
 
@@ -19,6 +20,32 @@ export const Route = createFileRoute("/find-a-mentor")({
       { property: "og:url", content: "/find-a-mentor" },
     ],
     links: [{ rel: "canonical", href: "/find-a-mentor" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: "/" },
+            { "@type": "ListItem", position: 2, name: "Find a Mentor", item: "/find-a-mentor" },
+          ],
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify(
+          ALL_MENTORS.map((m) => ({
+            "@context": "https://schema.org",
+            "@type": "Person",
+            name: m.name,
+            jobTitle: m.exam === "jee" ? "JEE Mentor" : "NEET Mentor",
+            alumniOf: { "@type": "CollegeOrUniversity", name: m.institute },
+            description: `${m.rank} · ${m.specialty}`,
+          })),
+        ),
+      },
+    ],
   }),
   component: FindMentorPage,
 });
@@ -33,6 +60,7 @@ function FindMentorPage() {
     <div className="relative min-h-screen overflow-x-clip bg-background">
       <Navbar />
       <main>
+        <Breadcrumbs items={[{ label: "Find a Mentor" }]} />
         <section className="relative">
           <PageBackdrop />
           <div className="mx-auto max-w-4xl px-5 pt-14 sm:pt-20 pb-8 text-center">
