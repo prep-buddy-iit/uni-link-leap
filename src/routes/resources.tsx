@@ -94,6 +94,27 @@ function ResourcesPage() {
   const [exam, setExam] = useState<ExamFilter>("all");
   const [videoOpen, setVideoOpen] = useState<string | null>(null);
   const [photoIdx, setPhotoIdx] = useState<number | null>(null);
+  const [submitOpen, setSubmitOpen] = useState(false);
+  const [openArticle, setOpenArticle] = useState<ResourceSubmission | null>(null);
+  const [subs, setSubs] = useState<ResourceSubmission[]>([]);
+  const [photoUrlMap, setPhotoUrlMap] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchApprovedSubmissions().then(async (rows) => {
+      if (cancelled) return;
+      setSubs(rows);
+      const photos = rows.filter((r) => r.kind === "photo" && r.image_url);
+      const entries = await Promise.all(
+        photos.map(async (r) => [r.id, await getSignedImageUrl(r.image_url!)] as const),
+      );
+      if (cancelled) return;
+      const map: Record<string, string> = {};
+      for (const [id, url] of entries) if (url) map[id] = url;
+      setPhotoUrlMap(map);
+    });
+    return () => { cancelled = true; };
+  }, []);
 
   const examFilter = <T extends { exam: ExamKey | "both" }>(items: T[]) =>
     exam === "all" ? items : items.filter((i) => i.exam === exam || i.exam === "both");
@@ -101,6 +122,36 @@ function ResourcesPage() {
   const articles = useMemo(() => examFilter(ARTICLES), [exam]);
   const videos = useMemo(() => examFilter(VIDEOS), [exam]);
   const photos = useMemo(() => examFilter(CAMPUS_PHOTOS), [exam]);
+
+  const communityArticles = useMemo(
+    () => subs.filter((s) => s.kind === "article" && (exam === "all" || s.exam === exam || s.exam === "both")),
+    [subs, exam],
+  );
+  const communityVideos = useMemo(
+    () => subs
+      .filter((s) => s.kind === "video" && (exam === "all" || s.exam === exam || s.exam === "both"))
+      .map((s) => ({ ...s, videoId: s.youtube_url ? extractYouTubeId(s.youtube_url) : null }))
+      .filter((s) => !!s.videoId),
+    [subs, exam],
+  );
+  const communityPhotos = useMemo(
+    () => subs
+      .filter((s) => s.kind === "photo" && s.image_url && (exam === "all" || s.exam === exam || s.exam === "both"))
+      .map((s) => ({
+        id: s.id,
+        src: photoUrlMap[s.id] ?? "",
+        caption: s.description || s.title,
+        institute: s.submitter_credential || "Community submission",
+        exam: s.exam as ExamKey | "both",
+      }))
+      .filter((p) => !!p.src),
+    [subs, photoUrlMap, exam],
+  );
+
+  const allGalleryPhotos = useMemo(
+    () => [...photos, ...communityPhotos.map((p) => ({ ...p, span: "regular" as const }))],
+    [photos, communityPhotos],
+  );
 
   const showArticles = tab === "all" || tab === "articles";
   const showVideos = tab === "all" || tab === "videos";
