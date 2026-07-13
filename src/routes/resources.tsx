@@ -410,7 +410,27 @@ function ResourcesPage() {
       <Footer />
 
       <VideoLightbox open={videoOpen !== null} onClose={() => setVideoOpen(null)} videoId={videoOpen ?? ""} />
-      <PhotoLightbox photos={photos} index={photoIdx} onClose={() => setPhotoIdx(null)} onIndex={setPhotoIdx} />
+      <PhotoLightbox photos={allGalleryPhotos} index={photoIdx} onClose={() => setPhotoIdx(null)} onIndex={setPhotoIdx} />
+      {submitOpen && <ResourceSubmissionForm onClose={() => setSubmitOpen(false)} />}
+      {openArticle && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-ink/60 backdrop-blur-sm" onClick={() => setOpenArticle(null)}>
+          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl bg-white shadow-lift p-8" onClick={(e) => e.stopPropagation()}>
+            <button onClick={() => setOpenArticle(null)} className="absolute right-4 top-4 rounded-full p-2 hover:bg-black/5" aria-label="Close">
+              <X className="h-5 w-5" />
+            </button>
+            <span className="mono text-[10px] uppercase tracking-wider text-primary">Community · Article</span>
+            <h2 className="mt-2 font-display text-2xl sm:text-3xl font-bold">{openArticle.title}</h2>
+            <p className="mt-2 text-sm text-ink-muted">
+              By <span className="font-semibold text-ink">{openArticle.submitter_name}</span>
+              {openArticle.submitter_credential && <> · {openArticle.submitter_credential}</>}
+            </p>
+            {openArticle.description && <p className="mt-4 text-base text-ink-muted italic">{openArticle.description}</p>}
+            <div className="mt-6 prose prose-sm max-w-none whitespace-pre-wrap text-ink leading-relaxed">
+              {openArticle.body}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
