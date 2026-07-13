@@ -368,7 +368,7 @@ function ResourcesPage() {
               </p>
             </div>
             <div className="columns-2 md:columns-3 lg:columns-4 gap-4 [column-fill:_balance]">
-              {photos.map((p, i) => (
+              {allGalleryPhotos.map((p, i) => (
                 <button key={p.id} onClick={() => setPhotoIdx(i)}
                   className="mb-4 block w-full break-inside-avoid overflow-hidden rounded-2xl group relative">
                   <img src={p.src} alt={`${p.institute} — ${p.caption}`} loading="lazy"
