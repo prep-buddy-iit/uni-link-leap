@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Play, ArrowRight, Clock } from "lucide-react";
+import { Play, Clock, Upload, X, Users } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { PageBackdrop } from "@/components/site/PageBackdrop";
@@ -9,6 +9,13 @@ import { VideoLightbox } from "@/components/VideoLightbox";
 import { PhotoLightbox } from "@/components/site/PhotoLightbox";
 import { ARTICLES, AUTHORS, VIDEOS, CAMPUS_PHOTOS } from "@/lib/resources-content";
 import type { ExamKey } from "@/components/ApplicationModal";
+import { ResourceSubmissionForm } from "@/components/site/ResourceSubmissionForm";
+import {
+  fetchApprovedSubmissions,
+  getSignedImageUrl,
+  extractYouTubeId,
+  type ResourceSubmission,
+} from "@/lib/resource-submissions";
 
 const TITLE = "Resources — JEE & NEET Strategy, Motivation & Campus Life | PrepBuddy";
 const DESC = "Articles, videos and a look inside IIT, NIT and AIIMS campuses — written by IITians and AIIMS students. Real strategy and motivation for Class 11, 12 and Droppers.";
