@@ -319,6 +319,40 @@ function ResourcesPage() {
                   </button>
                 ))}
               </div>
+
+              {communityVideos.length > 0 && (
+                <div className="mt-14">
+                  <div className="flex items-center gap-2 mb-6">
+                    <Users className="h-4 w-4 text-primary" />
+                    <p className="mono text-[10px] uppercase tracking-wider text-primary">From the community</p>
+                  </div>
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    {communityVideos.map((v) => (
+                      <button key={v.id} onClick={() => setVideoOpen(v.videoId!)}
+                        className="glass-strong card-lift rounded-3xl p-3 text-left group">
+                        <div className="relative overflow-hidden rounded-2xl aspect-video">
+                          <img src={`https://img.youtube.com/vi/${v.videoId}/hqdefault.jpg`} alt={v.title}
+                            className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]" />
+                          <span className="absolute inset-0 bg-gradient-to-tr from-ink/40 via-transparent to-transparent" />
+                          <span className="absolute inset-0 flex items-center justify-center">
+                            <span className="grid h-14 w-14 place-items-center rounded-full bg-white/95 shadow-lift transition group-hover:scale-110">
+                              <Play className="h-5 w-5 translate-x-0.5 text-primary" fill="currentColor" />
+                            </span>
+                          </span>
+                          <span className="absolute left-2 top-2 mono text-[10px] uppercase tracking-wider rounded-full bg-white/90 text-ink px-2 py-1">
+                            Community
+                          </span>
+                        </div>
+                        <div className="px-3 pt-4 pb-2">
+                          <h3 className="font-display text-base font-bold text-ink">{v.title}</h3>
+                          {v.description && <p className="mt-1 text-xs text-ink-muted">{v.description}</p>}
+                          <p className="mt-2 mono text-[10px] text-ink-muted">By {v.submitter_name}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </section>
         )}
