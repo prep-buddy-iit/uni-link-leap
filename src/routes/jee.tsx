@@ -108,6 +108,11 @@ function JeePage() {
   const { open } = useApplicationModal();
   return (
     <div className="relative min-h-screen overflow-x-clip bg-background">
+      <UrgencyStrip
+        target={nextJeeSession()}
+        template="JEE Main {label} is {days} away — plans built this month get the full runway."
+        fallback="Applications for the next JEE Main session open soon — get a head start on your plan."
+      />
       <Navbar />
       <main>
         <Breadcrumbs items={[{ label: "JEE Mentorship" }]} />
