@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Play, ArrowRight, Clock } from "lucide-react";
+import { Play, Clock, Upload, X, Users } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { PageBackdrop } from "@/components/site/PageBackdrop";
@@ -9,6 +9,13 @@ import { VideoLightbox } from "@/components/VideoLightbox";
 import { PhotoLightbox } from "@/components/site/PhotoLightbox";
 import { ARTICLES, AUTHORS, VIDEOS, CAMPUS_PHOTOS } from "@/lib/resources-content";
 import type { ExamKey } from "@/components/ApplicationModal";
+import { ResourceSubmissionForm } from "@/components/site/ResourceSubmissionForm";
+import {
+  fetchApprovedSubmissions,
+  getSignedImageUrl,
+  extractYouTubeId,
+  type ResourceSubmission,
+} from "@/lib/resource-submissions";
 
 const TITLE = "Resources — JEE & NEET Strategy, Motivation & Campus Life | PrepBuddy";
 const DESC = "Articles, videos and a look inside IIT, NIT and AIIMS campuses — written by IITians and AIIMS students. Real strategy and motivation for Class 11, 12 and Droppers.";
@@ -87,6 +94,27 @@ function ResourcesPage() {
   const [exam, setExam] = useState<ExamFilter>("all");
   const [videoOpen, setVideoOpen] = useState<string | null>(null);
   const [photoIdx, setPhotoIdx] = useState<number | null>(null);
+  const [submitOpen, setSubmitOpen] = useState(false);
+  const [openArticle, setOpenArticle] = useState<ResourceSubmission | null>(null);
+  const [subs, setSubs] = useState<ResourceSubmission[]>([]);
+  const [photoUrlMap, setPhotoUrlMap] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchApprovedSubmissions().then(async (rows) => {
+      if (cancelled) return;
+      setSubs(rows);
+      const photos = rows.filter((r) => r.kind === "photo" && r.image_url);
+      const entries = await Promise.all(
+        photos.map(async (r) => [r.id, await getSignedImageUrl(r.image_url!)] as const),
+      );
+      if (cancelled) return;
+      const map: Record<string, string> = {};
+      for (const [id, url] of entries) if (url) map[id] = url;
+      setPhotoUrlMap(map);
+    });
+    return () => { cancelled = true; };
+  }, []);
 
   const examFilter = <T extends { exam: ExamKey | "both" }>(items: T[]) =>
     exam === "all" ? items : items.filter((i) => i.exam === exam || i.exam === "both");
@@ -94,6 +122,36 @@ function ResourcesPage() {
   const articles = useMemo(() => examFilter(ARTICLES), [exam]);
   const videos = useMemo(() => examFilter(VIDEOS), [exam]);
   const photos = useMemo(() => examFilter(CAMPUS_PHOTOS), [exam]);
+
+  const communityArticles = useMemo(
+    () => subs.filter((s) => s.kind === "article" && (exam === "all" || s.exam === exam || s.exam === "both")),
+    [subs, exam],
+  );
+  const communityVideos = useMemo(
+    () => subs
+      .filter((s) => s.kind === "video" && (exam === "all" || s.exam === exam || s.exam === "both"))
+      .map((s) => ({ ...s, videoId: s.youtube_url ? extractYouTubeId(s.youtube_url) : null }))
+      .filter((s) => !!s.videoId),
+    [subs, exam],
+  );
+  const communityPhotos = useMemo(
+    () => subs
+      .filter((s) => s.kind === "photo" && s.image_url && (exam === "all" || s.exam === exam || s.exam === "both"))
+      .map((s) => ({
+        id: s.id,
+        src: photoUrlMap[s.id] ?? "",
+        caption: s.description || s.title,
+        institute: s.submitter_credential || "Community submission",
+        exam: s.exam as ExamKey | "both",
+      }))
+      .filter((p) => !!p.src),
+    [subs, photoUrlMap, exam],
+  );
+
+  const allGalleryPhotos = useMemo(
+    () => [...photos, ...communityPhotos.map((p) => ({ ...p, span: "regular" as const }))],
+    [photos, communityPhotos],
+  );
 
   const showArticles = tab === "all" || tab === "articles";
   const showVideos = tab === "all" || tab === "videos";
@@ -116,6 +174,13 @@ function ResourcesPage() {
             <p className="mt-5 text-lg text-ink-muted max-w-2xl mx-auto">
               Written by our mentors and IITians from campuses across the country — plus a look inside the colleges you're working toward.
             </p>
+            <div className="mt-7 flex flex-wrap justify-center gap-3">
+              <button onClick={() => setSubmitOpen(true)}
+                className="pill-btn pill-btn-primary pill-btn-primary-hover">
+                <Upload className="h-4 w-4" /> Submit your own
+              </button>
+              <span className="text-xs text-ink-muted self-center">Articles, videos or campus photos — reviewed before going live.</span>
+            </div>
           </div>
         </section>
 
@@ -193,6 +258,29 @@ function ResourcesPage() {
                 );
               })}
             </div>
+
+            {communityArticles.length > 0 && (
+              <div className="mt-14">
+                <div className="flex items-center gap-2 mb-6">
+                  <Users className="h-4 w-4 text-primary" />
+                  <p className="mono text-[10px] uppercase tracking-wider text-primary">From the community</p>
+                </div>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {communityArticles.map((a) => (
+                    <button key={a.id} onClick={() => setOpenArticle(a)}
+                      className="glass-strong card-lift rounded-3xl p-6 flex flex-col text-left group">
+                      <span className="mono text-[10px] uppercase tracking-wider text-ink-muted">Community · Article</span>
+                      <h3 className="mt-3 font-display text-lg font-bold text-ink group-hover:text-primary transition">{a.title}</h3>
+                      {a.description && <p className="mt-2 text-sm text-ink-muted flex-1">{a.description}</p>}
+                      <p className="mt-4 pt-4 border-t border-border/60 text-xs text-ink-muted">
+                        By <span className="font-semibold text-ink">{a.submitter_name}</span>
+                        {a.submitter_credential && <span className="mono text-[10px]"> · {a.submitter_credential}</span>}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </section>
         )}
 
@@ -231,6 +319,40 @@ function ResourcesPage() {
                   </button>
                 ))}
               </div>
+
+              {communityVideos.length > 0 && (
+                <div className="mt-14">
+                  <div className="flex items-center gap-2 mb-6">
+                    <Users className="h-4 w-4 text-primary" />
+                    <p className="mono text-[10px] uppercase tracking-wider text-primary">From the community</p>
+                  </div>
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    {communityVideos.map((v) => (
+                      <button key={v.id} onClick={() => setVideoOpen(v.videoId!)}
+                        className="glass-strong card-lift rounded-3xl p-3 text-left group">
+                        <div className="relative overflow-hidden rounded-2xl aspect-video">
+                          <img src={`https://img.youtube.com/vi/${v.videoId}/hqdefault.jpg`} alt={v.title}
+                            className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]" />
+                          <span className="absolute inset-0 bg-gradient-to-tr from-ink/40 via-transparent to-transparent" />
+                          <span className="absolute inset-0 flex items-center justify-center">
+                            <span className="grid h-14 w-14 place-items-center rounded-full bg-white/95 shadow-lift transition group-hover:scale-110">
+                              <Play className="h-5 w-5 translate-x-0.5 text-primary" fill="currentColor" />
+                            </span>
+                          </span>
+                          <span className="absolute left-2 top-2 mono text-[10px] uppercase tracking-wider rounded-full bg-white/90 text-ink px-2 py-1">
+                            Community
+                          </span>
+                        </div>
+                        <div className="px-3 pt-4 pb-2">
+                          <h3 className="font-display text-base font-bold text-ink">{v.title}</h3>
+                          {v.description && <p className="mt-1 text-xs text-ink-muted">{v.description}</p>}
+                          <p className="mt-2 mono text-[10px] text-ink-muted">By {v.submitter_name}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </section>
         )}
@@ -246,7 +368,7 @@ function ResourcesPage() {
               </p>
             </div>
             <div className="columns-2 md:columns-3 lg:columns-4 gap-4 [column-fill:_balance]">
-              {photos.map((p, i) => (
+              {allGalleryPhotos.map((p, i) => (
                 <button key={p.id} onClick={() => setPhotoIdx(i)}
                   className="mb-4 block w-full break-inside-avoid overflow-hidden rounded-2xl group relative">
                   <img src={p.src} alt={`${p.institute} — ${p.caption}`} loading="lazy"
@@ -288,7 +410,27 @@ function ResourcesPage() {
       <Footer />
 
       <VideoLightbox open={videoOpen !== null} onClose={() => setVideoOpen(null)} videoId={videoOpen ?? ""} />
-      <PhotoLightbox photos={photos} index={photoIdx} onClose={() => setPhotoIdx(null)} onIndex={setPhotoIdx} />
+      <PhotoLightbox photos={allGalleryPhotos} index={photoIdx} onClose={() => setPhotoIdx(null)} onIndex={setPhotoIdx} />
+      {submitOpen && <ResourceSubmissionForm onClose={() => setSubmitOpen(false)} />}
+      {openArticle && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-ink/60 backdrop-blur-sm" onClick={() => setOpenArticle(null)}>
+          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl bg-white shadow-lift p-8" onClick={(e) => e.stopPropagation()}>
+            <button onClick={() => setOpenArticle(null)} className="absolute right-4 top-4 rounded-full p-2 hover:bg-black/5" aria-label="Close">
+              <X className="h-5 w-5" />
+            </button>
+            <span className="mono text-[10px] uppercase tracking-wider text-primary">Community · Article</span>
+            <h2 className="mt-2 font-display text-2xl sm:text-3xl font-bold">{openArticle.title}</h2>
+            <p className="mt-2 text-sm text-ink-muted">
+              By <span className="font-semibold text-ink">{openArticle.submitter_name}</span>
+              {openArticle.submitter_credential && <> · {openArticle.submitter_credential}</>}
+            </p>
+            {openArticle.description && <p className="mt-4 text-base text-ink-muted italic">{openArticle.description}</p>}
+            <div className="mt-6 prose prose-sm max-w-none whitespace-pre-wrap text-ink leading-relaxed">
+              {openArticle.body}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

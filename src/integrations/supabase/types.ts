@@ -140,6 +140,63 @@ export type Database = {
         }
         Relationships: []
       }
+      resource_submissions: {
+        Row: {
+          body: string | null
+          created_at: string
+          description: string | null
+          exam: string
+          id: string
+          image_url: string | null
+          kind: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          submitter_credential: string | null
+          submitter_email: string
+          submitter_name: string
+          title: string
+          updated_at: string
+          youtube_url: string | null
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          description?: string | null
+          exam?: string
+          id?: string
+          image_url?: string | null
+          kind: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          submitter_credential?: string | null
+          submitter_email: string
+          submitter_name: string
+          title: string
+          updated_at?: string
+          youtube_url?: string | null
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          description?: string | null
+          exam?: string
+          id?: string
+          image_url?: string | null
+          kind?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          submitter_credential?: string | null
+          submitter_email?: string
+          submitter_name?: string
+          title?: string
+          updated_at?: string
+          youtube_url?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
