@@ -258,6 +258,29 @@ function ResourcesPage() {
                 );
               })}
             </div>
+
+            {communityArticles.length > 0 && (
+              <div className="mt-14">
+                <div className="flex items-center gap-2 mb-6">
+                  <Users className="h-4 w-4 text-primary" />
+                  <p className="mono text-[10px] uppercase tracking-wider text-primary">From the community</p>
+                </div>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {communityArticles.map((a) => (
+                    <button key={a.id} onClick={() => setOpenArticle(a)}
+                      className="glass-strong card-lift rounded-3xl p-6 flex flex-col text-left group">
+                      <span className="mono text-[10px] uppercase tracking-wider text-ink-muted">Community · Article</span>
+                      <h3 className="mt-3 font-display text-lg font-bold text-ink group-hover:text-primary transition">{a.title}</h3>
+                      {a.description && <p className="mt-2 text-sm text-ink-muted flex-1">{a.description}</p>}
+                      <p className="mt-4 pt-4 border-t border-border/60 text-xs text-ink-muted">
+                        By <span className="font-semibold text-ink">{a.submitter_name}</span>
+                        {a.submitter_credential && <span className="mono text-[10px]"> · {a.submitter_credential}</span>}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </section>
         )}
 
