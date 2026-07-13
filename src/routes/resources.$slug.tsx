@@ -131,10 +131,10 @@ function ArticlePage() {
 
         <article className="mx-auto max-w-3xl px-5 pb-16">
           <div className="prose-custom">
-            {article.body.map((s) => (
+            {article.body.map((s: { heading: string; paragraphs: string[] }) => (
               <section key={s.heading} className="mt-10">
                 <h2 className="font-display text-2xl font-bold text-ink">{s.heading}</h2>
-                {s.paragraphs.map((p, i) => (
+                {s.paragraphs.map((p: string, i: number) => (
                   <p key={i} className="mt-4 text-ink leading-relaxed">{p}</p>
                 ))}
               </section>

@@ -22,6 +22,7 @@ export function Footer() {
             ]} />
             <FooterCol h="Company" items={[
               { l: "Our Method", to: "/" },
+              { l: "Resources", to: "/resources" },
               { l: "Become a Mentor", to: "/become-a-mentor" },
               { l: "Contact Us", to: "/contact" },
             ]} />

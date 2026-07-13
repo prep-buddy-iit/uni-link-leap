@@ -6,13 +6,17 @@ const BASE_URL = "";
 
 type Entry = { path: string; changefreq?: string; priority?: string };
 
+import { ARTICLES } from "@/lib/resources-content";
+
 const ENTRIES: Entry[] = [
   { path: "/",                 changefreq: "weekly",  priority: "1.0" },
   { path: "/jee",              changefreq: "weekly",  priority: "0.9" },
   { path: "/neet",             changefreq: "weekly",  priority: "0.9" },
+  { path: "/resources",        changefreq: "weekly",  priority: "0.8" },
   { path: "/find-a-mentor",    changefreq: "weekly",  priority: "0.7" },
   { path: "/become-a-mentor",  changefreq: "monthly", priority: "0.6" },
   { path: "/contact",          changefreq: "monthly", priority: "0.5" },
+  ...ARTICLES.map((a) => ({ path: `/resources/${a.slug}`, changefreq: "monthly", priority: "0.6" })),
 ];
 
 export const Route = createFileRoute("/sitemap.xml")({
