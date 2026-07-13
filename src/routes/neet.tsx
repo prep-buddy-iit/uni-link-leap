@@ -14,6 +14,8 @@ import { KnowledgeHub } from "@/components/site/KnowledgeHub";
 import { Testimonials } from "@/components/site/Testimonials";
 import { TrialBanner, SessionBanner } from "@/components/site/TrialSessionBanners";
 import { PageBackdrop } from "@/components/site/PageBackdrop";
+import { UrgencyStrip } from "@/components/site/UrgencyStrip";
+import { nextNeetExam } from "@/lib/exam-dates";
 import { EXAM } from "@/lib/exam-content";
 
 const ex = EXAM.neet;
@@ -106,6 +108,11 @@ function NeetPage() {
   const { open } = useApplicationModal();
   return (
     <div className="relative min-h-screen overflow-x-clip bg-background">
+      <UrgencyStrip
+        target={nextNeetExam()}
+        template="NEET UG {label} is {days} away — plans built this month get the full runway."
+        fallback="The next NEET UG date will be announced soon — get a head start on your plan."
+      />
       <Navbar />
       <main>
         <Breadcrumbs items={[{ label: "NEET Mentorship" }]} />

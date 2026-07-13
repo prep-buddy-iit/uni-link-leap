@@ -14,6 +14,8 @@ import { KnowledgeHub } from "@/components/site/KnowledgeHub";
 import { Testimonials } from "@/components/site/Testimonials";
 import { TrialBanner, SessionBanner } from "@/components/site/TrialSessionBanners";
 import { PageBackdrop } from "@/components/site/PageBackdrop";
+import { UrgencyStrip } from "@/components/site/UrgencyStrip";
+import { nextJeeSession } from "@/lib/exam-dates";
 import { EXAM } from "@/lib/exam-content";
 
 const ex = EXAM.jee;
@@ -106,6 +108,11 @@ function JeePage() {
   const { open } = useApplicationModal();
   return (
     <div className="relative min-h-screen overflow-x-clip bg-background">
+      <UrgencyStrip
+        target={nextJeeSession()}
+        template="JEE Main {label} is {days} away — plans built this month get the full runway."
+        fallback="Applications for the next JEE Main session open soon — get a head start on your plan."
+      />
       <Navbar />
       <main>
         <Breadcrumbs items={[{ label: "JEE Mentorship" }]} />
