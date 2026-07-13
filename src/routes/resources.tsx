@@ -174,6 +174,13 @@ function ResourcesPage() {
             <p className="mt-5 text-lg text-ink-muted max-w-2xl mx-auto">
               Written by our mentors and IITians from campuses across the country — plus a look inside the colleges you're working toward.
             </p>
+            <div className="mt-7 flex flex-wrap justify-center gap-3">
+              <button onClick={() => setSubmitOpen(true)}
+                className="pill-btn pill-btn-primary pill-btn-primary-hover">
+                <Upload className="h-4 w-4" /> Submit your own
+              </button>
+              <span className="text-xs text-ink-muted self-center">Articles, videos or campus photos — reviewed before going live.</span>
+            </div>
           </div>
         </section>
 
