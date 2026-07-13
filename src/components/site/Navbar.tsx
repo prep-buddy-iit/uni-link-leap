@@ -44,6 +44,11 @@ export function Navbar() {
         }>
         NEET
       </Link>
+      <Link to="/resources" onClick={onClick}
+        className="text-sm font-medium text-ink-muted hover:text-primary transition"
+        activeProps={{ className: "text-ink" }}>
+        Resources
+      </Link>
       <Link to="/contact" onClick={onClick}
         className="text-sm font-medium text-ink-muted hover:text-primary transition"
         activeProps={{ className: "text-ink" }}>
