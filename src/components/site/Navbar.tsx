@@ -99,12 +99,10 @@ export function Navbar() {
     <header className="sticky top-0 z-40 border-b border-border/60 bg-white/70 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3">
         <Link to="/" className="flex items-center gap-2 shrink-0">
-          {/* <div className="grid h-9 w-9 place-items-center rounded-xl gradient-primary text-white font-display font-bold text-sm">PB</div> */}
-          <img
-            src="https://drive.google.com/uc?export=view&id=15Zbp7ZPTf0685rjiZpCu7wK6Oga4qDDM"
-            alt="PrepBuddy"
-            className="h-10 w-auto object-contain"
-          />
+          <div className="grid h-9 w-9 place-items-center rounded-xl gradient-primary text-white font-display font-bold text-sm">
+            PB
+          </div>
+
           <span className="font-display text-lg font-bold">PrepBuddy</span>
         </Link>
 
