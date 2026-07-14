@@ -1,10 +1,14 @@
 import { useState } from "react";
 import { Play } from "lucide-react";
 import { VideoLightbox } from "@/components/VideoLightbox";
-import heroImage from "@/assets/hero-mentor.jpg";
+const heroImage = "https://img.youtube.com/vi/GYszmNT-ks4/hqdefault.jpg";
 
-export function HeroVideoCard({ videoId = "dQw4w9WgXcQ", caption = "See how a real mentorship week works →" }: {
-  videoId?: string; caption?: string;
+export function HeroVideoCard({
+  videoId = "GYszmNT-ks4",
+  caption = "See how a real mentorship week works →",
+}: {
+  videoId?: string;
+  caption?: string;
 }) {
   const [open, setOpen] = useState(false);
   return (
@@ -16,9 +20,14 @@ export function HeroVideoCard({ videoId = "dQw4w9WgXcQ", caption = "See how a re
           className="group relative block w-full overflow-hidden rounded-2xl aspect-video"
           aria-label="Watch: See how a real mentorship week works"
         >
-          <img src={heroImage} alt="A PrepBuddy mentor on a video call with a student"
-            width={1280} height={800} loading="lazy"
-            className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+          <img
+            src={heroImage}
+            alt="A PrepBuddy mentor on a video call with a student"
+            width={1280}
+            height={800}
+            loading="lazy"
+            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+          />
           <span className="absolute inset-0 bg-gradient-to-tr from-ink/40 via-transparent to-transparent" />
           <span className="absolute inset-0 flex items-center justify-center">
             <span className="grid h-16 w-16 place-items-center rounded-full bg-white/95 shadow-lift transition group-hover:scale-110">
