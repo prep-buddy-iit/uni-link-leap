@@ -21,37 +21,49 @@ export function Navbar() {
 
   const NavLinks = ({ onClick }: { onClick?: () => void }) => (
     <>
-      <Link to="/" onClick={onClick} activeOptions={{ exact: true }}
+      <Link
+        to="/"
+        onClick={onClick}
+        activeOptions={{ exact: true }}
         className="text-sm font-medium text-ink-muted hover:text-primary transition"
-        activeProps={{ className: "text-ink" }}>
+        activeProps={{ className: "text-ink" }}
+      >
         Home
       </Link>
-      <Link to="/jee" onClick={onClick}
+      <Link
+        to="/jee"
+        onClick={onClick}
         className={
           "text-sm font-medium transition rounded-full " +
-          (onJee
-            ? "gradient-primary text-white px-4 py-1.5 shadow-glass"
-            : "text-ink-muted hover:text-primary")
-        }>
+          (onJee ? "gradient-primary text-white px-4 py-1.5 shadow-glass" : "text-ink-muted hover:text-primary")
+        }
+      >
         JEE
       </Link>
-      <Link to="/neet" onClick={onClick}
+      <Link
+        to="/neet"
+        onClick={onClick}
         className={
           "text-sm font-medium transition rounded-full " +
-          (onNeet
-            ? "gradient-primary text-white px-4 py-1.5 shadow-glass"
-            : "text-ink-muted hover:text-primary")
-        }>
+          (onNeet ? "gradient-primary text-white px-4 py-1.5 shadow-glass" : "text-ink-muted hover:text-primary")
+        }
+      >
         NEET
       </Link>
-      <Link to="/resources" onClick={onClick}
+      <Link
+        to="/resources"
+        onClick={onClick}
         className="text-sm font-medium text-ink-muted hover:text-primary transition"
-        activeProps={{ className: "text-ink" }}>
+        activeProps={{ className: "text-ink" }}
+      >
         Resources
       </Link>
-      <Link to="/contact" onClick={onClick}
+      <Link
+        to="/contact"
+        onClick={onClick}
         className="text-sm font-medium text-ink-muted hover:text-primary transition"
-        activeProps={{ className: "text-ink" }}>
+        activeProps={{ className: "text-ink" }}
+      >
         Contact Us
       </Link>
     </>
@@ -59,17 +71,25 @@ export function Navbar() {
 
   const CTAs = ({ onClick }: { onClick?: () => void }) => (
     <>
-      <Link to="/become-a-mentor" onClick={onClick}
+      <Link
+        to="/become-a-mentor"
+        onClick={onClick}
         className={
           "inline-flex items-center rounded-full border-[1.5px] px-4 py-2 text-sm font-semibold transition " +
           (onBecome
             ? "bg-secondary text-white border-secondary shadow-glass"
             : "border-secondary text-secondary hover:bg-secondary hover:text-white hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-10px_rgba(139,92,246,0.55)]")
-        }>
+        }
+      >
         Become a Mentor
       </Link>
-      <button onClick={() => { onClick?.(); handleTrial(); }}
-        className="pill-btn pill-btn-primary pill-btn-primary-hover text-sm px-5 py-2">
+      <button
+        onClick={() => {
+          onClick?.();
+          handleTrial();
+        }}
+        className="pill-btn pill-btn-primary pill-btn-primary-hover text-sm px-5 py-2"
+      >
         Start Your Trial
       </button>
     </>
@@ -79,7 +99,12 @@ export function Navbar() {
     <header className="sticky top-0 z-40 border-b border-border/60 bg-white/70 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3">
         <Link to="/" className="flex items-center gap-2 shrink-0">
-          <div className="grid h-9 w-9 place-items-center rounded-xl gradient-primary text-white font-display font-bold text-sm">PB</div>
+          {/* <div className="grid h-9 w-9 place-items-center rounded-xl gradient-primary text-white font-display font-bold text-sm">PB</div> */}
+          <img
+            src="https://drive.google.com/uc?export=view&id=15Zbp7ZPTf0685rjiZpCu7wK6Oga4qDDM"
+            alt="PrepBuddy"
+            className="h-10 w-auto object-contain"
+          />
           <span className="font-display text-lg font-bold">PrepBuddy</span>
         </Link>
 
@@ -91,8 +116,11 @@ export function Navbar() {
           <CTAs />
         </div>
 
-        <button aria-label="Menu" onClick={() => setOpen(!open)}
-          className="md:hidden grid h-10 w-10 place-items-center rounded-xl border border-border">
+        <button
+          aria-label="Menu"
+          onClick={() => setOpen(!open)}
+          className="md:hidden grid h-10 w-10 place-items-center rounded-xl border border-border"
+        >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
