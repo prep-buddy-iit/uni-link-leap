@@ -16,7 +16,6 @@ import { Route as JeeRouteImport } from './routes/jee'
 import { Route as FindAMentorRouteImport } from './routes/find-a-mentor'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BecomeAMentorRouteImport } from './routes/become-a-mentor'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ResourcesSlugRouteImport } from './routes/resources.$slug'
 import { Route as AdminResourcesRouteImport } from './routes/admin.resources'
@@ -61,11 +60,6 @@ const BecomeAMentorRoute = BecomeAMentorRouteImport.update({
   path: '/become-a-mentor',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -77,39 +71,38 @@ const ResourcesSlugRoute = ResourcesSlugRouteImport.update({
   getParentRoute: () => ResourcesRoute,
 } as any)
 const AdminResourcesRoute = AdminResourcesRouteImport.update({
-  id: '/resources',
-  path: '/resources',
-  getParentRoute: () => AdminRoute,
+  id: '/admin/resources',
+  path: '/admin/resources',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminMentorsRoute = AdminMentorsRouteImport.update({
-  id: '/mentors',
-  path: '/mentors',
-  getParentRoute: () => AdminRoute,
+  id: '/admin/mentors',
+  path: '/admin/mentors',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => AdminRoute,
+  id: '/admin/login',
+  path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminLeadsRoute = AdminLeadsRouteImport.update({
-  id: '/leads',
-  path: '/leads',
-  getParentRoute: () => AdminRoute,
+  id: '/admin/leads',
+  path: '/admin/leads',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminDashboardRoute = AdminDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AdminRoute,
+  id: '/admin/dashboard',
+  path: '/admin/dashboard',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminContactsRoute = AdminContactsRouteImport.update({
-  id: '/contacts',
-  path: '/contacts',
-  getParentRoute: () => AdminRoute,
+  id: '/admin/contacts',
+  path: '/admin/contacts',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRouteWithChildren
   '/become-a-mentor': typeof BecomeAMentorRoute
   '/contact': typeof ContactRoute
   '/find-a-mentor': typeof FindAMentorRoute
@@ -127,7 +120,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRouteWithChildren
   '/become-a-mentor': typeof BecomeAMentorRoute
   '/contact': typeof ContactRoute
   '/find-a-mentor': typeof FindAMentorRoute
@@ -146,7 +138,6 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin': typeof AdminRouteWithChildren
   '/become-a-mentor': typeof BecomeAMentorRoute
   '/contact': typeof ContactRoute
   '/find-a-mentor': typeof FindAMentorRoute
@@ -166,7 +157,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/admin'
     | '/become-a-mentor'
     | '/contact'
     | '/find-a-mentor'
@@ -184,7 +174,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/admin'
     | '/become-a-mentor'
     | '/contact'
     | '/find-a-mentor'
@@ -202,7 +191,6 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/admin'
     | '/become-a-mentor'
     | '/contact'
     | '/find-a-mentor'
@@ -221,7 +209,6 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRouteWithChildren
   BecomeAMentorRoute: typeof BecomeAMentorRoute
   ContactRoute: typeof ContactRoute
   FindAMentorRoute: typeof FindAMentorRoute
@@ -229,6 +216,12 @@ export interface RootRouteChildren {
   NeetRoute: typeof NeetRoute
   ResourcesRoute: typeof ResourcesRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  AdminContactsRoute: typeof AdminContactsRoute
+  AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminLeadsRoute: typeof AdminLeadsRoute
+  AdminLoginRoute: typeof AdminLoginRoute
+  AdminMentorsRoute: typeof AdminMentorsRoute
+  AdminResourcesRoute: typeof AdminResourcesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -282,13 +275,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BecomeAMentorRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -305,68 +291,48 @@ declare module '@tanstack/react-router' {
     }
     '/admin/resources': {
       id: '/admin/resources'
-      path: '/resources'
+      path: '/admin/resources'
       fullPath: '/admin/resources'
       preLoaderRoute: typeof AdminResourcesRouteImport
-      parentRoute: typeof AdminRoute
+      parentRoute: typeof rootRouteImport
     }
     '/admin/mentors': {
       id: '/admin/mentors'
-      path: '/mentors'
+      path: '/admin/mentors'
       fullPath: '/admin/mentors'
       preLoaderRoute: typeof AdminMentorsRouteImport
-      parentRoute: typeof AdminRoute
+      parentRoute: typeof rootRouteImport
     }
     '/admin/login': {
       id: '/admin/login'
-      path: '/login'
+      path: '/admin/login'
       fullPath: '/admin/login'
       preLoaderRoute: typeof AdminLoginRouteImport
-      parentRoute: typeof AdminRoute
+      parentRoute: typeof rootRouteImport
     }
     '/admin/leads': {
       id: '/admin/leads'
-      path: '/leads'
+      path: '/admin/leads'
       fullPath: '/admin/leads'
       preLoaderRoute: typeof AdminLeadsRouteImport
-      parentRoute: typeof AdminRoute
+      parentRoute: typeof rootRouteImport
     }
     '/admin/dashboard': {
       id: '/admin/dashboard'
-      path: '/dashboard'
+      path: '/admin/dashboard'
       fullPath: '/admin/dashboard'
       preLoaderRoute: typeof AdminDashboardRouteImport
-      parentRoute: typeof AdminRoute
+      parentRoute: typeof rootRouteImport
     }
     '/admin/contacts': {
       id: '/admin/contacts'
-      path: '/contacts'
+      path: '/admin/contacts'
       fullPath: '/admin/contacts'
       preLoaderRoute: typeof AdminContactsRouteImport
-      parentRoute: typeof AdminRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
-
-interface AdminRouteChildren {
-  AdminContactsRoute: typeof AdminContactsRoute
-  AdminDashboardRoute: typeof AdminDashboardRoute
-  AdminLeadsRoute: typeof AdminLeadsRoute
-  AdminLoginRoute: typeof AdminLoginRoute
-  AdminMentorsRoute: typeof AdminMentorsRoute
-  AdminResourcesRoute: typeof AdminResourcesRoute
-}
-
-const AdminRouteChildren: AdminRouteChildren = {
-  AdminContactsRoute: AdminContactsRoute,
-  AdminDashboardRoute: AdminDashboardRoute,
-  AdminLeadsRoute: AdminLeadsRoute,
-  AdminLoginRoute: AdminLoginRoute,
-  AdminMentorsRoute: AdminMentorsRoute,
-  AdminResourcesRoute: AdminResourcesRoute,
-}
-
-const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface ResourcesRouteChildren {
   ResourcesSlugRoute: typeof ResourcesSlugRoute
@@ -382,7 +348,6 @@ const ResourcesRouteWithChildren = ResourcesRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminRoute: AdminRouteWithChildren,
   BecomeAMentorRoute: BecomeAMentorRoute,
   ContactRoute: ContactRoute,
   FindAMentorRoute: FindAMentorRoute,
@@ -390,6 +355,12 @@ const rootRouteChildren: RootRouteChildren = {
   NeetRoute: NeetRoute,
   ResourcesRoute: ResourcesRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  AdminContactsRoute: AdminContactsRoute,
+  AdminDashboardRoute: AdminDashboardRoute,
+  AdminLeadsRoute: AdminLeadsRoute,
+  AdminLoginRoute: AdminLoginRoute,
+  AdminMentorsRoute: AdminMentorsRoute,
+  AdminResourcesRoute: AdminResourcesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
