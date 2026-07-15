@@ -1,4 +1,6 @@
 import { Link } from "@tanstack/react-router";
+import logoAsset from "@/assets/prepbuddy-logo.jpg.asset.json";
+
 
 export function Footer() {
   return (
@@ -7,7 +9,7 @@ export function Footer() {
         <div className="grid gap-10 lg:grid-cols-[1.3fr_2fr]">
           <div>
             <Link to="/" className="flex items-center gap-2">
-              <div className="grid h-9 w-9 place-items-center rounded-xl gradient-primary text-white font-display font-bold text-sm">PB</div>
+              <img src={logoAsset.url} alt="PrepBuddy logo" className="h-9 w-9 rounded-xl object-cover shadow-soft" />
               <span className="font-display text-lg font-bold">PrepBuddy</span>
             </Link>
             <p className="mt-3 text-sm text-ink-muted max-w-sm">
