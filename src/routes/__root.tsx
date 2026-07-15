@@ -83,13 +83,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "PrepBuddy" },
-      { property: "og:title", content: "PrepBuddy - 1-on-1 Mentorship for JEE & NEET" },
+      { property: "og:title", content: "PrepBuddy - 1-on-1 Mentorship for JEE & NEET | Class 11, 12 & Droppers" },
       {
         property: "og:description",
         content:
-          "One dedicated mentor, a study plan built from your mock scores, and daily accountability - for JEE and NEET aspirants, Class 11 through Droppers.",
+          "PrepBuddy pairs Class 11, 12 and Droppers with a dedicated topper-mentor - IITians for JEE, AIIMS/medical students for NEET. Personalized plans, daily accountability, weekly review calls.",
       },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "PrepBuddy - 1-on-1 Mentorship for JEE & NEET | Class 11, 12 & Droppers" },
+      { name: "twitter:description", content: "PrepBuddy pairs Class 11, 12 and Droppers with a dedicated topper-mentor - IITians for JEE, AIIMS/medical students for NEET. Personalized plans, daily accountability, weekly review calls." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/727af470-17da-43e0-ac5e-50105ceb5a9c/id-preview-3bdbcaef--d1b86c75-1143-4960-a5b1-06dee2b4648a.lovable.app-1784099037468.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/727af470-17da-43e0-ac5e-50105ceb5a9c/id-preview-3bdbcaef--d1b86c75-1143-4960-a5b1-06dee2b4648a.lovable.app-1784099037468.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
