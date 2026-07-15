@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { useApplicationModal } from "@/lib/application-modal";
+import logoAsset from "@/assets/prepbuddy-logo.jpg.asset.json";
+
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
@@ -99,9 +101,12 @@ export function Navbar() {
     <header className="sticky top-0 z-40 border-b border-border/60 bg-white/70 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3">
         <Link to="/" className="flex items-center gap-2 shrink-0">
-          <div className="grid h-9 w-9 place-items-center rounded-xl gradient-primary text-white font-display font-bold text-sm">
-            PB
-          </div>
+          <img
+            src={logoAsset.url}
+            alt="PrepBuddy logo"
+            className="h-9 w-9 rounded-xl object-cover shadow-soft"
+          />
+
 
           <span className="font-display text-lg font-bold">PrepBuddy</span>
         </Link>
