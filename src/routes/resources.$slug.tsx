@@ -14,14 +14,14 @@ export const Route = createFileRoute("/resources/$slug")({
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return { meta: [{ title: "Article not found — PrepBuddy" }, { name: "robots", content: "noindex" }] };
+      return { meta: [{ title: "Article not found - PrepBuddy" }, { name: "robots", content: "noindex" }] };
     }
     const a = loaderData.article;
     const author = AUTHORS[a.authorSlug];
     const url = `/resources/${a.slug}`;
     return {
       meta: [
-        { title: `${a.title} — PrepBuddy` },
+        { title: `${a.title} - PrepBuddy` },
         { name: "description", content: a.description },
         { name: "author", content: author.name },
         { property: "og:title", content: a.title },

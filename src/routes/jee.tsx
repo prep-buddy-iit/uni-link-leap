@@ -38,7 +38,7 @@ export const Route = createFileRoute("/jee")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "EducationalOrganization",
-          name: "PrepBuddy — JEE Mentorship",
+          name: "PrepBuddy - JEE Mentorship",
           url: "/jee",
           description: ex.metaDesc,
           areaServed: "IN",
@@ -110,8 +110,8 @@ function JeePage() {
     <div className="relative min-h-screen overflow-x-clip bg-background">
       <UrgencyStrip
         target={nextJeeSession()}
-        template="JEE Main {label} is {days} away — plans built this month get the full runway."
-        fallback="Applications for the next JEE Main session open soon — get a head start on your plan."
+        template="JEE Main {label} is {days} away - plans built this month get the full runway."
+        fallback="Applications for the next JEE Main session open soon - get a head start on your plan."
       />
       <Navbar />
       <main>
@@ -129,7 +129,7 @@ function JeePage() {
               <div className="mt-7 flex flex-col sm:flex-row gap-3">
                 <button onClick={() => open("trial", "jee")}
                   className="pill-btn pill-btn-primary pill-btn-primary-hover">
-                  Start 3-Day Trial — ₹99 <ArrowRight className="h-4 w-4" />
+                  Start 3-Day Trial - ₹99 <ArrowRight className="h-4 w-4" />
                 </button>
                 <Link to="/jee" hash="stories"
                   className="pill-btn border border-input bg-white text-ink hover:border-primary">

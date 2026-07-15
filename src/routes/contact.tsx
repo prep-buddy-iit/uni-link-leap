@@ -6,7 +6,7 @@ import { ContactForm } from "@/components/ContactForm";
 import { PageBackdrop } from "@/components/site/PageBackdrop";
 import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 
-const TITLE = "Contact Us — PrepBuddy JEE & NEET Mentorship";
+const TITLE = "Contact Us - PrepBuddy JEE & NEET Mentorship";
 const DESC = "Questions about PrepBuddy's 1-on-1 JEE and NEET mentorship? Reach us on WhatsApp, email, or send us a message.";
 
 export const Route = createFileRoute("/contact")({
@@ -69,7 +69,7 @@ function ContactPage() {
               <span className="text-gradient-primary">We're here.</span>
             </h1>
             <p className="mt-4 text-lg text-ink-muted max-w-2xl mx-auto">
-              Whether you're a student, a parent, or a topper interested in mentoring — we usually reply within 4 hours.
+              Whether you're a student, a parent, or a topper interested in mentoring - we usually reply within 4 hours.
             </p>
           </div>
         </section>
@@ -80,7 +80,7 @@ function ContactPage() {
               <InfoCard
                 icon={<MessageCircle className="h-5 w-5" />}
                 title="WhatsApp"
-                sub="Fastest response — usually under an hour."
+                sub="Fastest response - usually under an hour."
                 cta="Chat on WhatsApp →"
                 href="https://wa.me/919999999999"
                 bg="linear-gradient(135deg,#22c35e,#12a04a)"
@@ -96,7 +96,7 @@ function ContactPage() {
               <InfoCard
                 icon={<MapPin className="h-5 w-5" />}
                 title="Location"
-                sub="Hyderabad, India — mentoring online, nationwide."
+                sub="Hyderabad, India - mentoring online, nationwide."
                 bg="var(--gradient-accent)"
               />
             </div>

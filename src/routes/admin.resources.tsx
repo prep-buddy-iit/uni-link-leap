@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
-import { Check, X as XIcon, Eye, Play, RotateCcw } from "lucide-react";
+import { Check, X as XIcon, Eye, Play, RotateCcw, Trash2 } from "lucide-react";
 import {
   getSignedImageUrl,
   extractYouTubeId,
@@ -15,7 +15,7 @@ type Tab = "pending" | "approved" | "rejected";
 export const Route = createFileRoute("/admin/resources")({
   head: () => ({
     meta: [
-      { title: "Admin — Resource submissions | PrepBuddy" },
+      { title: "Admin - Resource submissions | PrepBuddy" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -66,6 +66,20 @@ function AdminResources() {
     setBusy(null);
     if (error) return alert(error.message);
     setRows((rs) => rs.map((r) => (r.id === id ? { ...r, status } : r)));
+  }
+
+  async function deleteRow(id: string) {
+    const row = rows.find((r) => r.id === id);
+    if (!row) return;
+    if (!confirm(`Delete "${row.title}"? This cannot be undone.`)) return;
+    setBusy(id);
+    if (row.kind === "photo" && row.image_url) {
+      await supabase.storage.from("resource-uploads").remove([row.image_url]).catch(() => {});
+    }
+    const { error } = await supabase.from("resource_submissions" as never).delete().eq("id", id);
+    setBusy(null);
+    if (error) return alert(error.message);
+    setRows((rs) => rs.filter((r) => r.id !== id));
   }
 
   if (gate === "loading") return <AdminLoading />;
@@ -147,6 +161,10 @@ function AdminResources() {
                       <RotateCcw className="h-3.5 w-3.5" /> Reopen
                     </button>
                   )}
+                  <button onClick={() => deleteRow(r.id)} disabled={busy === r.id}
+                    className="pill-btn border border-destructive bg-destructive text-white text-sm h-9 px-3 disabled:opacity-70">
+                    <Trash2 className="h-3.5 w-3.5" /> Delete
+                  </button>
                 </div>
               </div>
             </div>

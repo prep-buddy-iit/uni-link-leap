@@ -9,7 +9,7 @@ import { PageBackdrop } from "@/components/site/PageBackdrop";
 export const Route = createFileRoute("/admin/login")({
   head: () => ({
     meta: [
-      { title: "Admin sign in — PrepBuddy" },
+      { title: "Admin sign in - PrepBuddy" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),

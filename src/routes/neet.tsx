@@ -38,7 +38,7 @@ export const Route = createFileRoute("/neet")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "EducationalOrganization",
-          name: "PrepBuddy — NEET Mentorship",
+          name: "PrepBuddy - NEET Mentorship",
           url: "/neet",
           description: ex.metaDesc,
           areaServed: "IN",
@@ -110,8 +110,8 @@ function NeetPage() {
     <div className="relative min-h-screen overflow-x-clip bg-background">
       <UrgencyStrip
         target={nextNeetExam()}
-        template="NEET UG {label} is {days} away — plans built this month get the full runway."
-        fallback="The next NEET UG date will be announced soon — get a head start on your plan."
+        template="NEET UG {label} is {days} away - plans built this month get the full runway."
+        fallback="The next NEET UG date will be announced soon - get a head start on your plan."
       />
       <Navbar />
       <main>
@@ -129,7 +129,7 @@ function NeetPage() {
               <div className="mt-7 flex flex-col sm:flex-row gap-3">
                 <button onClick={() => open("trial", "neet")}
                   className="pill-btn pill-btn-primary pill-btn-primary-hover">
-                  Start 3-Day Trial — ₹99 <ArrowRight className="h-4 w-4" />
+                  Start 3-Day Trial - ₹99 <ArrowRight className="h-4 w-4" />
                 </button>
                 <Link to="/neet" hash="stories"
                   className="pill-btn border border-input bg-white text-ink hover:border-primary">

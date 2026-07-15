@@ -7,7 +7,7 @@ import { Users, GraduationCap, MessageSquare, FileText, TrendingUp } from "lucid
 export const Route = createFileRoute("/admin/dashboard")({
   head: () => ({
     meta: [
-      { title: "Admin dashboard — PrepBuddy CRM" },
+      { title: "Admin dashboard - PrepBuddy CRM" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),

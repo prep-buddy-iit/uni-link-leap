@@ -7,7 +7,7 @@ import { Search, Trash2, Download } from "lucide-react";
 export const Route = createFileRoute("/admin/mentors")({
   head: () => ({
     meta: [
-      { title: "Mentor applications — Admin CRM" },
+      { title: "Mentor applications - Admin CRM" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -132,7 +132,7 @@ function AdminMentors() {
                   <td className="p-3 text-ink-muted">{r.phone}</td>
                   <td className="p-3 mono">{r.jee_rank.toLocaleString()}</td>
                   <td className="p-3 text-ink-muted">
-                    <div>{r.iit_name ?? "—"}</div>
+                    <div>{r.iit_name ?? "-"}</div>
                     {r.year_of_study && <div className="text-xs">{r.year_of_study}</div>}
                   </td>
                   <td className="p-3">
@@ -185,7 +185,7 @@ function F({ k, v }: { k: string; v: string | null | undefined }) {
   return (
     <div>
       <dt className="mono text-[10px] uppercase tracking-wider text-ink-muted">{k}</dt>
-      <dd className="mt-0.5">{v || "—"}</dd>
+      <dd className="mt-0.5">{v || "-"}</dd>
     </div>
   );
 }

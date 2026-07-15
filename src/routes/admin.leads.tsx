@@ -7,7 +7,7 @@ import { Search, Trash2, Download } from "lucide-react";
 export const Route = createFileRoute("/admin/leads")({
   head: () => ({
     meta: [
-      { title: "Leads / mentees — Admin CRM" },
+      { title: "Leads / mentees - Admin CRM" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -143,7 +143,7 @@ function AdminLeads() {
                     {r.email && <div className="text-xs">{r.email}</div>}
                   </td>
                   <td className="p-3 text-ink-muted">
-                    <div className="mono text-xs uppercase">{r.exam ?? "—"}</div>
+                    <div className="mono text-xs uppercase">{r.exam ?? "-"}</div>
                     <div className="text-xs">{r.current_class}{r.target_year ? ` · ${r.target_year}` : ""}</div>
                   </td>
                   <td className="p-3">
@@ -206,7 +206,7 @@ function Field({ k, v }: { k: string; v: string | null | undefined }) {
   return (
     <div>
       <dt className="mono text-[10px] uppercase tracking-wider text-ink-muted">{k}</dt>
-      <dd className="mt-0.5 text-ink">{v || "—"}</dd>
+      <dd className="mt-0.5 text-ink">{v || "-"}</dd>
     </div>
   );
 }

@@ -11,8 +11,8 @@ import { PageBackdrop } from "@/components/site/PageBackdrop";
 import { useReveal } from "@/hooks/useReveal";
 import { COMMUNITIES } from "@/lib/exam-content";
 
-const TITLE = "PrepBuddy — 1-on-1 Mentorship for JEE & NEET | Class 11, 12 & Droppers";
-const DESC = "PrepBuddy pairs Class 11, 12 and Droppers with a dedicated topper-mentor — IITians for JEE, AIIMS/medical students for NEET. Personalized plans, daily accountability, weekly review calls. Start your 3-day trial for ₹99.";
+const TITLE = "PrepBuddy - 1-on-1 Mentorship for JEE & NEET | Class 11, 12 & Droppers";
+const DESC = "PrepBuddy pairs Class 11, 12 and Droppers with a dedicated topper-mentor - IITians for JEE, AIIMS/medical students for NEET. Personalized plans, daily accountability, weekly review calls. Start your 3-day trial for ₹99.";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -70,7 +70,7 @@ function Hero() {
             <span className="text-gradient-primary">every single day.</span>
           </h1>
           <p className="mt-5 text-lg text-ink-muted max-w-xl">
-            One dedicated mentor, a study plan built around your actual mock scores, and daily accountability —
+            One dedicated mentor, a study plan built around your actual mock scores, and daily accountability -
             for JEE and NEET aspirants, Class 11 through Droppers.
           </p>
           <div className="mt-7 flex items-center gap-4">
@@ -106,7 +106,7 @@ function ExamSelector() {
       <div className="mt-10 grid md:grid-cols-2 gap-5">
         <ExamCard
           to="/jee" label="JEE" title="I'm preparing for JEE"
-          sub="Get matched with an IITian mentor. Physics, Chemistry, Maths — Main + Advanced."
+          sub="Get matched with an IITian mentor. Physics, Chemistry, Maths - Main + Advanced."
           icon={<Atom className="h-7 w-7 text-primary" />}
           bg="linear-gradient(135deg, rgba(42,79,224,0.10), rgba(139,92,246,0.10))"
         />
@@ -143,10 +143,10 @@ function ExamCard({ to, label, title, sub, icon, bg }: {
 function WhyMentorship() {
   const items = [
     { icon: ClipboardList, title: "Daily Planning",     body: "A plan rebuilt weekly around your real mock data, not a fixed syllabus calendar." },
-    { icon: ClipboardCheck, title: "Accountability",    body: "Someone actually checks if you did the work — the biggest predictor of consistency." },
-    { icon: UserCheck,      title: "Personal Mentor",   body: "One topper who knows your strengths, gaps and pace — not a rotating support ticket." },
+    { icon: ClipboardCheck, title: "Accountability",    body: "Someone actually checks if you did the work - the biggest predictor of consistency." },
+    { icon: UserCheck,      title: "Personal Mentor",   body: "One topper who knows your strengths, gaps and pace - not a rotating support ticket." },
     { icon: LineChart,      title: "Mock Analysis",     body: "Error-pattern review after every mock, so the same mistake doesn't repeat for months." },
-    { icon: HeartHandshake, title: "Stress Management", body: "A mentor who's been through the exam recently — practical calm, not generic motivation." },
+    { icon: HeartHandshake, title: "Stress Management", body: "A mentor who's been through the exam recently - practical calm, not generic motivation." },
   ];
   const ref = useReveal<HTMLDivElement>();
   return (
@@ -176,8 +176,8 @@ function WhyMentorship() {
 function HowItWorks() {
   const steps = [
     { icon: ClipboardList,  title: "Apply in 2 minutes",                     body: "Tell us your class, the plan you're interested in, and what you're struggling with." },
-    { icon: HandshakeIcon,  title: "Get matched with your mentor",           body: "We allot a mentor based on your subject strengths, target year and pace — you don't have to pick one." },
-    { icon: BookOpen,       title: "Personal study plan, built from your mocks", body: "Not a generic syllabus — your actual gaps, prioritized." },
+    { icon: HandshakeIcon,  title: "Get matched with your mentor",           body: "We allot a mentor based on your subject strengths, target year and pace - you don't have to pick one." },
+    { icon: BookOpen,       title: "Personal study plan, built from your mocks", body: "Not a generic syllabus - your actual gaps, prioritized." },
     { icon: MessagesSquare, title: "Daily guidance + weekly review call",    body: "Short daily check-ins, one deeper call every week." },
   ];
   return (

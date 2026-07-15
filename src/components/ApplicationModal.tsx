@@ -7,11 +7,11 @@ export type PlanKey = "trial" | "month1" | "month3" | "month6" | "session";
 export type ExamKey = "jee" | "neet";
 
 const PLAN_LABEL: Record<PlanKey, string> = {
-  trial: "₹99 — 3-Day Trial",
-  month1: "₹1,599 — 1 Month",
-  month3: "₹3,999 — 3 Months",
-  month6: "₹5,999 — 6 Months",
-  session: "₹999 — 1:1 Session",
+  trial: "₹99 - 3-Day Trial",
+  month1: "₹1,599 - 1 Month",
+  month3: "₹3,999 - 3 Months",
+  month6: "₹5,999 - 6 Months",
+  session: "₹999 - 1:1 Session",
 };
 
 const PLAN_OPTIONS: PlanKey[] = ["trial", "month1", "month3", "month6", "session"];
@@ -224,7 +224,7 @@ export function ApplicationModal({
             </div>
             <h2 className="font-display text-2xl font-bold">You're in!</h2>
             <p className="mt-2 text-ink-muted">
-              Our team will reach out within 4 hours. While you wait, join the community — daily
+              Our team will reach out within 4 hours. While you wait, join the community - daily
               motivation, doubt-solving, and mentor AMAs.
             </p>
 

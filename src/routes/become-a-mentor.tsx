@@ -7,7 +7,7 @@ import { BecomeMentorForm } from "@/components/BecomeMentorForm";
 import { PageBackdrop } from "@/components/site/PageBackdrop";
 import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 
-const TITLE = "Become a Mentor — PrepBuddy | Mentor JEE & NEET Students as an IITian or AIIMS/Medical Student";
+const TITLE = "Become a Mentor - PrepBuddy | Mentor JEE & NEET Students as an IITian or AIIMS/Medical Student";
 const DESC = "Paid, flexible 1-on-1 mentorship for JEE and NEET aspirants. We work with IITians and AIIMS/medical students who cleared their exam recently. 2–4 hours/week, remote.";
 
 export const Route = createFileRoute("/become-a-mentor")({
@@ -52,7 +52,7 @@ function BecomeMentorPage() {
               <span className="text-gradient-primary">Help someone else do it.</span>
             </h1>
             <p className="mt-5 text-lg text-ink-muted max-w-2xl mx-auto">
-              Flexible hours, paid per student, and a selective process — mentor one to three aspirants at a time
+              Flexible hours, paid per student, and a selective process - mentor one to three aspirants at a time
               on your own schedule.
             </p>
           </div>
@@ -76,7 +76,7 @@ function BecomeMentorPage() {
             {[
               { icon: Wallet,         title: "Paid per student",     body: "Predictable compensation per mentee, plus performance bonuses." },
               { icon: Clock,          title: "Flexible hours",        body: "Set your own weekly hours around college / job commitments." },
-              { icon: HeartHandshake, title: "Real impact",           body: "Work 1:1 with 1–3 aspirants — see their outcomes actually change." },
+              { icon: HeartHandshake, title: "Real impact",           body: "Work 1:1 with 1–3 aspirants - see their outcomes actually change." },
               { icon: Users,          title: "A mentor community",    body: "Onboarding, playbooks, and a Slack of fellow IIT / AIIMS mentors." },
             ].map((c) => (
               <div key={c.title} className="glass-card card-lift rounded-2xl p-5">
@@ -99,9 +99,9 @@ function BecomeMentorPage() {
             <ol className="relative mt-12 space-y-6">
               <div className="absolute left-6 top-6 bottom-6 w-px bg-gradient-to-b from-primary via-secondary to-accent hidden sm:block" />
               {[
-                { icon: ClipboardList, title: "Application",             body: "Submit rank, institute and year of study — takes 2 minutes." },
+                { icon: ClipboardList, title: "Application",             body: "Submit rank, institute and year of study - takes 2 minutes." },
                 { icon: CheckCircle2,  title: "Subject test",             body: "A short subject screener to confirm current fluency." },
-                { icon: Video,         title: "Mock mentoring session",   body: "A recorded mock call — we look at teaching style, not just knowledge." },
+                { icon: Video,         title: "Mock mentoring session",   body: "A recorded mock call - we look at teaching style, not just knowledge." },
                 { icon: PhoneCall,     title: "Final interview",          body: "A 20-minute conversation with our mentor lead. Then onboarding." },
               ].map((s, i) => (
                 <li key={s.title} className="relative flex gap-5">

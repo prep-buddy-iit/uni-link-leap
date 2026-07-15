@@ -7,8 +7,8 @@ import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 import { ALL_MENTORS } from "@/lib/exam-content";
 import type { ExamKey } from "@/components/ApplicationModal";
 
-const TITLE = "Meet Our Mentors — PrepBuddy JEE & NEET Mentors";
-const DESC = "Every PrepBuddy mentor is a verified topper — IITians for JEE, AIIMS/medical-college students for NEET. Browse mentor credentials; matching happens when you start your trial.";
+const TITLE = "Meet Our Mentors - PrepBuddy JEE & NEET Mentors";
+const DESC = "Every PrepBuddy mentor is a verified topper - IITians for JEE, AIIMS/medical-college students for NEET. Browse mentor credentials; matching happens when you start your trial.";
 
 export const Route = createFileRoute("/find-a-mentor")({
   head: () => ({
@@ -70,7 +70,7 @@ function FindMentorPage() {
               <span className="text-gradient-primary">verified topper</span>.
             </h1>
             <p className="mt-5 text-lg text-ink-muted max-w-2xl mx-auto">
-              IITians for JEE, AIIMS/medical-college students for NEET — each has been through a 4-stage
+              IITians for JEE, AIIMS/medical-college students for NEET - each has been through a 4-stage
               selection process. When you start your trial, we match you to the mentor who fits your subject
               gaps and pace best.
             </p>
@@ -128,7 +128,7 @@ function FindMentorPage() {
               Not sure who's right for you?
             </h2>
             <p className="mt-3 text-white/85 max-w-xl mx-auto">
-              Start with the ₹99 trial — we'll match you.
+              Start with the ₹99 trial - we'll match you.
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
               <Link to="/jee" hash="plans" className="pill-btn bg-white text-primary hover:opacity-90">

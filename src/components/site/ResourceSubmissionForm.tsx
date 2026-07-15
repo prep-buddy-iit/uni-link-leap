@@ -75,7 +75,7 @@ export function ResourceSubmissionForm({ onClose }: { onClose: () => void }) {
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl gradient-primary text-white">
               <CheckCircle2 className="h-8 w-8" />
             </div>
-            <h3 className="font-display text-2xl font-bold">Thanks — submission received</h3>
+            <h3 className="font-display text-2xl font-bold">Thanks - submission received</h3>
             <p className="mt-2 text-ink-muted max-w-md mx-auto">
               Our team reviews submissions within a few days. If it's approved, you'll see it live on the Resources page.
             </p>
@@ -129,7 +129,7 @@ export function ResourceSubmissionForm({ onClose }: { onClose: () => void }) {
               <Field label="Article body" error={errors.body}>
                 <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={8}
                   className={inputCls(!!errors.body) + " resize-y"}
-                  placeholder="Write your article here. Plain text — use line breaks between paragraphs." maxLength={12000} />
+                  placeholder="Write your article here. Plain text - use line breaks between paragraphs." maxLength={12000} />
                 <p className="mt-1 text-xs text-ink-muted">{body.length} / 12000 characters</p>
               </Field>
             )}
