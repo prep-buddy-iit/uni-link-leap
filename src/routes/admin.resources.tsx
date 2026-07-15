@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
-import { Check, X as XIcon, Eye, Play, RotateCcw } from "lucide-react";
+import { Check, X as XIcon, Eye, Play, RotateCcw, Trash2 } from "lucide-react";
 import {
   getSignedImageUrl,
   extractYouTubeId,
@@ -66,6 +66,20 @@ function AdminResources() {
     setBusy(null);
     if (error) return alert(error.message);
     setRows((rs) => rs.map((r) => (r.id === id ? { ...r, status } : r)));
+  }
+
+  async function deleteRow(id: string) {
+    const row = rows.find((r) => r.id === id);
+    if (!row) return;
+    if (!confirm(`Delete "${row.title}"? This cannot be undone.`)) return;
+    setBusy(id);
+    if (row.kind === "photo" && row.image_url) {
+      await supabase.storage.from("resource-uploads").remove([row.image_url]).catch(() => {});
+    }
+    const { error } = await supabase.from("resource_submissions" as never).delete().eq("id", id);
+    setBusy(null);
+    if (error) return alert(error.message);
+    setRows((rs) => rs.filter((r) => r.id !== id));
   }
 
   if (gate === "loading") return <AdminLoading />;
