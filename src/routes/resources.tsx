@@ -18,8 +18,8 @@ import {
 import { getApprovedSubmissionPhotoUrl } from "@/lib/resource-images.functions";
 
 
-const TITLE = "Resources — JEE & NEET Strategy, Motivation & Campus Life | PrepBuddy";
-const DESC = "Articles, videos and a look inside IIT, NIT and AIIMS campuses — written by IITians and AIIMS students. Real strategy and motivation for Class 11, 12 and Droppers.";
+const TITLE = "Resources - JEE & NEET Strategy, Motivation & Campus Life | PrepBuddy";
+const DESC = "Articles, videos and a look inside IIT, NIT and AIIMS campuses - written by IITians and AIIMS students. Real strategy and motivation for Class 11, 12 and Droppers.";
 
 type ContentTab = "all" | "articles" | "videos" | "gallery";
 type ExamFilter = "all" | ExamKey;
@@ -181,14 +181,14 @@ function ResourcesPage() {
               <span className="text-gradient-primary">where you're headed.</span>
             </h1>
             <p className="mt-5 text-lg text-ink-muted max-w-2xl mx-auto">
-              Written by our mentors and IITians from campuses across the country — plus a look inside the colleges you're working toward.
+              Written by our mentors and IITians from campuses across the country - plus a look inside the colleges you're working toward.
             </p>
             <div className="mt-7 flex flex-wrap justify-center gap-3">
               <button onClick={() => setSubmitOpen(true)}
                 className="pill-btn pill-btn-primary pill-btn-primary-hover">
                 <Upload className="h-4 w-4" /> Submit your own
               </button>
-              <span className="text-xs text-ink-muted self-center">Articles, videos or campus photos — reviewed before going live.</span>
+              <span className="text-xs text-ink-muted self-center">Articles, videos or campus photos - reviewed before going live.</span>
             </div>
           </div>
         </section>
@@ -373,14 +373,14 @@ function ResourcesPage() {
               <p className="eyebrow">Campus gallery</p>
               <h2 className="mt-2 font-display text-2xl sm:text-3xl font-bold">Where you're headed.</h2>
               <p className="mt-2 text-sm text-ink-muted max-w-2xl">
-                A look inside IIT, NIT and AIIMS campuses — libraries, hostels, labs, convocation halls. Click any photo to open.
+                A look inside IIT, NIT and AIIMS campuses - libraries, hostels, labs, convocation halls. Click any photo to open.
               </p>
             </div>
             <div className="columns-2 md:columns-3 lg:columns-4 gap-4 [column-fill:_balance]">
               {allGalleryPhotos.map((p, i) => (
                 <button key={p.id} onClick={() => setPhotoIdx(i)}
                   className="mb-4 block w-full break-inside-avoid overflow-hidden rounded-2xl group relative">
-                  <img src={p.src} alt={`${p.institute} — ${p.caption}`} loading="lazy"
+                  <img src={p.src} alt={`${p.institute} - ${p.caption}`} loading="lazy"
                     className={
                       "w-full object-cover transition duration-500 group-hover:scale-[1.05] " +
                       (p.span === "tall" ? "aspect-[3/4]" : p.span === "wide" ? "aspect-[4/3]" : "aspect-square")
@@ -403,7 +403,7 @@ function ResourcesPage() {
               Want a mentor who's been where you're headed?
             </h2>
             <p className="mt-3 text-white/85 max-w-xl mx-auto">
-              Start with the ₹99, 3-day trial — we'll match you to a topper who's cleared the same exam.
+              Start with the ₹99, 3-day trial - we'll match you to a topper who's cleared the same exam.
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
               <Link to="/jee" hash="plans" className="pill-btn bg-white text-primary hover:opacity-90">

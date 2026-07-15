@@ -7,7 +7,7 @@ import { Search, Trash2, Download } from "lucide-react";
 export const Route = createFileRoute("/admin/contacts")({
   head: () => ({
     meta: [
-      { title: "Contact messages — Admin CRM" },
+      { title: "Contact messages - Admin CRM" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),

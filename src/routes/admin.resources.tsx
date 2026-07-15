@@ -15,7 +15,7 @@ type Tab = "pending" | "approved" | "rejected";
 export const Route = createFileRoute("/admin/resources")({
   head: () => ({
     meta: [
-      { title: "Admin — Resource submissions | PrepBuddy" },
+      { title: "Admin - Resource submissions | PrepBuddy" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),

@@ -13,7 +13,7 @@ export function Footer() {
               <span className="font-display text-lg font-bold">PrepBuddy</span>
             </Link>
             <p className="mt-3 text-sm text-ink-muted max-w-sm">
-              1-on-1 mentorship for JEE and NEET aspirants — IITians and AIIMS/medical students, personalized plans, daily accountability.
+              1-on-1 mentorship for JEE and NEET aspirants - IITians and AIIMS/medical students, personalized plans, daily accountability.
             </p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">

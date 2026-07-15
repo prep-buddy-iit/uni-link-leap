@@ -42,7 +42,7 @@ export function VideoLightbox({
       >
         <iframe
           src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
-          title="PrepBuddy — How mentorship works"
+          title="PrepBuddy - How mentorship works"
           className="absolute inset-0 h-full w-full"
           allow="autoplay; encrypted-media; picture-in-picture"
           allowFullScreen

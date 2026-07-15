@@ -11,7 +11,7 @@ export function CommunityCards({ exam }: { exam: ExamKey }) {
         <p className="eyebrow">Community</p>
         <h2 className="mt-3 font-display text-3xl sm:text-4xl font-bold">You're not doing this alone.</h2>
         <p className="mt-3 text-ink-muted">
-          A human from our team will reach out within 4 hours of your application — community is the
+          A human from our team will reach out within 4 hours of your application - community is the
           extra layer, not the only one.
         </p>
       </div>

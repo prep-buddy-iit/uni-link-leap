@@ -3,7 +3,7 @@ import { daysUntil, type ExamTarget } from "@/lib/exam-dates";
 
 type Props = {
   target: ExamTarget | null;
-  /** Template with `{label}` and `{days}` placeholders, e.g. "JEE Main {label} is {days} away — …" */
+  /** Template with `{label}` and `{days}` placeholders, e.g. "JEE Main {label} is {days} away - …" */
   template: string;
   /** Copy shown when no future date is configured. */
   fallback: string;

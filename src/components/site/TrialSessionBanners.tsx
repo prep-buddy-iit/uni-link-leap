@@ -17,7 +17,7 @@ export function TrialBanner({ exam }: { exam: ExamKey }) {
               Try {ex.label} mentorship for 3 days before you commit.
             </h2>
             <p className="mt-4 text-white/85 max-w-xl">
-              One mentor call, a personalized plan built from your last {ex.label} mock score, and daily check-ins —
+              One mentor call, a personalized plan built from your last {ex.label} mock score, and daily check-ins -
               priced low on purpose to filter for students who are serious.
             </p>
           </div>
