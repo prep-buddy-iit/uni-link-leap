@@ -161,6 +161,10 @@ function AdminResources() {
                       <RotateCcw className="h-3.5 w-3.5" /> Reopen
                     </button>
                   )}
+                  <button onClick={() => deleteRow(r.id)} disabled={busy === r.id}
+                    className="pill-btn border border-destructive bg-destructive text-white text-sm h-9 px-3 disabled:opacity-70">
+                    <Trash2 className="h-3.5 w-3.5" /> Delete
+                  </button>
                 </div>
               </div>
             </div>
