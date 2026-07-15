@@ -12,10 +12,11 @@ import type { ExamKey } from "@/components/ApplicationModal";
 import { ResourceSubmissionForm } from "@/components/site/ResourceSubmissionForm";
 import {
   fetchApprovedSubmissions,
-  getSignedImageUrl,
   extractYouTubeId,
   type ResourceSubmission,
 } from "@/lib/resource-submissions";
+import { getApprovedSubmissionPhotoUrl } from "@/lib/resource-images.functions";
+
 
 const TITLE = "Resources — JEE & NEET Strategy, Motivation & Campus Life | PrepBuddy";
 const DESC = "Articles, videos and a look inside IIT, NIT and AIIMS campuses — written by IITians and AIIMS students. Real strategy and motivation for Class 11, 12 and Droppers.";
@@ -106,8 +107,16 @@ function ResourcesPage() {
       setSubs(rows);
       const photos = rows.filter((r) => r.kind === "photo" && r.image_url);
       const entries = await Promise.all(
-        photos.map(async (r) => [r.id, await getSignedImageUrl(r.image_url!)] as const),
+        photos.map(async (r) => {
+          try {
+            const res = await getApprovedSubmissionPhotoUrl({ data: { path: r.image_url! } });
+            return [r.id, res.url] as const;
+          } catch {
+            return [r.id, null] as const;
+          }
+        }),
       );
+
       if (cancelled) return;
       const map: Record<string, string> = {};
       for (const [id, url] of entries) if (url) map[id] = url;
