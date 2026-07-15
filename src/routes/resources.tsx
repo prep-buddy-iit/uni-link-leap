@@ -162,9 +162,9 @@ function ResourcesPage() {
     [photos, communityPhotos],
   );
 
-  const showArticles = tab === "all" || tab === "articles";
-  const showVideos = tab === "all" || tab === "videos";
-  const showGallery = tab === "all" || tab === "gallery";
+  const showArticles = (tab === "all" || tab === "articles") && (articles.length + communityArticles.length > 0);
+  const showVideos = (tab === "all" || tab === "videos") && (videos.length + communityVideos.length > 0);
+  const showGallery = (tab === "all" || tab === "gallery") && allGalleryPhotos.length > 0;
 
   return (
     <div className="relative min-h-screen overflow-x-clip bg-background">
