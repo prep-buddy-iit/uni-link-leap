@@ -42,6 +42,7 @@ const CLASSES = ["Class 11", "Class 12", "Dropper"];
 type State = {
   name: string;
   phone: string;
+  email: string;
   current_class: string;
   plan: PlanKey;
   problems: string[];
@@ -49,8 +50,10 @@ type State = {
 };
 
 const empty = (plan: PlanKey = "trial"): State => ({
-  name: "", phone: "", current_class: "", plan, problems: [], source: "",
+  name: "", phone: "", email: "", current_class: "", plan, problems: [], source: "",
 });
+
+type Step = "form" | "otp" | "done";
 
 export function ApplicationModal({
   open, onOpenChange, initialPlan, initialExam,
