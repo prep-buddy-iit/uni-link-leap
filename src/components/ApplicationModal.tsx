@@ -108,7 +108,7 @@ export function ApplicationModal({
     const { error } = await supabase.from("leads").insert({
       name: form.name.trim(),
       phone,
-      email: "",
+      email: null,
       current_class: form.current_class || "Not specified",
       plan: PLAN_LABEL[form.plan],
       problems: form.problems,
