@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
-import { X, Loader2, MessageCircle, Send } from "lucide-react";
+import { X, Loader2, MessageCircle, Send, MailCheck } from "lucide-react";
 import { COMMUNITIES } from "@/lib/exam-content";
+import { sendOtp, verifyOtp } from "@/lib/otp.functions";
 
 export type PlanKey = "trial" | "month1" | "month3" | "month6" | "session";
 export type ExamKey = "jee" | "neet";
@@ -40,6 +42,7 @@ const CLASSES = ["Class 11", "Class 12", "Dropper"];
 type State = {
   name: string;
   phone: string;
+  email: string;
   current_class: string;
   plan: PlanKey;
   problems: string[];
@@ -47,8 +50,10 @@ type State = {
 };
 
 const empty = (plan: PlanKey = "trial"): State => ({
-  name: "", phone: "", current_class: "", plan, problems: [], source: "",
+  name: "", phone: "", email: "", current_class: "", plan, problems: [], source: "",
 });
+
+type Step = "form" | "otp" | "done";
 
 export function ApplicationModal({
   open, onOpenChange, initialPlan, initialExam,
@@ -61,13 +66,24 @@ export function ApplicationModal({
   const [form, setForm] = useState<State>(empty(initialPlan ?? "trial"));
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [step, setStep] = useState<Step>("form");
+  const [code, setCode] = useState("");
+  const [devCode, setDevCode] = useState<string | null>(null);
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const cooldownTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const sendOtpFn = useServerFn(sendOtp);
+  const verifyOtpFn = useServerFn(verifyOtp);
 
   useEffect(() => {
     if (open) {
       setForm(empty(initialPlan ?? "trial"));
       setErrors({});
-      setSubmitted(false);
+      setStep("form");
+      setCode("");
+      setDevCode(null);
+      setResendCooldown(0);
+      if (cooldownTimer.current) { clearInterval(cooldownTimer.current); cooldownTimer.current = null; }
     }
   }, [open, initialPlan]);
 
@@ -77,6 +93,10 @@ export function ApplicationModal({
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = prev; };
   }, [open]);
+
+  useEffect(() => () => {
+    if (cooldownTimer.current) clearInterval(cooldownTimer.current);
+  }, []);
 
   if (!open) return null;
 
@@ -95,20 +115,70 @@ export function ApplicationModal({
     }));
   }
 
+  function startResendCooldown() {
+    setResendCooldown(30);
+    if (cooldownTimer.current) clearInterval(cooldownTimer.current);
+    cooldownTimer.current = setInterval(() => {
+      setResendCooldown((s) => {
+        if (s <= 1) {
+          if (cooldownTimer.current) { clearInterval(cooldownTimer.current); cooldownTimer.current = null; }
+          return 0;
+        }
+        return s - 1;
+      });
+    }, 1000);
+  }
+
+  async function requestCode(email: string) {
+    try {
+      const res = await sendOtpFn({ data: { email } });
+      setDevCode(res.devCode ?? null);
+      startResendCooldown();
+      return true;
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Could not send code. Please try again.";
+      setErrors({ email: msg });
+      return false;
+    }
+  }
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     const errs: Record<string, string> = {};
     if (form.name.trim().length < 2) errs.name = "Please enter your full name.";
     const phone = form.phone.trim();
     if (!/^[0-9+\-\s]{10,15}$/.test(phone)) errs.phone = "Please enter a valid phone number.";
+    const email = form.email.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errs.email = "Please enter a valid email address.";
     setErrors(errs);
     if (Object.keys(errs).length) return;
 
     setSubmitting(true);
+    const ok = await requestCode(email);
+    setSubmitting(false);
+    if (ok) setStep("otp");
+  }
+
+  async function onVerify(e: React.FormEvent) {
+    e.preventDefault();
+    if (!/^\d{6}$/.test(code)) {
+      setErrors({ code: "Enter the 6-digit code." });
+      return;
+    }
+    setErrors({});
+    setSubmitting(true);
+    try {
+      await verifyOtpFn({ data: { email: form.email.trim().toLowerCase(), code } });
+    } catch (err) {
+      setSubmitting(false);
+      setErrors({ code: err instanceof Error ? err.message : "Could not verify code." });
+      return;
+    }
+
     const { error } = await supabase.from("leads").insert({
       name: form.name.trim(),
-      phone,
-      email: null,
+      phone: form.phone.trim(),
+      email: form.email.trim().toLowerCase(),
       current_class: form.current_class || "Not specified",
       plan: PLAN_LABEL[form.plan],
       problems: form.problems,
@@ -117,13 +187,20 @@ export function ApplicationModal({
       exam: exam ?? null,
     });
     setSubmitting(false);
-
     if (error) {
       console.error(error);
-      setErrors({ _root: "Something went wrong. Please try again in a moment." });
+      setErrors({ code: "Verified, but saving failed. Please try again." });
       return;
     }
-    setSubmitted(true);
+    setStep("done");
+  }
+
+  async function onResend() {
+    if (resendCooldown > 0) return;
+    setErrors({});
+    setSubmitting(true);
+    await requestCode(form.email.trim().toLowerCase());
+    setSubmitting(false);
   }
 
   return (
@@ -145,7 +222,7 @@ export function ApplicationModal({
           <X className="h-4 w-4" />
         </button>
 
-        {!submitted ? (
+        {step === "form" && (
           <form onSubmit={onSubmit} noValidate className="p-6 sm:p-8">
             <p className="eyebrow">{examLabel ? `${examLabel} Application` : "Application"}</p>
             <h2 className="mt-1 font-display text-2xl font-bold">
@@ -163,6 +240,8 @@ export function ApplicationModal({
                 error={errors.name} placeholder="e.g. Aarav Sharma" />
               <FieldInput label="Phone number" value={form.phone} onChange={(v) => update("phone", v)}
                 error={errors.phone} type="tel" inputMode="tel" placeholder="98XXXXXXXX" />
+              <FieldInput label="Email address" value={form.email} onChange={(v) => update("email", v)}
+                error={errors.email} type="email" inputMode="email" placeholder="you@example.com" />
 
               <FieldSelect label="Class" value={form.current_class}
                 onChange={(v) => update("current_class", v)} options={CLASSES} placeholder="Select your class" />
@@ -208,16 +287,76 @@ export function ApplicationModal({
               className="mt-6 w-full pill-btn pill-btn-primary pill-btn-primary-hover h-12 text-base disabled:opacity-70"
             >
               {submitting ? (
-                <><Loader2 className="h-4 w-4 animate-spin" /> Submitting…</>
+                <><Loader2 className="h-4 w-4 animate-spin" /> Sending code…</>
               ) : (
-                "Submit application →"
+                "Continue — verify email →"
               )}
             </button>
             <p className="mt-3 text-xs text-ink-muted text-center">
-              🔒 Your data is never shared or sold. See our privacy policy.
+              🔒 We'll email you a 6-digit code to verify. Your data is never shared or sold.
             </p>
           </form>
-        ) : (
+        )}
+
+        {step === "otp" && (
+          <form onSubmit={onVerify} noValidate className="p-6 sm:p-8">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl gradient-primary text-white">
+              <MailCheck className="h-7 w-7" />
+            </div>
+            <h2 className="font-display text-2xl font-bold text-center">Check your inbox</h2>
+            <p className="mt-2 text-sm text-ink-muted text-center">
+              We sent a 6-digit verification code to <strong className="text-ink">{form.email}</strong>.
+            </p>
+
+            {devCode && (
+              <p className="mt-4 rounded-lg bg-amber-100 px-3 py-2 text-xs text-amber-900">
+                <strong>Setup mode:</strong> email sending isn't configured yet, so your code is{" "}
+                <span className="font-mono font-bold">{devCode}</span>. Configure Lovable Emails or Resend to send real emails.
+              </p>
+            )}
+
+            <div className="mt-6">
+              <label className="block text-sm font-medium text-ink mb-1.5">Verification code</label>
+              <input
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                maxLength={6}
+                value={code}
+                onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                placeholder="123456"
+                className={
+                  "w-full rounded-xl border bg-white px-4 py-3 text-center text-2xl font-mono tracking-[0.6em] text-ink outline-none transition " +
+                  (errors.code ? "border-destructive" : "border-input focus:border-primary focus:ring-4 focus:ring-primary/15")
+                }
+              />
+              {errors.code && <p className="mt-1.5 text-xs text-destructive">{errors.code}</p>}
+            </div>
+
+            <button type="submit" disabled={submitting || code.length !== 6}
+              className="mt-6 w-full pill-btn pill-btn-primary pill-btn-primary-hover h-12 text-base disabled:opacity-70"
+            >
+              {submitting ? (
+                <><Loader2 className="h-4 w-4 animate-spin" /> Verifying…</>
+              ) : (
+                "Verify & submit →"
+              )}
+            </button>
+
+            <div className="mt-4 flex items-center justify-between text-sm">
+              <button type="button" onClick={() => setStep("form")}
+                className="text-ink-muted hover:text-ink underline underline-offset-4">
+                ← Edit details
+              </button>
+              <button type="button" onClick={onResend} disabled={resendCooldown > 0 || submitting}
+                className="text-primary font-semibold disabled:text-ink-muted disabled:no-underline hover:underline">
+                {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend code"}
+              </button>
+            </div>
+          </form>
+        )}
+
+        {step === "done" && (
           <div className="p-6 sm:p-8 text-center">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl gradient-primary text-white text-3xl">
               🎉
