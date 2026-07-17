@@ -66,13 +66,24 @@ export function ApplicationModal({
   const [form, setForm] = useState<State>(empty(initialPlan ?? "trial"));
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [step, setStep] = useState<Step>("form");
+  const [code, setCode] = useState("");
+  const [devCode, setDevCode] = useState<string | null>(null);
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const cooldownTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const sendOtpFn = useServerFn(sendOtp);
+  const verifyOtpFn = useServerFn(verifyOtp);
 
   useEffect(() => {
     if (open) {
       setForm(empty(initialPlan ?? "trial"));
       setErrors({});
-      setSubmitted(false);
+      setStep("form");
+      setCode("");
+      setDevCode(null);
+      setResendCooldown(0);
+      if (cooldownTimer.current) { clearInterval(cooldownTimer.current); cooldownTimer.current = null; }
     }
   }, [open, initialPlan]);
 
@@ -82,6 +93,10 @@ export function ApplicationModal({
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = prev; };
   }, [open]);
+
+  useEffect(() => () => {
+    if (cooldownTimer.current) clearInterval(cooldownTimer.current);
+  }, []);
 
   if (!open) return null;
 
@@ -100,20 +115,70 @@ export function ApplicationModal({
     }));
   }
 
+  function startResendCooldown() {
+    setResendCooldown(30);
+    if (cooldownTimer.current) clearInterval(cooldownTimer.current);
+    cooldownTimer.current = setInterval(() => {
+      setResendCooldown((s) => {
+        if (s <= 1) {
+          if (cooldownTimer.current) { clearInterval(cooldownTimer.current); cooldownTimer.current = null; }
+          return 0;
+        }
+        return s - 1;
+      });
+    }, 1000);
+  }
+
+  async function requestCode(email: string) {
+    try {
+      const res = await sendOtpFn({ data: { email } });
+      setDevCode(res.devCode ?? null);
+      startResendCooldown();
+      return true;
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Could not send code. Please try again.";
+      setErrors({ email: msg });
+      return false;
+    }
+  }
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     const errs: Record<string, string> = {};
     if (form.name.trim().length < 2) errs.name = "Please enter your full name.";
     const phone = form.phone.trim();
     if (!/^[0-9+\-\s]{10,15}$/.test(phone)) errs.phone = "Please enter a valid phone number.";
+    const email = form.email.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errs.email = "Please enter a valid email address.";
     setErrors(errs);
     if (Object.keys(errs).length) return;
 
     setSubmitting(true);
+    const ok = await requestCode(email);
+    setSubmitting(false);
+    if (ok) setStep("otp");
+  }
+
+  async function onVerify(e: React.FormEvent) {
+    e.preventDefault();
+    if (!/^\d{6}$/.test(code)) {
+      setErrors({ code: "Enter the 6-digit code." });
+      return;
+    }
+    setErrors({});
+    setSubmitting(true);
+    try {
+      await verifyOtpFn({ data: { email: form.email.trim().toLowerCase(), code } });
+    } catch (err) {
+      setSubmitting(false);
+      setErrors({ code: err instanceof Error ? err.message : "Could not verify code." });
+      return;
+    }
+
     const { error } = await supabase.from("leads").insert({
       name: form.name.trim(),
-      phone,
-      email: null,
+      phone: form.phone.trim(),
+      email: form.email.trim().toLowerCase(),
       current_class: form.current_class || "Not specified",
       plan: PLAN_LABEL[form.plan],
       problems: form.problems,
@@ -122,13 +187,20 @@ export function ApplicationModal({
       exam: exam ?? null,
     });
     setSubmitting(false);
-
     if (error) {
       console.error(error);
-      setErrors({ _root: "Something went wrong. Please try again in a moment." });
+      setErrors({ code: "Verified, but saving failed. Please try again." });
       return;
     }
-    setSubmitted(true);
+    setStep("done");
+  }
+
+  async function onResend() {
+    if (resendCooldown > 0) return;
+    setErrors({});
+    setSubmitting(true);
+    await requestCode(form.email.trim().toLowerCase());
+    setSubmitting(false);
   }
 
   return (
