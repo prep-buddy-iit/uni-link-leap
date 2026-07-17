@@ -13,7 +13,7 @@ export type ResourceSubmission = {
   image_url: string | null;
   exam: SubmissionExam;
   submitter_name: string;
-  submitter_email: string;
+  submitter_email?: string;
   submitter_credential: string | null;
   status: "pending" | "approved" | "rejected";
   created_at: string;
