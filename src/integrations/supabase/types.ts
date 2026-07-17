@@ -220,7 +220,51 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      resource_submissions_public: {
+        Row: {
+          body: string | null
+          created_at: string | null
+          description: string | null
+          exam: string | null
+          id: string | null
+          image_url: string | null
+          kind: string | null
+          status: string | null
+          submitter_credential: string | null
+          submitter_name: string | null
+          title: string | null
+          youtube_url: string | null
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string | null
+          description?: string | null
+          exam?: string | null
+          id?: string | null
+          image_url?: string | null
+          kind?: string | null
+          status?: string | null
+          submitter_credential?: string | null
+          submitter_name?: string | null
+          title?: string | null
+          youtube_url?: string | null
+        }
+        Update: {
+          body?: string | null
+          created_at?: string | null
+          description?: string | null
+          exam?: string | null
+          id?: string | null
+          image_url?: string | null
+          kind?: string | null
+          status?: string | null
+          submitter_credential?: string | null
+          submitter_name?: string | null
+          title?: string | null
+          youtube_url?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {

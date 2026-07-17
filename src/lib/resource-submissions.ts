@@ -13,7 +13,7 @@ export type ResourceSubmission = {
   image_url: string | null;
   exam: SubmissionExam;
   submitter_name: string;
-  submitter_email: string;
+  submitter_email?: string;
   submitter_credential: string | null;
   status: "pending" | "approved" | "rejected";
   created_at: string;
@@ -51,9 +51,8 @@ export async function getSignedImageUrl(path: string): Promise<string | null> {
 
 export async function fetchApprovedSubmissions(): Promise<ResourceSubmission[]> {
   const { data, error } = await supabase
-    .from("resource_submissions" as never)
+    .from("resource_submissions_public" as never)
     .select("*")
-    .eq("status", "approved")
     .order("created_at", { ascending: false });
   if (error) {
     console.error("[resources] fetch approved failed", error);
