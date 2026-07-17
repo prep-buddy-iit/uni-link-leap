@@ -49,15 +49,14 @@ export async function getSignedImageUrl(path: string): Promise<string | null> {
   return data?.signedUrl ?? null;
 }
 
-export async function fetchApprovedSubmissions(): Promise<ResourceSubmission[]> {
+export async function fetchApprovedSubmissions(): Promise<Omit<ResourceSubmission, "submitter_email">[]> {
   const { data, error } = await supabase
-    .from("resource_submissions" as never)
+    .from("resource_submissions_public" as never)
     .select("*")
-    .eq("status", "approved")
     .order("created_at", { ascending: false });
   if (error) {
     console.error("[resources] fetch approved failed", error);
     return [];
   }
-  return (data ?? []) as unknown as ResourceSubmission[];
+  return (data ?? []) as unknown as Omit<ResourceSubmission, "submitter_email">[];
 }
