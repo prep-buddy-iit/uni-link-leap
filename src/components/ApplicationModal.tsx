@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
-import { X, Loader2, MessageCircle, Send } from "lucide-react";
+import { X, Loader2, MessageCircle, Send, MailCheck } from "lucide-react";
 import { COMMUNITIES } from "@/lib/exam-content";
+import { sendOtp, verifyOtp } from "@/lib/otp.functions";
 
 export type PlanKey = "trial" | "month1" | "month3" | "month6" | "session";
 export type ExamKey = "jee" | "neet";
