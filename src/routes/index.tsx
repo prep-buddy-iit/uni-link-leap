@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowRight, ClipboardList, ClipboardCheck, UserCheck, LineChart, HeartHandshake,
-  HandshakeIcon, BookOpen, MessagesSquare, MessageCircle, Send, Stethoscope, Atom,
+  HandshakeIcon, BookOpen, MessagesSquare, MessageCircle, Stethoscope, Atom,
 } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
@@ -212,9 +212,7 @@ function HowItWorks() {
 function CommunityPreview() {
   const cards = [
     { label: "JEE WhatsApp",  href: COMMUNITIES.jee.whatsapp,  icon: MessageCircle, bg: "linear-gradient(135deg,#22c35e,#12a04a)" },
-    { label: "JEE Telegram",  href: COMMUNITIES.jee.telegram,  icon: Send,          bg: "linear-gradient(135deg,#2AABEE,#1e7fbf)" },
     { label: "NEET WhatsApp", href: COMMUNITIES.neet.whatsapp, icon: MessageCircle, bg: "linear-gradient(135deg,#22c35e,#12a04a)" },
-    { label: "NEET Telegram", href: COMMUNITIES.neet.telegram, icon: Send,          bg: "linear-gradient(135deg,#2AABEE,#1e7fbf)" },
   ];
   return (
     <section className="mx-auto max-w-7xl px-5 py-20 sm:py-24">

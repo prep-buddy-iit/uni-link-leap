@@ -1,4 +1,4 @@
-import { ArrowRight, MessageCircle, Send } from "lucide-react";
+import { ArrowRight, MessageCircle } from "lucide-react";
 import type { ExamKey } from "@/components/ApplicationModal";
 import { COMMUNITIES } from "@/lib/exam-content";
 
@@ -15,7 +15,7 @@ export function CommunityCards({ exam }: { exam: ExamKey }) {
           extra layer, not the only one.
         </p>
       </div>
-      <div className="mt-8 grid md:grid-cols-2 gap-5">
+      <div className="mt-8 grid md:grid-cols-1 gap-5 max-w-lg">
         <a href={c.whatsapp} target="_blank" rel="noreferrer"
           className="card-lift rounded-3xl p-6 sm:p-8 text-white"
           style={{ backgroundImage: "linear-gradient(135deg,#22c35e,#12a04a)" }}>
@@ -23,17 +23,6 @@ export function CommunityCards({ exam }: { exam: ExamKey }) {
             <MessageCircle className="h-6 w-6" /> {label} WhatsApp Community
           </div>
           <p className="mt-2 text-white/90">Daily study prompts, doubt threads, and mentor micro-tips.</p>
-          <span className="mt-5 inline-flex items-center gap-2 rounded-full bg-white/15 px-5 py-2.5 font-semibold">
-            Join <ArrowRight className="h-4 w-4" />
-          </span>
-        </a>
-        <a href={c.telegram} target="_blank" rel="noreferrer"
-          className="card-lift rounded-3xl p-6 sm:p-8 text-white"
-          style={{ backgroundImage: "linear-gradient(135deg,#2AABEE,#1e7fbf)" }}>
-          <div className="flex items-center gap-2 font-display text-xl font-bold">
-            <Send className="h-6 w-6" /> {label} Telegram Community
-          </div>
-          <p className="mt-2 text-white/90">Mock discussions, mentor AMAs, and shared notes.</p>
           <span className="mt-5 inline-flex items-center gap-2 rounded-full bg-white/15 px-5 py-2.5 font-semibold">
             Join <ArrowRight className="h-4 w-4" />
           </span>
