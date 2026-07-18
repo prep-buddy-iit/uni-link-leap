@@ -9,9 +9,9 @@ export type FAQ = { q: string; a: string };
 export type Post = { tag: string; title: string; body: string };
 export type Testimonial = { quote: string; name: string; meta: string };
 
-export const COMMUNITIES: Record<ExamKey, { whatsapp: string; telegram: string }> = {
-  jee: { whatsapp: "https://chat.whatsapp.com/", telegram: "https://t.me/" },
-  neet: { whatsapp: "https://chat.whatsapp.com/", telegram: "https://t.me/" },
+export const COMMUNITIES: Record<ExamKey, { whatsapp: string }> = {
+  jee: { whatsapp: "https://chat.whatsapp.com/" },
+  neet: { whatsapp: "https://chat.whatsapp.com/" },
 };
 
 export const JEE_MENTORS: Mentor[] = [

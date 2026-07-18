@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { X, Loader2, MessageCircle, Send } from "lucide-react";
+import { X, Loader2, MessageCircle } from "lucide-react";
 import { COMMUNITIES } from "@/lib/exam-content";
 
 export type PlanKey = "trial" | "month1" | "month3" | "month6" | "session";
@@ -231,25 +231,15 @@ export function ApplicationModal({
               motivation, doubt-solving, and mentor AMAs.
             </p>
 
-            <div className="mt-6 grid gap-3 sm:grid-cols-2 text-left">
+            <div className="mt-6 text-left">
               <a href={community?.whatsapp ?? "https://chat.whatsapp.com/"} target="_blank" rel="noreferrer"
-                className="group rounded-2xl p-4 text-white card-lift"
+                className="group block rounded-2xl p-4 text-white card-lift"
                 style={{ backgroundImage: "linear-gradient(135deg,#22c35e,#12a04a)" }}
               >
                 <div className="flex items-center gap-2 font-semibold">
                   <MessageCircle className="h-5 w-5" /> {examLabel ? `${examLabel} WhatsApp` : "WhatsApp Community"}
                 </div>
                 <p className="mt-1 text-sm opacity-90">Daily study prompts & doubt-solving.</p>
-                <p className="mt-3 text-sm font-semibold">Join →</p>
-              </a>
-              <a href={community?.telegram ?? "https://t.me/"} target="_blank" rel="noreferrer"
-                className="group rounded-2xl p-4 text-white card-lift"
-                style={{ backgroundImage: "linear-gradient(135deg,#2AABEE,#1e7fbf)" }}
-              >
-                <div className="flex items-center gap-2 font-semibold">
-                  <Send className="h-5 w-5" /> {examLabel ? `${examLabel} Telegram` : "Telegram Community"}
-                </div>
-                <p className="mt-1 text-sm opacity-90">Mock discussions, mentor AMAs, notes.</p>
                 <p className="mt-3 text-sm font-semibold">Join →</p>
               </a>
             </div>
