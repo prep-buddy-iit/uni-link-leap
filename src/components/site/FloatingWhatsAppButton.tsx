@@ -36,7 +36,7 @@ export function FloatingWhatsAppButton() {
       </span>
 
       <a
-        href={WHATSAPP_URL}
+        href={getWhatsAppUrl()}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat on WhatsApp"
