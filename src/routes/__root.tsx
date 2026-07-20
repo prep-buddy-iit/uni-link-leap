@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { ApplicationModalProvider } from "@/lib/application-modal";
+import { FloatingWhatsAppButton } from "@/components/site/FloatingWhatsAppButton";
 
 function NotFoundComponent() {
   return (
@@ -165,6 +166,7 @@ function RootComponent() {
         <Outlet />
       </ApplicationModalProvider>
       <Toaster richColors position="top-center" />
+      <FloatingWhatsAppButton />
     </QueryClientProvider>
   );
 }
