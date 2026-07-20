@@ -1,7 +1,14 @@
 import { useState, useEffect } from "react";
 
-const WHATSAPP_URL =
-  "https://wa.me/917428655600?text=Hi!%20I%20want%20to%20know%20more%20about%20your%20mentorship%20program.";
+const WHATSAPP_PHONE = "917428655600";
+const WHATSAPP_TEXT = "Hi! I want to know more about your mentorship program.";
+
+function getWhatsAppUrl() {
+  if (typeof navigator !== "undefined" && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+    return `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(WHATSAPP_TEXT)}`;
+  }
+  return `https://web.whatsapp.com/send?phone=${WHATSAPP_PHONE}&text=${encodeURIComponent(WHATSAPP_TEXT)}`;
+}
 
 export function FloatingWhatsAppButton() {
   const [visible, setVisible] = useState(false);
