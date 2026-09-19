@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { useApplicationModal } from "@/lib/application-modal";
-import logoAsset from "@/assets/prepbuddy-logo.jpg.asset.json";
+import logoAsset from "@/assets/prepbuddy-logo-2026.jpg.asset.json";
 
 
 export function Navbar() {
@@ -104,7 +104,7 @@ export function Navbar() {
           <img
             src={logoAsset.url}
             alt="PrepBuddy logo"
-            className="h-9 w-9 rounded-xl object-cover shadow-soft"
+            className="h-10 w-10 rounded-lg object-cover shadow-soft"
           />
 
 
