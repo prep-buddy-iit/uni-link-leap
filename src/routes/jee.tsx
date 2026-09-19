@@ -81,7 +81,7 @@ export const Route = createFileRoute("/jee")({
           "@type": "VideoObject",
           name: "How PrepBuddy JEE mentorship works",
           description: "A 2-minute walkthrough of a real week of 1-on-1 JEE mentorship at PrepBuddy.",
-          thumbnailUrl: "/favicon.ico",
+          thumbnailUrl: "/favicon.png",
           uploadDate: "2026-01-01",
           embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
         }),
