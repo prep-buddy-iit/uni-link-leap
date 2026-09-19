@@ -114,7 +114,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "@type": "Organization",
           name: "PrepBuddy",
           url: "/",
-          logo: "/favicon.png",
+          logo: "/logo.png",
           description:
             "1-on-1 mentorship for JEE and NEET aspirants - IITians for JEE, AIIMS/medical students for NEET. Personalized plans, daily accountability, weekly review calls.",
           areaServed: "IN",
