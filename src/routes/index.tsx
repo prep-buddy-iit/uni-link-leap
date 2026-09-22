@@ -10,6 +10,7 @@ import { TrustBar } from "@/components/site/TrustBar";
 import { PageBackdrop } from "@/components/site/PageBackdrop";
 import { useReveal } from "@/hooks/useReveal";
 import { COMMUNITIES } from "@/lib/exam-content";
+import { GuidancePreviewChat } from "@/components/site/GuidancePreviewChat";
 
 const TITLE = "PrepBuddy - 1-on-1 Mentorship for JEE & NEET | Class 11, 12 & Droppers";
 const DESC = "PrepBuddy pairs Class 11, 12 and Droppers with a dedicated topper-mentor - IITians for JEE, AIIMS/medical students for NEET. Personalized plans, daily accountability, weekly review calls. Start your 3-day trial for ₹99.";
@@ -48,6 +49,7 @@ function HomePage() {
       <main>
         <Hero />
         <ExamSelector />
+        <GuidancePreview />
         <TrustBar />
         <WhyMentorship />
         <HowItWorks />
@@ -89,6 +91,40 @@ function Hero() {
           </p>
         </div>
         <HeroVideoCard />
+      </div>
+    </section>
+  );
+}
+
+function GuidancePreview() {
+  return (
+    <section id="guidance-preview" className="bg-white/50 border-y border-border/60 scroll-mt-24">
+      <div className="mx-auto max-w-7xl px-5 py-20 sm:py-24 grid lg:grid-cols-[1fr_1.05fr] items-center gap-10 lg:gap-14">
+        <div>
+          <p className="eyebrow">Two minutes, no signup</p>
+          <h2 className="mt-4 font-display text-3xl sm:text-4xl font-bold leading-[1.1]">
+            Not sure what's actually going wrong?{" "}
+            <span className="text-gradient-primary">Find out before you pay anything.</span>
+          </h2>
+          <p className="mt-5 text-lg text-ink-muted max-w-xl">
+            Answer a few questions about how prep is really going - the honest version, not the
+            version you tell relatives. You'll get the pattern a mentor would spot in your first
+            call.
+          </p>
+          <ul className="mt-6 space-y-2.5 text-ink-muted">
+            {[
+              "No score, no rank prediction, no lecture",
+              "Worded for your exam - JEE or NEET",
+              "Nothing to sign up for to see your result",
+            ].map((l) => (
+              <li key={l} className="flex items-start gap-2.5">
+                <ClipboardCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                <span>{l}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <GuidancePreviewChat />
       </div>
     </section>
   );
