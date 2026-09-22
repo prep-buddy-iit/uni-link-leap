@@ -20,6 +20,7 @@ export function Footer() {
               { l: "JEE Mentorship", to: "/jee" },
               { l: "NEET Mentorship", to: "/neet" },
               { l: "Meet Our Mentors", to: "/find-a-mentor" },
+              { l: "Free Guidance Preview", to: "/guidance-preview" },
             ]} />
             <FooterCol h="Company" items={[
               { l: "Our Method", to: "/" },

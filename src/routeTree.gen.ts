@@ -9,50 +9,27 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as ResourcesRouteImport } from './routes/resources'
-import { Route as NeetRouteImport } from './routes/neet'
-import { Route as JeeRouteImport } from './routes/jee'
-import { Route as FindAMentorRouteImport } from './routes/find-a-mentor'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as BecomeAMentorRouteImport } from './routes/become-a-mentor'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ResourcesSlugRouteImport } from './routes/resources.$slug'
-import { Route as AdminResourcesRouteImport } from './routes/admin.resources'
-import { Route as AdminMentorsRouteImport } from './routes/admin.mentors'
-import { Route as AdminLoginRouteImport } from './routes/admin.login'
-import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
-import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as BecomeAMentorRouteImport } from './routes/become-a-mentor'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as FindAMentorRouteImport } from './routes/find-a-mentor'
+import { Route as GuidancePreviewRouteImport } from './routes/guidance-preview'
+import { Route as JeeRouteImport } from './routes/jee'
+import { Route as NeetRouteImport } from './routes/neet'
+import { Route as ResourcesRouteImport } from './routes/resources'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AdminContactsRouteImport } from './routes/admin.contacts'
+import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as AdminGuidancePreviewsRouteImport } from './routes/admin.guidance-previews'
+import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
+import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminMentorsRouteImport } from './routes/admin.mentors'
+import { Route as AdminResourcesRouteImport } from './routes/admin.resources'
+import { Route as ResourcesSlugRouteImport } from './routes/resources.$slug'
 
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResourcesRoute = ResourcesRouteImport.update({
-  id: '/resources',
-  path: '/resources',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NeetRoute = NeetRouteImport.update({
-  id: '/neet',
-  path: '/neet',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const JeeRoute = JeeRouteImport.update({
-  id: '/jee',
-  path: '/jee',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FindAMentorRoute = FindAMentorRouteImport.update({
-  id: '/find-a-mentor',
-  path: '/find-a-mentor',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BecomeAMentorRoute = BecomeAMentorRouteImport.update({
@@ -60,39 +37,39 @@ const BecomeAMentorRoute = BecomeAMentorRouteImport.update({
   path: '/become-a-mentor',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ResourcesSlugRoute = ResourcesSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => ResourcesRoute,
-} as any)
-const AdminResourcesRoute = AdminResourcesRouteImport.update({
-  id: '/admin/resources',
-  path: '/admin/resources',
+const FindAMentorRoute = FindAMentorRouteImport.update({
+  id: '/find-a-mentor',
+  path: '/find-a-mentor',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminMentorsRoute = AdminMentorsRouteImport.update({
-  id: '/admin/mentors',
-  path: '/admin/mentors',
+const GuidancePreviewRoute = GuidancePreviewRouteImport.update({
+  id: '/guidance-preview',
+  path: '/guidance-preview',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminLoginRoute = AdminLoginRouteImport.update({
-  id: '/admin/login',
-  path: '/admin/login',
+const JeeRoute = JeeRouteImport.update({
+  id: '/jee',
+  path: '/jee',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminLeadsRoute = AdminLeadsRouteImport.update({
-  id: '/admin/leads',
-  path: '/admin/leads',
+const NeetRoute = NeetRouteImport.update({
+  id: '/neet',
+  path: '/neet',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminDashboardRoute = AdminDashboardRouteImport.update({
-  id: '/admin/dashboard',
-  path: '/admin/dashboard',
+const ResourcesRoute = ResourcesRouteImport.update({
+  id: '/resources',
+  path: '/resources',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminContactsRoute = AdminContactsRouteImport.update({
@@ -100,18 +77,55 @@ const AdminContactsRoute = AdminContactsRouteImport.update({
   path: '/admin/contacts',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/admin/dashboard',
+  path: '/admin/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminGuidancePreviewsRoute = AdminGuidancePreviewsRouteImport.update({
+  id: '/admin/guidance-previews',
+  path: '/admin/guidance-previews',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLeadsRoute = AdminLeadsRouteImport.update({
+  id: '/admin/leads',
+  path: '/admin/leads',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin/login',
+  path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminMentorsRoute = AdminMentorsRouteImport.update({
+  id: '/admin/mentors',
+  path: '/admin/mentors',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminResourcesRoute = AdminResourcesRouteImport.update({
+  id: '/admin/resources',
+  path: '/admin/resources',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResourcesSlugRoute = ResourcesSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => ResourcesRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/become-a-mentor': typeof BecomeAMentorRoute
   '/contact': typeof ContactRoute
   '/find-a-mentor': typeof FindAMentorRoute
+  '/guidance-preview': typeof GuidancePreviewRoute
   '/jee': typeof JeeRoute
   '/neet': typeof NeetRoute
   '/resources': typeof ResourcesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/contacts': typeof AdminContactsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/guidance-previews': typeof AdminGuidancePreviewsRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/mentors': typeof AdminMentorsRoute
@@ -123,12 +137,14 @@ export interface FileRoutesByTo {
   '/become-a-mentor': typeof BecomeAMentorRoute
   '/contact': typeof ContactRoute
   '/find-a-mentor': typeof FindAMentorRoute
+  '/guidance-preview': typeof GuidancePreviewRoute
   '/jee': typeof JeeRoute
   '/neet': typeof NeetRoute
   '/resources': typeof ResourcesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/contacts': typeof AdminContactsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/guidance-previews': typeof AdminGuidancePreviewsRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/mentors': typeof AdminMentorsRoute
@@ -141,12 +157,14 @@ export interface FileRoutesById {
   '/become-a-mentor': typeof BecomeAMentorRoute
   '/contact': typeof ContactRoute
   '/find-a-mentor': typeof FindAMentorRoute
+  '/guidance-preview': typeof GuidancePreviewRoute
   '/jee': typeof JeeRoute
   '/neet': typeof NeetRoute
   '/resources': typeof ResourcesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/contacts': typeof AdminContactsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/guidance-previews': typeof AdminGuidancePreviewsRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/mentors': typeof AdminMentorsRoute
@@ -160,12 +178,14 @@ export interface FileRouteTypes {
     | '/become-a-mentor'
     | '/contact'
     | '/find-a-mentor'
+    | '/guidance-preview'
     | '/jee'
     | '/neet'
     | '/resources'
     | '/sitemap.xml'
     | '/admin/contacts'
     | '/admin/dashboard'
+    | '/admin/guidance-previews'
     | '/admin/leads'
     | '/admin/login'
     | '/admin/mentors'
@@ -177,12 +197,14 @@ export interface FileRouteTypes {
     | '/become-a-mentor'
     | '/contact'
     | '/find-a-mentor'
+    | '/guidance-preview'
     | '/jee'
     | '/neet'
     | '/resources'
     | '/sitemap.xml'
     | '/admin/contacts'
     | '/admin/dashboard'
+    | '/admin/guidance-previews'
     | '/admin/leads'
     | '/admin/login'
     | '/admin/mentors'
@@ -194,12 +216,14 @@ export interface FileRouteTypes {
     | '/become-a-mentor'
     | '/contact'
     | '/find-a-mentor'
+    | '/guidance-preview'
     | '/jee'
     | '/neet'
     | '/resources'
     | '/sitemap.xml'
     | '/admin/contacts'
     | '/admin/dashboard'
+    | '/admin/guidance-previews'
     | '/admin/leads'
     | '/admin/login'
     | '/admin/mentors'
@@ -212,12 +236,14 @@ export interface RootRouteChildren {
   BecomeAMentorRoute: typeof BecomeAMentorRoute
   ContactRoute: typeof ContactRoute
   FindAMentorRoute: typeof FindAMentorRoute
+  GuidancePreviewRoute: typeof GuidancePreviewRoute
   JeeRoute: typeof JeeRoute
   NeetRoute: typeof NeetRoute
   ResourcesRoute: typeof ResourcesRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   AdminContactsRoute: typeof AdminContactsRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminGuidancePreviewsRoute: typeof AdminGuidancePreviewsRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminMentorsRoute: typeof AdminMentorsRoute
@@ -226,46 +252,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/resources': {
-      id: '/resources'
-      path: '/resources'
-      fullPath: '/resources'
-      preLoaderRoute: typeof ResourcesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/neet': {
-      id: '/neet'
-      path: '/neet'
-      fullPath: '/neet'
-      preLoaderRoute: typeof NeetRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/jee': {
-      id: '/jee'
-      path: '/jee'
-      fullPath: '/jee'
-      preLoaderRoute: typeof JeeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/find-a-mentor': {
-      id: '/find-a-mentor'
-      path: '/find-a-mentor'
-      fullPath: '/find-a-mentor'
-      preLoaderRoute: typeof FindAMentorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/become-a-mentor': {
@@ -275,46 +266,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BecomeAMentorRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/resources/$slug': {
-      id: '/resources/$slug'
-      path: '/$slug'
-      fullPath: '/resources/$slug'
-      preLoaderRoute: typeof ResourcesSlugRouteImport
-      parentRoute: typeof ResourcesRoute
-    }
-    '/admin/resources': {
-      id: '/admin/resources'
-      path: '/admin/resources'
-      fullPath: '/admin/resources'
-      preLoaderRoute: typeof AdminResourcesRouteImport
+    '/find-a-mentor': {
+      id: '/find-a-mentor'
+      path: '/find-a-mentor'
+      fullPath: '/find-a-mentor'
+      preLoaderRoute: typeof FindAMentorRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/mentors': {
-      id: '/admin/mentors'
-      path: '/admin/mentors'
-      fullPath: '/admin/mentors'
-      preLoaderRoute: typeof AdminMentorsRouteImport
+    '/guidance-preview': {
+      id: '/guidance-preview'
+      path: '/guidance-preview'
+      fullPath: '/guidance-preview'
+      preLoaderRoute: typeof GuidancePreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/login': {
-      id: '/admin/login'
-      path: '/admin/login'
-      fullPath: '/admin/login'
-      preLoaderRoute: typeof AdminLoginRouteImport
+    '/jee': {
+      id: '/jee'
+      path: '/jee'
+      fullPath: '/jee'
+      preLoaderRoute: typeof JeeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/leads': {
-      id: '/admin/leads'
-      path: '/admin/leads'
-      fullPath: '/admin/leads'
-      preLoaderRoute: typeof AdminLeadsRouteImport
+    '/neet': {
+      id: '/neet'
+      path: '/neet'
+      fullPath: '/neet'
+      preLoaderRoute: typeof NeetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resources': {
+      id: '/resources'
+      path: '/resources'
+      fullPath: '/resources'
+      preLoaderRoute: typeof ResourcesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/contacts': {
+      id: '/admin/contacts'
+      path: '/admin/contacts'
+      fullPath: '/admin/contacts'
+      preLoaderRoute: typeof AdminContactsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/dashboard': {
@@ -324,12 +329,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/contacts': {
-      id: '/admin/contacts'
-      path: '/admin/contacts'
-      fullPath: '/admin/contacts'
-      preLoaderRoute: typeof AdminContactsRouteImport
+    '/admin/guidance-previews': {
+      id: '/admin/guidance-previews'
+      path: '/admin/guidance-previews'
+      fullPath: '/admin/guidance-previews'
+      preLoaderRoute: typeof AdminGuidancePreviewsRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/leads': {
+      id: '/admin/leads'
+      path: '/admin/leads'
+      fullPath: '/admin/leads'
+      preLoaderRoute: typeof AdminLeadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/mentors': {
+      id: '/admin/mentors'
+      path: '/admin/mentors'
+      fullPath: '/admin/mentors'
+      preLoaderRoute: typeof AdminMentorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/resources': {
+      id: '/admin/resources'
+      path: '/admin/resources'
+      fullPath: '/admin/resources'
+      preLoaderRoute: typeof AdminResourcesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resources/$slug': {
+      id: '/resources/$slug'
+      path: '/$slug'
+      fullPath: '/resources/$slug'
+      preLoaderRoute: typeof ResourcesSlugRouteImport
+      parentRoute: typeof ResourcesRoute
     }
   }
 }
@@ -351,12 +391,14 @@ const rootRouteChildren: RootRouteChildren = {
   BecomeAMentorRoute: BecomeAMentorRoute,
   ContactRoute: ContactRoute,
   FindAMentorRoute: FindAMentorRoute,
+  GuidancePreviewRoute: GuidancePreviewRoute,
   JeeRoute: JeeRoute,
   NeetRoute: NeetRoute,
   ResourcesRoute: ResourcesRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   AdminContactsRoute: AdminContactsRoute,
   AdminDashboardRoute: AdminDashboardRoute,
+  AdminGuidancePreviewsRoute: AdminGuidancePreviewsRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminMentorsRoute: AdminMentorsRoute,
