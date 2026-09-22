@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { useApplicationModal } from "@/lib/application-modal";
 
@@ -7,7 +7,6 @@ import { useApplicationModal } from "@/lib/application-modal";
 export function Navbar() {
   const [open, setOpen] = useState(false);
   const { open: openApp } = useApplicationModal();
-  const nav = useNavigate();
   const { pathname } = useLocation();
 
   const onJee = pathname === "/jee";
@@ -17,7 +16,7 @@ export function Navbar() {
   function handleTrial() {
     if (onJee) return openApp("trial", "jee");
     if (onNeet) return openApp("trial", "neet");
-    nav({ to: "/", hash: "exam-selector" });
+    return openApp("trial");
   }
 
   const NavLinks = ({ onClick }: { onClick?: () => void }) => (

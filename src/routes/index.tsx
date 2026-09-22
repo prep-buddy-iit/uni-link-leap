@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowRight, ClipboardList, ClipboardCheck, UserCheck, LineChart, HeartHandshake,
-  HandshakeIcon, BookOpen, MessagesSquare, MessageCircle, Stethoscope, Atom,
+  HandshakeIcon, BookOpen, MessagesSquare, MessageCircle,
 } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
@@ -48,7 +48,6 @@ function HomePage() {
       <Navbar />
       <main>
         <Hero />
-        <ExamSelector />
         <GuidancePreview />
         <TrustBar />
         <WhyMentorship />
@@ -87,7 +86,7 @@ function Hero() {
             </p>
           </div>
           <p className="mt-6 text-sm text-primary font-semibold">
-            <a href="#exam-selector">Pick your exam below →</a>
+            <a href="#guidance-preview">Pick your exam below →</a>
           </p>
         </div>
         <HeroVideoCard />
@@ -127,52 +126,6 @@ function GuidancePreview() {
         <GuidancePreviewChat />
       </div>
     </section>
-  );
-}
-
-function ExamSelector() {
-  return (
-    <section id="exam-selector" className="mx-auto max-w-7xl px-5 py-16 scroll-mt-24">
-      <div className="max-w-3xl">
-        <p className="eyebrow">Which exam are you preparing for?</p>
-        <h2 className="mt-3 font-display text-3xl sm:text-4xl font-bold">
-          Choose your path. <span className="text-gradient-primary">We handle the rest.</span>
-        </h2>
-      </div>
-      <div className="mt-10 grid md:grid-cols-2 gap-5">
-        <ExamCard
-          to="/jee" label="JEE" title="I'm preparing for JEE"
-          sub="Get matched with an IITian mentor. Physics, Chemistry, Maths - Main + Advanced."
-          icon={<Atom className="h-7 w-7 text-primary" />}
-          bg="linear-gradient(135deg, rgba(42,79,224,0.10), rgba(139,92,246,0.10))"
-        />
-        <ExamCard
-          to="/neet" label="NEET" title="I'm preparing for NEET"
-          sub="Get matched with an AIIMS or top medical-college mentor. Biology-heavy plan built for NEET UG."
-          icon={<Stethoscope className="h-7 w-7 text-[#12a04a]" />}
-          bg="linear-gradient(135deg, rgba(34,195,94,0.12), rgba(255,122,69,0.10))"
-        />
-      </div>
-    </section>
-  );
-}
-
-function ExamCard({ to, label, title, sub, icon, bg }: {
-  to: "/jee" | "/neet"; label: string; title: string; sub: string; icon: React.ReactNode; bg: string;
-}) {
-  return (
-    <Link to={to} className="group relative overflow-hidden rounded-3xl p-7 sm:p-9 glass-strong card-lift block"
-      style={{ backgroundImage: bg }}>
-      <div className="flex items-center gap-3">
-        <div className="grid h-12 w-12 place-items-center rounded-2xl bg-white shadow-soft">{icon}</div>
-        <span className="mono text-xs uppercase tracking-wider text-ink-muted">{label}</span>
-      </div>
-      <h3 className="mt-5 font-display text-2xl sm:text-3xl font-bold text-ink">{title}</h3>
-      <p className="mt-2 text-ink-muted">{sub}</p>
-      <span className="mt-6 inline-flex items-center gap-2 text-primary font-semibold">
-        Continue <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
-      </span>
-    </Link>
   );
 }
 
