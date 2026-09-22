@@ -122,7 +122,10 @@ export function ApplicationModal({
       source: form.source || null,
       subjects: [],
       exam: exam ?? null,
-      guidance_preview_id: guidancePreviewId ?? null,
+      // Only sent when there actually is one. Sending the key unconditionally
+      // would make every trial application depend on the guidance-preview
+      // migration having been applied first.
+      ...(guidancePreviewId ? { guidance_preview_id: guidancePreviewId } : {}),
     });
     setSubmitting(false);
     if (error) {
