@@ -1,12 +1,10 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 import { ApplicationModal, type PlanKey, type ExamKey } from "@/components/ApplicationModal";
-import type { GuidancePreviewPayload } from "@/lib/guidance-preview/lead-note";
 
 type OpenOptions = {
-  // Carried in from the Free Guidance Preview result screen. Held in memory
-  // only - it is written onto the lead this modal creates, so a student who
-  // never signs up leaves no record.
-  guidancePreview?: GuidancePreviewPayload;
+  // Prefill, carried in from the Free Guidance Preview, which already asked.
+  name?: string;
+  phone?: string;
 };
 
 type Ctx = {
@@ -19,14 +17,12 @@ export function ApplicationModalProvider({ children }: { children: ReactNode }) 
   const [isOpen, setIsOpen] = useState(false);
   const [plan, setPlan] = useState<PlanKey | undefined>(undefined);
   const [exam, setExam] = useState<ExamKey | undefined>(undefined);
-  const [guidancePreview, setGuidancePreview] = useState<GuidancePreviewPayload | undefined>(
-    undefined,
-  );
+  const [contact, setContact] = useState<OpenOptions>({});
 
   const open = useCallback((p?: PlanKey, e?: ExamKey, options?: OpenOptions) => {
     setPlan(p);
     setExam(e);
-    setGuidancePreview(options?.guidancePreview);
+    setContact({ name: options?.name, phone: options?.phone });
     setIsOpen(true);
   }, []);
 
@@ -40,7 +36,8 @@ export function ApplicationModalProvider({ children }: { children: ReactNode }) 
         onOpenChange={setIsOpen}
         initialPlan={plan}
         initialExam={exam}
-        guidancePreview={guidancePreview}
+        initialName={contact.name}
+        initialPhone={contact.phone}
       />
     </ApplicationModalContext.Provider>
   );

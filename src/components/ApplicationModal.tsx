@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { X, Loader2, MessageCircle } from "lucide-react";
 import { COMMUNITIES } from "@/lib/exam-content";
-import { formatLeadNote, type GuidancePreviewPayload } from "@/lib/guidance-preview/lead-note";
 
 export type PlanKey = "trial" | "month1" | "month3" | "month6" | "session";
 export type ExamKey = "jee" | "neet";
@@ -47,36 +46,36 @@ type State = {
   source: string;
 };
 
-const empty = (plan: PlanKey = "trial"): State => ({
-  name: "", phone: "", current_class: "", plan, problems: [], source: "",
+const empty = (plan: PlanKey = "trial", name = "", phone = ""): State => ({
+  name, phone, current_class: "", plan, problems: [], source: "",
 });
 
 type Step = "form" | "done";
 
 export function ApplicationModal({
-  open, onOpenChange, initialPlan, initialExam, guidancePreview,
+  open, onOpenChange, initialPlan, initialExam, initialName, initialPhone,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   initialPlan?: PlanKey;
   initialExam?: ExamKey;
-  // Carried in from the Free Guidance Preview result screen. Its answers and
-  // full note are written onto the lead below, so the mentor picks the
-  // conversation up from there instead of starting cold.
-  guidancePreview?: GuidancePreviewPayload;
+  // Prefilled when the student arrives from the Free Guidance Preview, which
+  // already collected these - no reason to ask twice.
+  initialName?: string;
+  initialPhone?: string;
 }) {
-  const [form, setForm] = useState<State>(empty(initialPlan ?? "trial"));
+  const [form, setForm] = useState<State>(empty(initialPlan ?? "trial", initialName, initialPhone));
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [step, setStep] = useState<Step>("form");
 
   useEffect(() => {
     if (open) {
-      setForm(empty(initialPlan ?? "trial"));
+      setForm(empty(initialPlan ?? "trial", initialName, initialPhone));
       setErrors({});
       setStep("form");
     }
-  }, [open, initialPlan]);
+  }, [open, initialPlan, initialName, initialPhone]);
 
   useEffect(() => {
     if (!open) return;
@@ -119,11 +118,9 @@ export function ApplicationModal({
       current_class: form.current_class || "Not specified",
       plan: PLAN_LABEL[form.plan],
       problems: form.problems,
-      source: form.source || (guidancePreview ? "Guidance preview" : null),
-      subjects: guidancePreview ? [guidancePreview.subject] : [],
-      exam: exam ?? guidancePreview?.exam ?? null,
-      // The mentor-side handoff: answers and full note ride along on the lead.
-      notes: guidancePreview ? formatLeadNote(guidancePreview) : null,
+      source: form.source || null,
+      subjects: [],
+      exam: exam ?? null,
     });
     setSubmitting(false);
     if (error) {

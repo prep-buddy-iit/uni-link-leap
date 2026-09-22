@@ -15,7 +15,7 @@ import {
   type Note,
   type Responses,
 } from "@/lib/guidance-preview/engine";
-import type { GuidancePreviewPayload } from "@/lib/guidance-preview/lead-note";
+import { saveGuidancePreviewLead } from "@/lib/guidance-preview/store";
 import { TRIAL_CTA_COPY } from "@/lib/guidance-preview/copy";
 
 const STEP_EXAM = 0;
@@ -23,9 +23,15 @@ const STEP_SUBJECT = 1;
 /** Categories occupy STEP_FIRST_CATEGORY .. STEP_FIRST_CATEGORY + count - 1. */
 const STEP_FIRST_CATEGORY = 2;
 
+/** Same shape the application modal accepts, so the two agree. */
+const PHONE_RE = /^[0-9+\-\s]{10,15}$/;
+
 type Result = {
   note: Note;
-  payload: GuidancePreviewPayload;
+  exam: ExamKey;
+  name: string;
+  phone: string;
+  saved: boolean;
 };
 
 export function GuidancePreviewChat({
@@ -43,10 +49,15 @@ export function GuidancePreviewChat({
   const [subject, setSubject] = useState<string>("");
   const [responses, setResponses] = useState<Responses>({});
   const [freeText, setFreeText] = useState("");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [errors, setErrors] = useState<{ name?: string; phone?: string }>({});
+  const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
 
   const categories = useMemo(() => (exam ? getCategories(exam) : []), [exam]);
-  const lastStep = STEP_FIRST_CATEGORY + categories.length;
+  const freeTextStep = STEP_FIRST_CATEGORY + categories.length;
+  const contactStep = freeTextStep + 1;
 
   const totalChecked = useMemo(
     () => Object.values(responses).reduce((n, ids) => n + (ids?.length ?? 0), 0),
@@ -73,37 +84,54 @@ export function GuidancePreviewChat({
     });
   }
 
-  function finish() {
+  async function finish() {
     if (!exam) return;
     if (totalChecked === 0) {
       toast.error("Tick at least one thing so there's something to read.");
       return;
     }
 
+    const errs: { name?: string; phone?: string } = {};
+    if (name.trim().length < 2) errs.name = "Please enter your name.";
+    if (!PHONE_RE.test(phone.trim())) errs.phone = "Please enter a valid phone number.";
+    setErrors(errs);
+    if (Object.keys(errs).length) return;
+
+    setSubmitting(true);
+
     const scored = scoreResponses(responses);
     const trimmed = freeText.trim() || null;
     const note = generateNote(scored, exam, trimmed);
 
-    // The full note is generated here but never rendered - it is held in memory
-    // and written onto the lead only if the student goes on to start the trial.
-    setResult({
+    // Straight into `leads` - the same anonymous insert every other form on the
+    // site uses. The full note goes with it; only `note.teaser` is rendered.
+    const saved = await saveGuidancePreviewLead({
+      exam,
+      subject,
+      responses,
+      freeText: trimmed,
       note,
-      payload: { exam, subject, responses, freeText: trimmed, note },
+      name,
+      phone,
     });
-    setStep(lastStep + 1);
+
+    setSubmitting(false);
+    setResult({ note, exam, name: name.trim(), phone: phone.trim(), saved });
+    setStep(contactStep + 1);
   }
 
   if (result) {
     return (
       <ResultScreen
         note={result.note}
+        saved={result.saved}
         className={className}
-        onStartTrial={() => open("trial", result.payload.exam, { guidancePreview: result.payload })}
+        onStartTrial={() => open("trial", result.exam, { name: result.name, phone: result.phone })}
       />
     );
   }
 
-  const progress = Math.round((step / (lastStep + 1)) * 100);
+  const progress = Math.round((step / (contactStep + 1)) * 100);
   const subjects = exam ? SUBJECTS_BY_EXAM[exam] : [];
 
   return (
@@ -193,7 +221,7 @@ export function GuidancePreviewChat({
         ) : null,
       )}
 
-      {step === lastStep && (
+      {step === freeTextStep && (
         <Step
           question="Anything else you want the mentor to know?"
           hint="Optional - one or two lines is plenty."
@@ -207,10 +235,34 @@ export function GuidancePreviewChat({
             className="w-full rounded-2xl border border-input bg-white px-4 py-3 text-ink outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/15"
           />
           <Nav
-            onBack={() => setStep(lastStep - 1)}
-            onNext={finish}
-            nextLabel="See what this points at"
+            onBack={() => setStep(freeTextStep - 1)}
+            onNext={() => setStep(contactStep)}
+            nextLabel="Almost there"
           />
+        </Step>
+      )}
+
+      {step === contactStep && (
+        <Step
+          question="Last thing - where do we send this?"
+          hint="So your mentor can pick up where your answers leave off."
+        >
+          <div className="space-y-4">
+            <Field label="Your name" value={name} onChange={setName} error={errors.name}
+              placeholder="e.g. Aarav Sharma" />
+            <Field label="Phone number" value={phone} onChange={setPhone} error={errors.phone}
+              type="tel" inputMode="tel" placeholder="98XXXXXXXX" />
+          </div>
+          <Nav
+            onBack={() => setStep(freeTextStep)}
+            onNext={finish}
+            nextLabel={submitting ? "Reading your answers…" : "See what this points at"}
+            nextDisabled={submitting}
+            busy={submitting}
+          />
+          <p className="mt-3 text-center text-xs text-ink-muted">
+            🔒 Your data is never shared or sold.
+          </p>
         </Step>
       )}
     </div>
@@ -226,10 +278,12 @@ export function GuidancePreviewChat({
 function ResultScreen({
   note,
   onStartTrial,
+  saved,
   className = "",
 }: {
   note: Note;
   onStartTrial: () => void;
+  saved: boolean;
   className?: string;
 }) {
   return (
@@ -264,7 +318,9 @@ function ResultScreen({
       </button>
 
       <p className="mt-3 text-center text-xs text-ink-muted">
-        Your answers come with you - your mentor reads them before you speak.
+        {saved
+          ? "Your answers are saved - your mentor reads them before you speak."
+          : "We couldn't save your answers just now, but our team will still reach out."}
       </p>
     </div>
   );
@@ -284,6 +340,47 @@ function Step({
       <h2 className="font-display text-xl sm:text-2xl font-bold">{question}</h2>
       <p className="mt-1.5 text-sm text-ink-muted">{hint}</p>
       <div className="mt-5">{children}</div>
+    </div>
+  );
+}
+
+function Field({
+  label,
+  value,
+  onChange,
+  error,
+  type = "text",
+  placeholder,
+  inputMode,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  error?: string;
+  type?: string;
+  placeholder?: string;
+  inputMode?: "text" | "tel";
+}) {
+  return (
+    <div>
+      {/* The input sits inside the label so the two are associated without ids. */}
+      <label className="block">
+        <span className="block text-sm font-medium text-ink mb-1.5">{label}</span>
+        <input
+          type={type}
+          value={value}
+          inputMode={inputMode}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          className={
+            "w-full rounded-xl border bg-white px-4 py-3 text-ink outline-none transition " +
+            (error
+              ? "border-destructive"
+              : "border-input focus:border-primary focus:ring-4 focus:ring-primary/15")
+          }
+        />
+      </label>
+      {error && <p className="mt-1.5 text-xs text-destructive">{error}</p>}
     </div>
   );
 }

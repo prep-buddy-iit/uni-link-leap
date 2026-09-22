@@ -7,12 +7,17 @@ import { EXAMS, SUBJECTS_BY_EXAM, getCategories } from "./questions";
 import { generateNote, scoreResponses, type Responses } from "./engine";
 import { TRIAL_CTA_COPY } from "./copy";
 import { formatLeadNote, isGuidancePreviewLead, type GuidancePreviewPayload } from "./lead-note";
+import type { GuidancePreviewLead } from "./store";
 import type { ExamKey } from "@/components/ApplicationModal";
 
-// Nothing is persisted on finish any more - the preview is handed to the trial
-// modal in memory, so `open` is the whole handoff surface.
-const open =
-  vi.fn<(plan: string, exam: ExamKey, opts: { guidancePreview: GuidancePreviewPayload }) => void>();
+// The questionnaire writes straight to `leads` on finish; stub that so the test
+// never touches the network.
+const saveGuidancePreviewLead = vi.fn(async (_lead: GuidancePreviewLead) => true);
+vi.mock("@/lib/guidance-preview/store", () => ({
+  saveGuidancePreviewLead: (lead: GuidancePreviewLead) => saveGuidancePreviewLead(lead),
+}));
+
+const open = vi.fn<(plan: string, exam: ExamKey, opts: { name: string; phone: string }) => void>();
 vi.mock("@/lib/application-modal", () => ({
   useApplicationModal: () => ({ open }),
 }));
@@ -20,7 +25,7 @@ vi.mock("@/lib/application-modal", () => ({
 // Imported after the mocks so the component picks them up.
 const { GuidancePreviewChat } = await import("@/components/site/GuidancePreviewChat");
 
-/** Picks the exam, then ticks one item in every category, to the result screen. */
+/** Walks the whole questionnaire, ticking one item per category, to the result. */
 async function completePreview(exam: ExamKey = "jee") {
   const user = userEvent.setup();
   render(<GuidancePreviewChat />);
@@ -36,31 +41,35 @@ async function completePreview(exam: ExamKey = "jee") {
     await user.click(screen.getByRole("button", { name: /Next|Almost done/i }));
   }
 
+  await user.click(screen.getByRole("button", { name: /Almost there/i }));
+
+  await user.type(screen.getByLabelText("Your name"), "Aarav Sharma");
+  await user.type(screen.getByLabelText("Phone number"), "9876543210");
   await user.click(screen.getByRole("button", { name: /See what this points at/i }));
+
   await waitFor(() => expect(screen.getByRole("button", { name: /trial/i })).toBeTruthy());
   return user;
 }
 
-/** The payload the result screen would hand to the trial form. */
-function handedOff(): GuidancePreviewPayload {
-  return open.mock.calls[0][2].guidancePreview;
+/** What the questionnaire wrote to `leads`. */
+function saved(): GuidancePreviewLead {
+  return saveGuidancePreviewLead.mock.calls[0][0];
 }
 
 beforeEach(() => {
+  saveGuidancePreviewLead.mockClear();
   open.mockClear();
 });
 afterEach(cleanup);
 
 describe("free result screen", () => {
   it("never renders fullNote content", async () => {
-    const user = await completePreview();
+    await completePreview();
 
-    // Snapshot the screen before the CTA hands anything over.
     const rendered = document.body.textContent ?? "";
-    await user.click(screen.getByRole("button", { name: /trial/i }));
 
-    // The note the mentor gets travels on, but must not reach the pre-trial DOM.
-    const { note } = handedOff();
+    // The note the mentor gets is stored, but must not reach the pre-trial DOM.
+    const { note } = saved();
     expect(note.fullNote.length).toBeGreaterThan(0);
     expect(rendered).not.toContain(note.fullNote);
 
@@ -79,10 +88,9 @@ describe("free result screen", () => {
   });
 
   it("shows only the teaser for the pattern it landed on", async () => {
-    const user = await completePreview();
-    await user.click(screen.getByRole("button", { name: /trial/i }));
+    await completePreview();
 
-    const { note } = handedOff();
+    const { note } = saved();
     expect(screen.getByText(note.teaserLabel)).toBeTruthy();
     expect(screen.getByText(note.teaser)).toBeTruthy();
   });
@@ -98,13 +106,51 @@ describe("trial CTA", () => {
     expect(TRIAL_CTA_COPY).toContain("₹99");
   });
 
-  it("hands the preview payload to the existing trial flow", async () => {
+  it("prefills the trial form with the contact already collected", async () => {
     const user = await completePreview();
     await user.click(screen.getByRole("button", { name: /trial/i }));
 
     expect(open.mock.calls[0][0]).toBe("trial");
     expect(open.mock.calls[0][1]).toBe("jee");
-    expect(handedOff().note.fullNote.length).toBeGreaterThan(0);
+    expect(open.mock.calls[0][2]).toEqual({ name: "Aarav Sharma", phone: "9876543210" });
+  });
+});
+
+describe("contact step", () => {
+  it("stores the questionnaire without any signup", async () => {
+    await completePreview("neet");
+
+    const lead = saved();
+    expect(lead.name).toBe("Aarav Sharma");
+    expect(lead.phone).toBe("9876543210");
+    expect(lead.exam).toBe("neet");
+    expect(lead.subject).toBe("Physics");
+    expect(lead.note.fullNote.length).toBeGreaterThan(0);
+  });
+
+  it("refuses to submit without a valid name and phone", async () => {
+    const user = userEvent.setup();
+    render(<GuidancePreviewChat initialExam="jee" />);
+
+    await user.click(screen.getByRole("button", { name: /Physics/i }));
+    await user.click(screen.getByRole("button", { name: /^Start/i }));
+    for (const category of getCategories("jee")) {
+      await user.click(screen.getByLabelText(category.items[0].label));
+      await user.click(screen.getByRole("button", { name: /Next|Almost done/i }));
+    }
+    await user.click(screen.getByRole("button", { name: /Almost there/i }));
+
+    // Nothing filled in.
+    await user.click(screen.getByRole("button", { name: /See what this points at/i }));
+    expect(saveGuidancePreviewLead).not.toHaveBeenCalled();
+    expect(screen.getByText("Please enter your name.")).toBeTruthy();
+
+    // A name, but a phone number that is too short.
+    await user.type(screen.getByLabelText("Your name"), "Aarav Sharma");
+    await user.type(screen.getByLabelText("Phone number"), "12345");
+    await user.click(screen.getByRole("button", { name: /See what this points at/i }));
+    expect(saveGuidancePreviewLead).not.toHaveBeenCalled();
+    expect(screen.getByText("Please enter a valid phone number.")).toBeTruthy();
   });
 });
 
@@ -136,31 +182,21 @@ describe("exam step", () => {
     expect(byId(jeeStudy, "study_reread")).not.toContain("NCERT");
   });
 
-  it("carries the chosen exam into the trial handoff", async () => {
-    const user = await completePreview("neet");
-    await user.click(screen.getByRole("button", { name: /trial/i }));
-
-    expect(open.mock.calls[0][0]).toBe("trial");
-    expect(open.mock.calls[0][1]).toBe("neet");
-    expect(handedOff().exam).toBe("neet");
-  });
-
   it("builds the teaser evidence from the exam's own wording", async () => {
-    const user = await completePreview("neet");
-    await user.click(screen.getByRole("button", { name: /trial/i }));
+    await completePreview("neet");
 
-    const payload = handedOff();
-    expect(payload.note.teaser).toMatch(/^You said you /);
-    expect(EXAMS.map((e) => e.key)).toContain(payload.exam);
+    const lead = saved();
+    expect(lead.note.teaser).toMatch(/^You said you /);
+    expect(EXAMS.map((e) => e.key)).toContain(lead.exam);
   });
 });
 
 describe("lead note", () => {
   it("carries the answers and full note, and is detectable as a preview", async () => {
-    const user = await completePreview("neet");
-    await user.click(screen.getByRole("button", { name: /trial/i }));
+    await completePreview("neet");
 
-    const notes = formatLeadNote(handedOff());
+    const lead = saved();
+    const notes = formatLeadNote(lead);
 
     expect(isGuidancePreviewLead(notes)).toBe(true);
     expect(isGuidancePreviewLead("Called twice, no answer")).toBe(false);
@@ -168,7 +204,7 @@ describe("lead note", () => {
 
     expect(notes).toContain("NEET · Physics");
     expect(notes).toContain("What they ticked:");
-    expect(notes).toContain(handedOff().note.fullNote);
+    expect(notes).toContain(lead.note.fullNote);
 
     // Ticked items are written as their NEET wording, not as raw ids.
     const firstTicked = getCategories("neet")[0].items[0];
