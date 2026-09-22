@@ -47,12 +47,49 @@ export type Database = {
         }
         Relationships: []
       }
+      guidance_preview_responses: {
+        Row: {
+          created_at: string
+          free_text: string | null
+          full_note: string
+          handed_off: boolean
+          id: string
+          primary_cluster: string
+          responses: Json
+          secondary_cluster: string | null
+          subject: string
+        }
+        Insert: {
+          created_at?: string
+          free_text?: string | null
+          full_note?: string
+          handed_off?: boolean
+          id?: string
+          primary_cluster: string
+          responses?: Json
+          secondary_cluster?: string | null
+          subject: string
+        }
+        Update: {
+          created_at?: string
+          free_text?: string | null
+          full_note?: string
+          handed_off?: boolean
+          id?: string
+          primary_cluster?: string
+          responses?: Json
+          secondary_cluster?: string | null
+          subject?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           created_at: string
           current_class: string
           email: string | null
           exam: string | null
+          guidance_preview_id: string | null
           id: string
           name: string
           notes: string | null
@@ -70,6 +107,7 @@ export type Database = {
           current_class: string
           email?: string | null
           exam?: string | null
+          guidance_preview_id?: string | null
           id?: string
           name: string
           notes?: string | null
@@ -87,6 +125,7 @@ export type Database = {
           current_class?: string
           email?: string | null
           exam?: string | null
+          guidance_preview_id?: string | null
           id?: string
           name?: string
           notes?: string | null
@@ -99,7 +138,15 @@ export type Database = {
           subjects?: string[] | null
           target_year?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "leads_guidance_preview_id_fkey"
+            columns: ["guidance_preview_id"]
+            isOneToOne: false
+            referencedRelation: "guidance_preview_responses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       mentor_applications: {
         Row: {
@@ -267,6 +314,12 @@ export type Database = {
       }
     }
     Functions: {
+      mark_guidance_preview_handed_off: {
+        Args: {
+          _id: string
+        }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
