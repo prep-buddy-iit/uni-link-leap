@@ -4,9 +4,9 @@ type Stat = { target: number; label: string; prefix?: string; suffix?: string; d
 
 export function TrustBar({ stats }: { stats?: Stat[] }) {
   const items = stats ?? [
-    { target: 3200, suffix: "+", label: "Students mentored" },
-    { target: 180,  suffix: "+", label: "Verified mentors" },
-    { target: 4.8,  decimals: 1, label: "Avg. parent rating" },
+    { target: 100,  suffix: "+", label: "Students mentored" },
+    { target: 10,   suffix: "+", label: "Verified mentors" },
+    { target: 4.9,  decimals: 1, label: "Avg. parent rating" },
     { target: 2,    prefix: "<", suffix: " hrs", label: "Mentor response time" },
   ];
   return (

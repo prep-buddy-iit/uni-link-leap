@@ -82,7 +82,7 @@ function Hero() {
               ))}
             </div>
             <p className="text-sm text-ink-muted">
-              Trusted by <b className="text-ink">3,200+ students</b> and their parents
+              Trusted by <b className="text-ink">100+ students</b> and their parents
             </p>
           </div>
           <p className="mt-6 text-sm text-primary font-semibold">

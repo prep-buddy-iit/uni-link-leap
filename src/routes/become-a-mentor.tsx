@@ -59,8 +59,8 @@ function BecomeMentorPage() {
         </section>
 
         <TrustBar stats={[
-          { target: 180, suffix: "+", label: "Active mentors" },
-          { target: 3200, suffix: "+", label: "Students mentored" },
+          { target: 10, suffix: "+", label: "Active mentors" },
+          { target: 100, suffix: "+", label: "Students mentored" },
           { target: 4, suffix: "-stage", label: "Review process" },
           { target: 4, prefix: "2–", suffix: " hrs/wk", label: "Flexible commitment" },
         ]} />
