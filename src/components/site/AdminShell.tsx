@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { Loader2, LogOut, LayoutDashboard, Users, GraduationCap, MessageSquare, FileText } from "lucide-react";
+import { Loader2, LogOut, LayoutDashboard, Users, GraduationCap, MessageSquare, FileText, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
@@ -11,6 +11,7 @@ const NAV = [
   { to: "/admin/leads", label: "Leads / Mentees", icon: Users },
   { to: "/admin/mentors", label: "Mentor Apps", icon: GraduationCap },
   { to: "/admin/contacts", label: "Contact Msgs", icon: MessageSquare },
+  { to: "/admin/guidance-previews", label: "Guidance Previews", icon: Sparkles },
   { to: "/admin/resources", label: "Resources", icon: FileText },
 ] as const;
 
