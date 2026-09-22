@@ -9,9 +9,23 @@ export type FAQ = { q: string; a: string };
 export type Post = { tag: string; title: string; body: string };
 export type Testimonial = { quote: string; name: string; meta: string };
 
-export const COMMUNITIES: Record<ExamKey, { whatsapp: string }> = {
-  jee: { whatsapp: "https://chat.whatsapp.com/" },
-  neet: { whatsapp: "https://chat.whatsapp.com/" },
+export const COMMUNITIES: Record<ExamKey, { whatsapp: string; perks: string[] }> = {
+  jee: {
+    whatsapp: "https://chat.whatsapp.com/",
+    perks: [
+      "PYQ breakdowns and mock-day threads",
+      "Doubt threads answered by IITian mentors",
+      "Weekly AMAs on strategy, cutoffs and burnout",
+    ],
+  },
+  neet: {
+    whatsapp: "https://chat.whatsapp.com/",
+    perks: [
+      "NCERT line-by-line drills and Biology doubts",
+      "Doubt threads answered by AIIMS mentors",
+      "Weekly AMAs on strategy, cutoffs and burnout",
+    ],
+  },
 };
 
 export const JEE_MENTORS: Mentor[] = [
