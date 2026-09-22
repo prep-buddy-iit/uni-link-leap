@@ -215,6 +215,27 @@ describe("lead note", () => {
     expect(parseLeadNote(notes).ids).toEqual(ids);
   });
 
+  it("recovers the exact ticked options, grouped by question", async () => {
+    await completePreview("neet");
+
+    const lead = saved();
+    const ids = idsOf(lead);
+    const { ids: back } = parseLeadNote(formatLeadNote(lead, ids));
+
+    // What the admin drawer does: map stored ids to this exam's wording.
+    const grouped = getCategories("neet")
+      .map((c) => ({ question: c.question, picked: c.items.filter((i) => back.includes(i.id)) }))
+      .filter((g) => g.picked.length > 0);
+
+    expect(grouped.flatMap((g) => g.picked.map((i) => i.id))).toEqual(ids);
+    for (const g of grouped) {
+      for (const item of g.picked) expect(item.label.length).toBeGreaterThan(0);
+    }
+    // NEET wording, not JEE, and not raw ids.
+    const reread = grouped.flatMap((g) => g.picked).find((i) => i.id === "study_reread");
+    if (reread) expect(reread.label).toContain("NCERT");
+  });
+
   it("rebuilds the exact full note the questionnaire generated", async () => {
     await completePreview("neet");
 

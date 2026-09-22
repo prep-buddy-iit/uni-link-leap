@@ -5,6 +5,7 @@ import { AdminShell, useAdminGate, AdminLoading, AdminDenied } from "@/component
 import { Search, Trash2, Download, Sparkles } from "lucide-react";
 import { isGuidancePreviewLead, parseLeadNote } from "@/lib/guidance-preview/lead-note";
 import { rebuildFullNote } from "@/lib/guidance-preview/engine";
+import { getCategories } from "@/lib/guidance-preview/questions";
 import type { ExamKey } from "@/components/ApplicationModal";
 
 export const Route = createFileRoute("/admin/leads")({
@@ -83,7 +84,8 @@ function AdminLeads() {
   }
 
   function exportCsv() {
-    const headers = ["created_at", "name", "phone", "email", "exam", "current_class", "target_year", "prep_status", "plan", "source", "status", "notes"];
+    // subjects/problems carry the guidance preview's subject and ticked options.
+    const headers = ["created_at", "name", "phone", "email", "exam", "current_class", "target_year", "prep_status", "plan", "source", "status", "subjects", "problems", "notes"];
     const csv = [
       headers.join(","),
       ...filtered.map((r) =>
@@ -204,7 +206,9 @@ function AdminLeads() {
               <Field k="Plan interested in" v={open.plan} />
               <Field k="Source" v={open.source} />
               <Field k="Subjects" v={open.subjects?.join(", ")} />
-              <Field k="Problems" v={open.problems?.join(", ")} />
+              {!isGuidancePreviewLead(open.notes) && (
+                <Field k="Problems" v={open.problems?.join(", ")} />
+              )}
             </dl>
             {open.notes &&
               (isGuidancePreviewLead(open.notes) ? (
@@ -235,10 +239,52 @@ function AdminLeads() {
  */
 function GuidancePreviewNote({ notes, exam }: { notes: string; exam: string | null }) {
   const { ids, freeText } = parseLeadNote(notes);
-  const fullNote = rebuildFullNote(ids, (exam === "neet" ? "neet" : "jee") as ExamKey, freeText);
+  const examKey: ExamKey = exam === "neet" ? "neet" : "jee";
+  const fullNote = rebuildFullNote(ids, examKey, freeText);
+
+  const categories = getCategories(examKey);
+  // Anything the current questionnaire no longer defines - surfaced rather than
+  // dropped, so an answer is never silently lost after a wording change.
+  const known = new Set(categories.flatMap((c) => c.items.map((i) => i.id)));
+  const unknown = ids.filter((id) => !known.has(id));
 
   return (
     <>
+      <div className="mt-6">
+        <p className="mono text-[10px] uppercase tracking-wider text-ink-muted">
+          What they ticked ({ids.length})
+        </p>
+        <div className="mt-2 space-y-3">
+          {categories.map((c) => {
+            const picked = c.items.filter((i) => ids.includes(i.id));
+            if (picked.length === 0) return null;
+            return (
+              <div key={c.key}>
+                <p className="text-xs font-semibold text-ink">{c.question}</p>
+                <ul className="mt-1 list-disc pl-5 text-sm text-ink-muted">
+                  {picked.map((i) => (
+                    <li key={i.id}>{i.label}</li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
+          {unknown.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold text-ink">No longer in the questionnaire</p>
+              <ul className="mt-1 list-disc pl-5 text-sm text-ink-muted">
+                {unknown.map((id) => (
+                  <li key={id} className="mono text-xs">
+                    {id}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {ids.length === 0 && <p className="text-sm text-ink-muted">Nothing recorded.</p>}
+        </div>
+      </div>
+
       {freeText && (
         <div className="mt-6">
           <p className="mono text-[10px] uppercase tracking-wider text-ink-muted">In their words</p>
