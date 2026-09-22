@@ -21,6 +21,8 @@ export async function saveGuidancePreviewLead(lead: GuidancePreviewLead): Promis
   const labelFor = (id: string) =>
     categories.flatMap((c) => c.items).find((i) => i.id === id)?.label ?? id;
 
+  const ids = CATEGORY_KEYS.flatMap((key) => lead.responses[key] ?? []);
+
   const { error } = await supabase.from("leads").insert({
     name: lead.name.trim(),
     phone: lead.phone.trim(),
@@ -28,9 +30,10 @@ export async function saveGuidancePreviewLead(lead: GuidancePreviewLead): Promis
     current_class: "Not specified",
     exam: lead.exam,
     subjects: [lead.subject],
-    problems: CATEGORY_KEYS.flatMap((key) => lead.responses[key] ?? []).map(labelFor),
+    // Readable in admin; the ids in `notes` are what rebuilds the full note.
+    problems: ids.map(labelFor),
     source: "Guidance preview",
-    notes: formatLeadNote(lead),
+    notes: formatLeadNote(lead, ids),
   });
 
   if (error) {

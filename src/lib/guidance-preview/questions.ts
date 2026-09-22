@@ -314,6 +314,16 @@ export function getItem(id: string, exam: ExamKey): Item | undefined {
   };
 }
 
+/** Regroups a flat list of ticked ids back into per-category responses. */
+export function responsesFromIds(ids: string[]): Partial<Record<CategoryKey, string[]>> {
+  const out: Partial<Record<CategoryKey, string[]>> = {};
+  for (const c of RAW_CATEGORIES) {
+    const mine = ids.filter((id) => c.items.some((i) => i.id === id));
+    if (mine.length) out[c.key] = mine;
+  }
+  return out;
+}
+
 /** Weights are exam-independent, so scoring does not need the exam. */
 export function getWeights(id: string): Partial<Record<ClusterKey, number>> {
   return RAW_ITEM_INDEX[id]?.weights ?? {};

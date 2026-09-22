@@ -1,6 +1,12 @@
 import type { ExamKey } from "@/components/ApplicationModal";
 import { CLUSTERS, CLUSTER_KEYS, type ClusterKey } from "./clusters";
-import { CATEGORY_KEYS, getItem, getWeights, type CategoryKey } from "./questions";
+import {
+  CATEGORY_KEYS,
+  getItem,
+  getWeights,
+  responsesFromIds,
+  type CategoryKey,
+} from "./questions";
 
 /** What the student ticked, keyed by category. */
 export type Responses = Partial<Record<CategoryKey, string[]>>;
@@ -94,4 +100,14 @@ export function generateNote(scored: Scored, exam: ExamKey, freeText?: string | 
     teaserLabel: primary.label,
     fullNote: fullParts.join("\n\n"),
   };
+}
+
+/**
+ * Rebuilds the gated note from what a lead stored - the ticked ids, the exam
+ * and the free text. Deterministic, so this reproduces exactly what the
+ * questionnaire generated at the time.
+ */
+export function rebuildFullNote(ids: string[], exam: ExamKey, freeText?: string | null): string {
+  const responses = responsesFromIds(ids);
+  return generateNote(scoreResponses(responses), exam, freeText).fullNote;
 }

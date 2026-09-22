@@ -3,7 +3,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminShell, useAdminGate, AdminLoading, AdminDenied } from "@/components/site/AdminShell";
 import { Search, Trash2, Download, Sparkles } from "lucide-react";
-import { isGuidancePreviewLead } from "@/lib/guidance-preview/lead-note";
+import { isGuidancePreviewLead, parseLeadNote } from "@/lib/guidance-preview/lead-note";
+import { rebuildFullNote } from "@/lib/guidance-preview/engine";
+import type { ExamKey } from "@/components/ApplicationModal";
 
 export const Route = createFileRoute("/admin/leads")({
   head: () => ({
@@ -204,25 +206,52 @@ function AdminLeads() {
               <Field k="Subjects" v={open.subjects?.join(", ")} />
               <Field k="Problems" v={open.problems?.join(", ")} />
             </dl>
-            {open.notes && (
-              <div className="mt-6">
-                <p className="mono text-[10px] uppercase tracking-wider text-ink-muted">
-                  {isGuidancePreviewLead(open.notes) ? "Guidance preview" : "Notes"}
-                </p>
-                {/*
-                  This is where the mentor-side picks up the full note the preview
-                  generated - the student never sees it before signing up, only the
-                  teaser on the free result screen. It is a placeholder diagnosis
-                  built from a checklist; once real mock-test data is available the
-                  diagnostic engine takes over here.
-                */}
-                <p className="mt-1 text-sm whitespace-pre-wrap">{open.notes}</p>
-              </div>
-            )}
+            {open.notes &&
+              (isGuidancePreviewLead(open.notes) ? (
+                <GuidancePreviewNote notes={open.notes} exam={open.exam} />
+              ) : (
+                <div className="mt-6">
+                  <p className="mono text-[10px] uppercase tracking-wider text-ink-muted">Notes</p>
+                  <p className="mt-1 text-sm whitespace-pre-wrap">{open.notes}</p>
+                </div>
+              ))}
           </div>
         </div>
       )}
     </AdminShell>
+  );
+}
+
+/**
+ * The mentor-side pickup point for the guidance preview's full note.
+ *
+ * The note is rebuilt here rather than stored: it is ~2,000 characters and
+ * `leads.notes` is capped at 1,000, but it is fully determined by the ticked
+ * ids, the exam and the free text, all of which are stored. The student never
+ * sees it before signing up - only the teaser on the free result screen.
+ *
+ * It is a placeholder diagnosis assembled from a checklist. Once real mock-test
+ * data is available, the actual diagnostic engine takes over here.
+ */
+function GuidancePreviewNote({ notes, exam }: { notes: string; exam: string | null }) {
+  const { ids, freeText } = parseLeadNote(notes);
+  const fullNote = rebuildFullNote(ids, (exam === "neet" ? "neet" : "jee") as ExamKey, freeText);
+
+  return (
+    <>
+      {freeText && (
+        <div className="mt-6">
+          <p className="mono text-[10px] uppercase tracking-wider text-ink-muted">In their words</p>
+          <p className="mt-1 text-sm whitespace-pre-wrap">{freeText}</p>
+        </div>
+      )}
+      <div className="mt-6 rounded-2xl border border-input bg-muted/40 p-4">
+        <p className="mono text-[10px] uppercase tracking-wider text-ink-muted">
+          Guidance preview · full note (not shown pre-trial)
+        </p>
+        <p className="mt-2 text-sm whitespace-pre-wrap leading-relaxed">{fullNote}</p>
+      </div>
+    </>
   );
 }
 

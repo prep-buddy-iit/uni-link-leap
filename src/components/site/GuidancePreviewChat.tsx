@@ -16,6 +16,7 @@ import {
   type Responses,
 } from "@/lib/guidance-preview/engine";
 import { saveGuidancePreviewLead } from "@/lib/guidance-preview/store";
+import { FREE_TEXT_MAX } from "@/lib/guidance-preview/lead-note";
 import { TRIAL_CTA_COPY } from "@/lib/guidance-preview/copy";
 
 const STEP_EXAM = 0;
@@ -224,13 +225,13 @@ export function GuidancePreviewChat({
       {step === freeTextStep && (
         <Step
           question="Anything else you want the mentor to know?"
-          hint="Optional - one or two lines is plenty."
+          hint="Optional - a line or two is plenty."
         >
           <textarea
             value={freeText}
             onChange={(e) => setFreeText(e.target.value)}
             rows={4}
-            maxLength={1000}
+            maxLength={FREE_TEXT_MAX}
             placeholder="e.g. I dropped a year and I'm scared it won't pay off."
             className="w-full rounded-2xl border border-input bg-white px-4 py-3 text-ink outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/15"
           />

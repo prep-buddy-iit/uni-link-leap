@@ -3,10 +3,16 @@ import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { CLUSTERS, CLUSTER_KEYS } from "./clusters";
-import { EXAMS, SUBJECTS_BY_EXAM, getCategories } from "./questions";
-import { generateNote, scoreResponses, type Responses } from "./engine";
+import { CATEGORY_KEYS, EXAMS, SUBJECTS_BY_EXAM, getCategories } from "./questions";
+import { generateNote, rebuildFullNote, scoreResponses, type Responses } from "./engine";
 import { TRIAL_CTA_COPY } from "./copy";
-import { formatLeadNote, isGuidancePreviewLead, type GuidancePreviewPayload } from "./lead-note";
+import {
+  formatLeadNote,
+  isGuidancePreviewLead,
+  parseLeadNote,
+  NOTES_MAX,
+  type GuidancePreviewPayload,
+} from "./lead-note";
 import type { GuidancePreviewLead } from "./store";
 import type { ExamKey } from "@/components/ApplicationModal";
 
@@ -192,24 +198,55 @@ describe("exam step", () => {
 });
 
 describe("lead note", () => {
-  it("carries the answers and full note, and is detectable as a preview", async () => {
+  const idsOf = (lead: GuidancePreviewPayload) =>
+    CATEGORY_KEYS.flatMap((k) => lead.responses[k] ?? []);
+
+  it("is detectable as a preview and round-trips what it stored", async () => {
     await completePreview("neet");
 
     const lead = saved();
-    const notes = formatLeadNote(lead);
+    const ids = idsOf(lead);
+    const notes = formatLeadNote(lead, ids);
 
     expect(isGuidancePreviewLead(notes)).toBe(true);
     expect(isGuidancePreviewLead("Called twice, no answer")).toBe(false);
     expect(isGuidancePreviewLead(null)).toBe(false);
 
-    expect(notes).toContain("NEET · Physics");
-    expect(notes).toContain("What they ticked:");
-    expect(notes).toContain(lead.note.fullNote);
+    expect(parseLeadNote(notes).ids).toEqual(ids);
+  });
 
-    // Ticked items are written as their NEET wording, not as raw ids.
-    const firstTicked = getCategories("neet")[0].items[0];
-    expect(notes).toContain(firstTicked.label);
-    expect(notes).not.toContain(firstTicked.id);
+  it("rebuilds the exact full note the questionnaire generated", async () => {
+    await completePreview("neet");
+
+    const lead = saved();
+    const notes = formatLeadNote(lead, idsOf(lead));
+    const { ids, freeText } = parseLeadNote(notes);
+
+    expect(rebuildFullNote(ids, "neet", freeText)).toBe(lead.note.fullNote);
+  });
+
+  it("stays inside the leads.notes constraint even when everything is ticked", () => {
+    // The column is capped at 1000 chars; an over-long note is rejected outright
+    // by Postgres, which is what silently lost the first submissions.
+    const responses: Responses = {};
+    for (const c of getCategories("neet")) responses[c.key] = c.items.map((i) => i.id);
+    const ids = CATEGORY_KEYS.flatMap((k) => responses[k] ?? []);
+    const scored = scoreResponses(responses);
+    const freeText = "x".repeat(2000);
+
+    const notes = formatLeadNote(
+      {
+        exam: "neet",
+        subject: "All of them, honestly",
+        responses,
+        freeText,
+        note: generateNote(scored, "neet", freeText),
+      },
+      ids,
+    );
+
+    expect(notes.length).toBeLessThanOrEqual(NOTES_MAX);
+    expect(parseLeadNote(notes).ids).toEqual(ids);
   });
 
   it("includes the student's own words when given", () => {
@@ -222,9 +259,8 @@ describe("lead note", () => {
       note: generateNote(scored, "jee", "I dropped a year."),
     };
 
-    const notes = formatLeadNote(payload);
-    expect(notes).toContain("In their words:");
-    expect(notes).toContain("I dropped a year.");
+    const notes = formatLeadNote(payload, ["rev_forget_weeks"]);
+    expect(parseLeadNote(notes).freeText).toBe("I dropped a year.");
   });
 });
 
