@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { X, Loader2, MessageCircle } from "lucide-react";
 import { COMMUNITIES } from "@/lib/exam-content";
+import { markGuidancePreviewHandedOff } from "@/lib/guidance-preview/store";
 
 export type PlanKey = "trial" | "month1" | "month3" | "month6" | "session";
 export type ExamKey = "jee" | "neet";
@@ -53,12 +54,16 @@ const empty = (plan: PlanKey = "trial"): State => ({
 type Step = "form" | "done";
 
 export function ApplicationModal({
-  open, onOpenChange, initialPlan, initialExam,
+  open, onOpenChange, initialPlan, initialExam, guidancePreviewId,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   initialPlan?: PlanKey;
   initialExam?: ExamKey;
+  // Hidden field, carried in from the Free Guidance Preview result screen so the
+  // lead is linked to the stored responses and full note - the mentor picks the
+  // conversation up from there instead of starting cold.
+  guidancePreviewId?: string;
 }) {
   const [form, setForm] = useState<State>(empty(initialPlan ?? "trial"));
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -117,6 +122,7 @@ export function ApplicationModal({
       source: form.source || null,
       subjects: [],
       exam: exam ?? null,
+      guidance_preview_id: guidancePreviewId ?? null,
     });
     setSubmitting(false);
     if (error) {
@@ -124,6 +130,7 @@ export function ApplicationModal({
       setErrors({ _root: "Something went wrong. Please try again in a moment." });
       return;
     }
+    if (guidancePreviewId) await markGuidancePreviewHandedOff(guidancePreviewId);
     setStep("done");
   }
 
