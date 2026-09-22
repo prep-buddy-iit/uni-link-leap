@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminShell, useAdminGate, AdminLoading, AdminDenied } from "@/components/site/AdminShell";
-import { Search, Trash2, Download } from "lucide-react";
+import { Search, Trash2, Download, Sparkles } from "lucide-react";
+import { isGuidancePreviewLead } from "@/lib/guidance-preview/lead-note";
 
 export const Route = createFileRoute("/admin/leads")({
   head: () => ({
@@ -39,6 +40,7 @@ function AdminLeads() {
   const [rows, setRows] = useState<Lead[]>([]);
   const [q, setQ] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [onlyPreviews, setOnlyPreviews] = useState(false);
   const [open, setOpen] = useState<Lead | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
 
@@ -52,11 +54,12 @@ function AdminLeads() {
   const filtered = useMemo(() => {
     return rows.filter((r) => {
       if (statusFilter !== "all" && r.status !== statusFilter) return false;
+      if (onlyPreviews && !isGuidancePreviewLead(r.notes)) return false;
       if (!q) return true;
       const hay = `${r.name} ${r.phone} ${r.email ?? ""} ${r.exam ?? ""} ${r.current_class}`.toLowerCase();
       return hay.includes(q.toLowerCase());
     });
-  }, [rows, q, statusFilter]);
+  }, [rows, q, statusFilter, onlyPreviews]);
 
   async function updateStatus(id: string, status: string) {
     setBusy(id);
@@ -116,6 +119,11 @@ function AdminLeads() {
           <option value="all">All statuses</option>
           {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
+        <label className="flex items-center gap-2 text-sm text-ink-muted">
+          <input type="checkbox" checked={onlyPreviews} onChange={(e) => setOnlyPreviews(e.target.checked)}
+            className="h-4 w-4 accent-primary" />
+          From guidance preview
+        </label>
         <button onClick={exportCsv} className="pill-btn border border-input text-sm h-10 px-3">
           <Download className="h-3.5 w-3.5" /> Export CSV
         </button>
@@ -137,7 +145,14 @@ function AdminLeads() {
             <tbody>
               {filtered.map((r) => (
                 <tr key={r.id} className="border-t border-border/40 hover:bg-black/[0.02]">
-                  <td className="p-3 font-semibold">{r.name}</td>
+                  <td className="p-3 font-semibold">
+                    {r.name}
+                    {isGuidancePreviewLead(r.notes) && (
+                      <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary align-middle">
+                        <Sparkles className="h-2.5 w-2.5" /> Preview
+                      </span>
+                    )}
+                  </td>
                   <td className="p-3 text-ink-muted">
                     <div>{r.phone}</div>
                     {r.email && <div className="text-xs">{r.email}</div>}
@@ -191,7 +206,16 @@ function AdminLeads() {
             </dl>
             {open.notes && (
               <div className="mt-6">
-                <p className="mono text-[10px] uppercase tracking-wider text-ink-muted">Notes</p>
+                <p className="mono text-[10px] uppercase tracking-wider text-ink-muted">
+                  {isGuidancePreviewLead(open.notes) ? "Guidance preview" : "Notes"}
+                </p>
+                {/*
+                  This is where the mentor-side picks up the full note the preview
+                  generated - the student never sees it before signing up, only the
+                  teaser on the free result screen. It is a placeholder diagnosis
+                  built from a checklist; once real mock-test data is available the
+                  diagnostic engine takes over here.
+                */}
                 <p className="mt-1 text-sm whitespace-pre-wrap">{open.notes}</p>
               </div>
             )}

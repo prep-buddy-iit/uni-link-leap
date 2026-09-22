@@ -6,20 +6,13 @@ import { CLUSTERS, CLUSTER_KEYS } from "./clusters";
 import { EXAMS, SUBJECTS_BY_EXAM, getCategories } from "./questions";
 import { generateNote, scoreResponses, type Responses } from "./engine";
 import { TRIAL_CTA_COPY } from "./copy";
-import type { PreviewRecord } from "./store";
+import { formatLeadNote, isGuidancePreviewLead, type GuidancePreviewPayload } from "./lead-note";
 import type { ExamKey } from "@/components/ApplicationModal";
 
-// The chat writes to Supabase on finish; stub the store so the test never
-// touches the network. Trial handoff itself is covered by the modal's own path.
-const saveGuidancePreviewResponse = vi.fn(
-  async (_rec: PreviewRecord): Promise<string | null> => "preview-uuid-1",
-);
-vi.mock("@/lib/guidance-preview/store", () => ({
-  saveGuidancePreviewResponse: (rec: PreviewRecord) => saveGuidancePreviewResponse(rec),
-  markGuidancePreviewHandedOff: vi.fn(async () => {}),
-}));
-
-const open = vi.fn();
+// Nothing is persisted on finish any more - the preview is handed to the trial
+// modal in memory, so `open` is the whole handoff surface.
+const open =
+  vi.fn<(plan: string, exam: ExamKey, opts: { guidancePreview: GuidancePreviewPayload }) => void>();
 vi.mock("@/lib/application-modal", () => ({
   useApplicationModal: () => ({ open }),
 }));
@@ -48,22 +41,28 @@ async function completePreview(exam: ExamKey = "jee") {
   return user;
 }
 
+/** The payload the result screen would hand to the trial form. */
+function handedOff(): GuidancePreviewPayload {
+  return open.mock.calls[0][2].guidancePreview;
+}
+
 beforeEach(() => {
-  saveGuidancePreviewResponse.mockClear();
   open.mockClear();
 });
 afterEach(cleanup);
 
 describe("free result screen", () => {
   it("never renders fullNote content", async () => {
-    await completePreview();
+    const user = await completePreview();
 
+    // Snapshot the screen before the CTA hands anything over.
     const rendered = document.body.textContent ?? "";
+    await user.click(screen.getByRole("button", { name: /trial/i }));
 
-    // The note the mentor gets is stored, but must not reach the pre-trial DOM.
-    const stored = saveGuidancePreviewResponse.mock.calls[0][0];
-    expect(stored.note.fullNote.length).toBeGreaterThan(0);
-    expect(rendered).not.toContain(stored.note.fullNote);
+    // The note the mentor gets travels on, but must not reach the pre-trial DOM.
+    const { note } = handedOff();
+    expect(note.fullNote.length).toBeGreaterThan(0);
+    expect(rendered).not.toContain(note.fullNote);
 
     // No cluster's full template or bridging line, whichever pattern it landed on.
     for (const key of CLUSTER_KEYS) {
@@ -80,11 +79,12 @@ describe("free result screen", () => {
   });
 
   it("shows only the teaser for the pattern it landed on", async () => {
-    await completePreview();
+    const user = await completePreview();
+    await user.click(screen.getByRole("button", { name: /trial/i }));
 
-    const stored = saveGuidancePreviewResponse.mock.calls[0][0];
-    expect(screen.getByText(stored.note.teaserLabel)).toBeTruthy();
-    expect(screen.getByText(stored.note.teaser)).toBeTruthy();
+    const { note } = handedOff();
+    expect(screen.getByText(note.teaserLabel)).toBeTruthy();
+    expect(screen.getByText(note.teaser)).toBeTruthy();
   });
 });
 
@@ -98,11 +98,13 @@ describe("trial CTA", () => {
     expect(TRIAL_CTA_COPY).toContain("₹99");
   });
 
-  it("hands the stored preview id to the existing trial flow", async () => {
+  it("hands the preview payload to the existing trial flow", async () => {
     const user = await completePreview();
     await user.click(screen.getByRole("button", { name: /trial/i }));
 
-    expect(open).toHaveBeenCalledWith("trial", "jee", { guidancePreviewId: "preview-uuid-1" });
+    expect(open.mock.calls[0][0]).toBe("trial");
+    expect(open.mock.calls[0][1]).toBe("jee");
+    expect(handedOff().note.fullNote.length).toBeGreaterThan(0);
   });
 });
 
@@ -138,15 +140,55 @@ describe("exam step", () => {
     const user = await completePreview("neet");
     await user.click(screen.getByRole("button", { name: /trial/i }));
 
-    expect(open).toHaveBeenCalledWith("trial", "neet", { guidancePreviewId: "preview-uuid-1" });
-    expect(saveGuidancePreviewResponse.mock.calls[0][0].exam).toBe("neet");
+    expect(open.mock.calls[0][0]).toBe("trial");
+    expect(open.mock.calls[0][1]).toBe("neet");
+    expect(handedOff().exam).toBe("neet");
   });
 
   it("builds the teaser evidence from the exam's own wording", async () => {
-    await completePreview("neet");
-    const stored = saveGuidancePreviewResponse.mock.calls[0][0];
-    expect(stored.note.teaser).toMatch(/^You said you /);
-    expect(EXAMS.map((e) => e.key)).toContain(stored.exam);
+    const user = await completePreview("neet");
+    await user.click(screen.getByRole("button", { name: /trial/i }));
+
+    const payload = handedOff();
+    expect(payload.note.teaser).toMatch(/^You said you /);
+    expect(EXAMS.map((e) => e.key)).toContain(payload.exam);
+  });
+});
+
+describe("lead note", () => {
+  it("carries the answers and full note, and is detectable as a preview", async () => {
+    const user = await completePreview("neet");
+    await user.click(screen.getByRole("button", { name: /trial/i }));
+
+    const notes = formatLeadNote(handedOff());
+
+    expect(isGuidancePreviewLead(notes)).toBe(true);
+    expect(isGuidancePreviewLead("Called twice, no answer")).toBe(false);
+    expect(isGuidancePreviewLead(null)).toBe(false);
+
+    expect(notes).toContain("NEET · Physics");
+    expect(notes).toContain("What they ticked:");
+    expect(notes).toContain(handedOff().note.fullNote);
+
+    // Ticked items are written as their NEET wording, not as raw ids.
+    const firstTicked = getCategories("neet")[0].items[0];
+    expect(notes).toContain(firstTicked.label);
+    expect(notes).not.toContain(firstTicked.id);
+  });
+
+  it("includes the student's own words when given", () => {
+    const scored = scoreResponses({ revision: ["rev_forget_weeks"] });
+    const payload: GuidancePreviewPayload = {
+      exam: "jee",
+      subject: "Maths",
+      responses: { revision: ["rev_forget_weeks"] },
+      freeText: "I dropped a year.",
+      note: generateNote(scored, "jee", "I dropped a year."),
+    };
+
+    const notes = formatLeadNote(payload);
+    expect(notes).toContain("In their words:");
+    expect(notes).toContain("I dropped a year.");
   });
 });
 

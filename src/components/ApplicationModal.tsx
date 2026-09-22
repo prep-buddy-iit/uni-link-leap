@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { X, Loader2, MessageCircle } from "lucide-react";
 import { COMMUNITIES } from "@/lib/exam-content";
-import { markGuidancePreviewHandedOff } from "@/lib/guidance-preview/store";
+import { formatLeadNote, type GuidancePreviewPayload } from "@/lib/guidance-preview/lead-note";
 
 export type PlanKey = "trial" | "month1" | "month3" | "month6" | "session";
 export type ExamKey = "jee" | "neet";
@@ -54,16 +54,16 @@ const empty = (plan: PlanKey = "trial"): State => ({
 type Step = "form" | "done";
 
 export function ApplicationModal({
-  open, onOpenChange, initialPlan, initialExam, guidancePreviewId,
+  open, onOpenChange, initialPlan, initialExam, guidancePreview,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   initialPlan?: PlanKey;
   initialExam?: ExamKey;
-  // Hidden field, carried in from the Free Guidance Preview result screen so the
-  // lead is linked to the stored responses and full note - the mentor picks the
+  // Carried in from the Free Guidance Preview result screen. Its answers and
+  // full note are written onto the lead below, so the mentor picks the
   // conversation up from there instead of starting cold.
-  guidancePreviewId?: string;
+  guidancePreview?: GuidancePreviewPayload;
 }) {
   const [form, setForm] = useState<State>(empty(initialPlan ?? "trial"));
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -119,13 +119,11 @@ export function ApplicationModal({
       current_class: form.current_class || "Not specified",
       plan: PLAN_LABEL[form.plan],
       problems: form.problems,
-      source: form.source || null,
-      subjects: [],
-      exam: exam ?? null,
-      // Only sent when there actually is one. Sending the key unconditionally
-      // would make every trial application depend on the guidance-preview
-      // migration having been applied first.
-      ...(guidancePreviewId ? { guidance_preview_id: guidancePreviewId } : {}),
+      source: form.source || (guidancePreview ? "Guidance preview" : null),
+      subjects: guidancePreview ? [guidancePreview.subject] : [],
+      exam: exam ?? guidancePreview?.exam ?? null,
+      // The mentor-side handoff: answers and full note ride along on the lead.
+      notes: guidancePreview ? formatLeadNote(guidancePreview) : null,
     });
     setSubmitting(false);
     if (error) {
@@ -133,7 +131,6 @@ export function ApplicationModal({
       setErrors({ _root: "Something went wrong. Please try again in a moment." });
       return;
     }
-    if (guidancePreviewId) await markGuidancePreviewHandedOff(guidancePreviewId);
     setStep("done");
   }
 

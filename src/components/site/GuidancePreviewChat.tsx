@@ -15,7 +15,7 @@ import {
   type Note,
   type Responses,
 } from "@/lib/guidance-preview/engine";
-import { saveGuidancePreviewResponse } from "@/lib/guidance-preview/store";
+import type { GuidancePreviewPayload } from "@/lib/guidance-preview/lead-note";
 import { TRIAL_CTA_COPY } from "@/lib/guidance-preview/copy";
 
 const STEP_EXAM = 0;
@@ -25,8 +25,7 @@ const STEP_FIRST_CATEGORY = 2;
 
 type Result = {
   note: Note;
-  previewId: string | null;
-  exam: ExamKey;
+  payload: GuidancePreviewPayload;
 };
 
 export function GuidancePreviewChat({
@@ -44,7 +43,6 @@ export function GuidancePreviewChat({
   const [subject, setSubject] = useState<string>("");
   const [responses, setResponses] = useState<Responses>({});
   const [freeText, setFreeText] = useState("");
-  const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
 
   const categories = useMemo(() => (exam ? getCategories(exam) : []), [exam]);
@@ -75,31 +73,23 @@ export function GuidancePreviewChat({
     });
   }
 
-  async function finish() {
+  function finish() {
     if (!exam) return;
     if (totalChecked === 0) {
       toast.error("Tick at least one thing so there's something to read.");
       return;
     }
-    setSubmitting(true);
 
     const scored = scoreResponses(responses);
     const trimmed = freeText.trim() || null;
     const note = generateNote(scored, exam, trimmed);
 
-    // The full note is generated and stored here, but stays behind the trial -
-    // only `note.teaser` is rendered below.
-    const previewId = await saveGuidancePreviewResponse({
-      exam,
-      subject,
-      responses,
-      freeText: trimmed,
-      scored,
+    // The full note is generated here but never rendered - it is held in memory
+    // and written onto the lead only if the student goes on to start the trial.
+    setResult({
       note,
+      payload: { exam, subject, responses, freeText: trimmed, note },
     });
-
-    setSubmitting(false);
-    setResult({ note, previewId, exam });
     setStep(lastStep + 1);
   }
 
@@ -107,11 +97,8 @@ export function GuidancePreviewChat({
     return (
       <ResultScreen
         note={result.note}
-        matched={Boolean(result.previewId)}
         className={className}
-        onStartTrial={() =>
-          open("trial", result.exam, { guidancePreviewId: result.previewId ?? undefined })
-        }
+        onStartTrial={() => open("trial", result.payload.exam, { guidancePreview: result.payload })}
       />
     );
   }
@@ -222,9 +209,7 @@ export function GuidancePreviewChat({
           <Nav
             onBack={() => setStep(lastStep - 1)}
             onNext={finish}
-            nextLabel={submitting ? "Reading your answers…" : "See what this points at"}
-            nextDisabled={submitting}
-            busy={submitting}
+            nextLabel="See what this points at"
           />
         </Step>
       )}
@@ -241,12 +226,10 @@ export function GuidancePreviewChat({
 function ResultScreen({
   note,
   onStartTrial,
-  matched,
   className = "",
 }: {
   note: Note;
   onStartTrial: () => void;
-  matched: boolean;
   className?: string;
 }) {
   return (
@@ -281,9 +264,7 @@ function ResultScreen({
       </button>
 
       <p className="mt-3 text-center text-xs text-ink-muted">
-        {matched
-          ? "Your answers are saved - your mentor reads them before you speak."
-          : "Mention this preview when our team calls and they'll pull your answers up."}
+        Your answers come with you - your mentor reads them before you speak.
       </p>
     </div>
   );

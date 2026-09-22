@@ -20,7 +20,6 @@ import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AdminContactsRouteImport } from './routes/admin.contacts'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
-import { Route as AdminGuidancePreviewsRouteImport } from './routes/admin.guidance-previews'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminMentorsRouteImport } from './routes/admin.mentors'
@@ -82,11 +81,6 @@ const AdminDashboardRoute = AdminDashboardRouteImport.update({
   path: '/admin/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminGuidancePreviewsRoute = AdminGuidancePreviewsRouteImport.update({
-  id: '/admin/guidance-previews',
-  path: '/admin/guidance-previews',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AdminLeadsRoute = AdminLeadsRouteImport.update({
   id: '/admin/leads',
   path: '/admin/leads',
@@ -125,7 +119,6 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/contacts': typeof AdminContactsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
-  '/admin/guidance-previews': typeof AdminGuidancePreviewsRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/mentors': typeof AdminMentorsRoute
@@ -144,7 +137,6 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/contacts': typeof AdminContactsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
-  '/admin/guidance-previews': typeof AdminGuidancePreviewsRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/mentors': typeof AdminMentorsRoute
@@ -164,7 +156,6 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/contacts': typeof AdminContactsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
-  '/admin/guidance-previews': typeof AdminGuidancePreviewsRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/mentors': typeof AdminMentorsRoute
@@ -185,7 +176,6 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/admin/contacts'
     | '/admin/dashboard'
-    | '/admin/guidance-previews'
     | '/admin/leads'
     | '/admin/login'
     | '/admin/mentors'
@@ -204,7 +194,6 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/admin/contacts'
     | '/admin/dashboard'
-    | '/admin/guidance-previews'
     | '/admin/leads'
     | '/admin/login'
     | '/admin/mentors'
@@ -223,7 +212,6 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/admin/contacts'
     | '/admin/dashboard'
-    | '/admin/guidance-previews'
     | '/admin/leads'
     | '/admin/login'
     | '/admin/mentors'
@@ -243,7 +231,6 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   AdminContactsRoute: typeof AdminContactsRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
-  AdminGuidancePreviewsRoute: typeof AdminGuidancePreviewsRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminMentorsRoute: typeof AdminMentorsRoute
@@ -329,13 +316,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/guidance-previews': {
-      id: '/admin/guidance-previews'
-      path: '/admin/guidance-previews'
-      fullPath: '/admin/guidance-previews'
-      preLoaderRoute: typeof AdminGuidancePreviewsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/admin/leads': {
       id: '/admin/leads'
       path: '/admin/leads'
@@ -398,7 +378,6 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   AdminContactsRoute: AdminContactsRoute,
   AdminDashboardRoute: AdminDashboardRoute,
-  AdminGuidancePreviewsRoute: AdminGuidancePreviewsRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminMentorsRoute: AdminMentorsRoute,
