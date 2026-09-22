@@ -1,8 +1,10 @@
+import type { ExamKey } from "@/components/ApplicationModal";
 import { supabase } from "@/integrations/supabase/client";
 import type { Note } from "./engine";
 import type { Responses, Scored } from "./engine";
 
 export type PreviewRecord = {
+  exam: ExamKey;
   subject: string;
   responses: Responses;
   freeText: string | null;
@@ -21,6 +23,7 @@ export async function saveGuidancePreviewResponse(rec: PreviewRecord): Promise<s
   const { data, error } = await supabase
     .from("guidance_preview_responses")
     .insert({
+      exam: rec.exam,
       subject: rec.subject,
       responses: rec.responses,
       free_text: rec.freeText,

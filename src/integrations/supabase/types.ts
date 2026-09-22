@@ -50,6 +50,7 @@ export type Database = {
       guidance_preview_responses: {
         Row: {
           created_at: string
+          exam: string
           free_text: string | null
           full_note: string
           handed_off: boolean
@@ -61,6 +62,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          exam?: string
           free_text?: string | null
           full_note?: string
           handed_off?: boolean
@@ -72,6 +74,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          exam?: string
           free_text?: string | null
           full_note?: string
           handed_off?: boolean

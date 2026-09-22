@@ -3,7 +3,12 @@ import { ArrowRight, Loader2, Lock, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { useApplicationModal } from "@/lib/application-modal";
 import type { ExamKey } from "@/components/ApplicationModal";
-import { CATEGORIES, SUBJECTS, type CategoryKey } from "@/lib/guidance-preview/questions";
+import {
+  EXAMS,
+  SUBJECTS_BY_EXAM,
+  getCategories,
+  type CategoryKey,
+} from "@/lib/guidance-preview/questions";
 import {
   generateNote,
   scoreResponses,
@@ -13,28 +18,52 @@ import {
 import { saveGuidancePreviewResponse } from "@/lib/guidance-preview/store";
 import { TRIAL_CTA_COPY } from "@/lib/guidance-preview/copy";
 
-/** subject step, then one step per category, then the free-text step. */
-const LAST_STEP = CATEGORIES.length + 1;
+const STEP_EXAM = 0;
+const STEP_SUBJECT = 1;
+/** Categories occupy STEP_FIRST_CATEGORY .. STEP_FIRST_CATEGORY + count - 1. */
+const STEP_FIRST_CATEGORY = 2;
 
 type Result = {
   note: Note;
   previewId: string | null;
+  exam: ExamKey;
 };
 
-export function GuidancePreviewChat({ exam }: { exam?: ExamKey }) {
+export function GuidancePreviewChat({
+  initialExam,
+  className = "",
+}: {
+  /** Pre-selects the exam, e.g. from ?exam=jee. The student can still change it. */
+  initialExam?: ExamKey;
+  className?: string;
+}) {
   const { open } = useApplicationModal();
 
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(initialExam ? STEP_SUBJECT : STEP_EXAM);
+  const [exam, setExam] = useState<ExamKey | undefined>(initialExam);
   const [subject, setSubject] = useState<string>("");
   const [responses, setResponses] = useState<Responses>({});
   const [freeText, setFreeText] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
 
+  const categories = useMemo(() => (exam ? getCategories(exam) : []), [exam]);
+  const lastStep = STEP_FIRST_CATEGORY + categories.length;
+
   const totalChecked = useMemo(
     () => Object.values(responses).reduce((n, ids) => n + (ids?.length ?? 0), 0),
     [responses],
   );
+
+  function pickExam(next: ExamKey) {
+    // Wording and subject list both depend on the exam, so a late change has to
+    // clear answers rather than leave them attached to questions never asked.
+    if (exam && exam !== next) {
+      setResponses({});
+      setSubject("");
+    }
+    setExam(next);
+  }
 
   function toggle(category: CategoryKey, id: string) {
     setResponses((r) => {
@@ -47,6 +76,7 @@ export function GuidancePreviewChat({ exam }: { exam?: ExamKey }) {
   }
 
   async function finish() {
+    if (!exam) return;
     if (totalChecked === 0) {
       toast.error("Tick at least one thing so there's something to read.");
       return;
@@ -55,11 +85,12 @@ export function GuidancePreviewChat({ exam }: { exam?: ExamKey }) {
 
     const scored = scoreResponses(responses);
     const trimmed = freeText.trim() || null;
-    const note = generateNote(scored, trimmed);
+    const note = generateNote(scored, exam, trimmed);
 
     // The full note is generated and stored here, but stays behind the trial -
     // only `note.teaser` is rendered below.
     const previewId = await saveGuidancePreviewResponse({
+      exam,
       subject,
       responses,
       freeText: trimmed,
@@ -68,28 +99,28 @@ export function GuidancePreviewChat({ exam }: { exam?: ExamKey }) {
     });
 
     setSubmitting(false);
-    setResult({ note, previewId });
-    setStep(LAST_STEP + 1);
-  }
-
-  function startTrial() {
-    open("trial", exam, { guidancePreviewId: result?.previewId ?? undefined });
+    setResult({ note, previewId, exam });
+    setStep(lastStep + 1);
   }
 
   if (result) {
     return (
       <ResultScreen
         note={result.note}
-        onStartTrial={startTrial}
         matched={Boolean(result.previewId)}
+        className={className}
+        onStartTrial={() =>
+          open("trial", result.exam, { guidancePreviewId: result.previewId ?? undefined })
+        }
       />
     );
   }
 
-  const progress = Math.round((step / (LAST_STEP + 1)) * 100);
+  const progress = Math.round((step / (lastStep + 1)) * 100);
+  const subjects = exam ? SUBJECTS_BY_EXAM[exam] : [];
 
   return (
-    <div className="glass-strong rounded-3xl p-6 sm:p-8">
+    <div className={"glass-strong rounded-3xl p-6 sm:p-8 " + className}>
       <div className="flex items-center gap-2 text-ink-muted">
         <Sparkles className="h-4 w-4 text-primary" />
         <p className="eyebrow !mb-0">Free guidance preview</p>
@@ -102,24 +133,45 @@ export function GuidancePreviewChat({ exam }: { exam?: ExamKey }) {
         />
       </div>
 
-      {step === 0 && (
+      {step === STEP_EXAM && (
+        <Step
+          question="Which exam are you preparing for?"
+          hint="Everything after this is worded for the one you pick."
+        >
+          <div className="flex flex-wrap gap-2">
+            {EXAMS.map((e) => (
+              <Chip key={e.key} active={exam === e.key} onClick={() => pickExam(e.key)}>
+                {e.label} <span className="opacity-70">· {e.blurb}</span>
+              </Chip>
+            ))}
+          </div>
+          <Nav onNext={() => setStep(STEP_SUBJECT)} nextDisabled={!exam} nextLabel="Next" />
+        </Step>
+      )}
+
+      {step === STEP_SUBJECT && (
         <Step
           question="Which subject is giving you the most trouble right now?"
           hint="Pick the one that worries you most - we'll go from there."
         >
           <div className="flex flex-wrap gap-2">
-            {SUBJECTS.map((s) => (
+            {subjects.map((s) => (
               <Chip key={s} active={subject === s} onClick={() => setSubject(s)}>
                 {s}
               </Chip>
             ))}
           </div>
-          <Nav onNext={() => setStep(1)} nextDisabled={!subject} nextLabel="Start" />
+          <Nav
+            onBack={() => setStep(STEP_EXAM)}
+            onNext={() => setStep(STEP_FIRST_CATEGORY)}
+            nextDisabled={!subject}
+            nextLabel="Start"
+          />
         </Step>
       )}
 
-      {CATEGORIES.map((c, i) =>
-        step === i + 1 ? (
+      {categories.map((c, i) =>
+        step === STEP_FIRST_CATEGORY + i ? (
           <Step key={c.key} question={c.question} hint={c.hint}>
             <div className="flex flex-col gap-2">
               {c.items.map((item) => {
@@ -146,15 +198,15 @@ export function GuidancePreviewChat({ exam }: { exam?: ExamKey }) {
               })}
             </div>
             <Nav
-              onBack={() => setStep(i)}
-              onNext={() => setStep(i + 2)}
-              nextLabel={i === CATEGORIES.length - 1 ? "Almost done" : "Next"}
+              onBack={() => setStep(STEP_FIRST_CATEGORY + i - 1)}
+              onNext={() => setStep(STEP_FIRST_CATEGORY + i + 1)}
+              nextLabel={i === categories.length - 1 ? "Almost done" : "Next"}
             />
           </Step>
         ) : null,
       )}
 
-      {step === LAST_STEP && (
+      {step === lastStep && (
         <Step
           question="Anything else you want the mentor to know?"
           hint="Optional - one or two lines is plenty."
@@ -168,7 +220,7 @@ export function GuidancePreviewChat({ exam }: { exam?: ExamKey }) {
             className="w-full rounded-2xl border border-input bg-white px-4 py-3 text-ink outline-none transition focus:border-primary focus:ring-4 focus:ring-primary/15"
           />
           <Nav
-            onBack={() => setStep(LAST_STEP - 1)}
+            onBack={() => setStep(lastStep - 1)}
             onNext={finish}
             nextLabel={submitting ? "Reading your answers…" : "See what this points at"}
             nextDisabled={submitting}
@@ -190,13 +242,15 @@ function ResultScreen({
   note,
   onStartTrial,
   matched,
+  className = "",
 }: {
   note: Note;
   onStartTrial: () => void;
   matched: boolean;
+  className?: string;
 }) {
   return (
-    <div className="glass-strong rounded-3xl p-6 sm:p-8">
+    <div className={"glass-strong rounded-3xl p-6 sm:p-8 " + className}>
       <div className="flex items-center gap-2 text-ink-muted">
         <Sparkles className="h-4 w-4 text-primary" />
         <p className="eyebrow !mb-0">Here's what your answers point at</p>

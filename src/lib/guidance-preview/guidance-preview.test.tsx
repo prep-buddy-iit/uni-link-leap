@@ -3,10 +3,11 @@ import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { CLUSTERS, CLUSTER_KEYS } from "./clusters";
-import { CATEGORIES } from "./questions";
+import { EXAMS, SUBJECTS_BY_EXAM, getCategories } from "./questions";
 import { generateNote, scoreResponses, type Responses } from "./engine";
 import { TRIAL_CTA_COPY } from "./copy";
 import type { PreviewRecord } from "./store";
+import type { ExamKey } from "@/components/ApplicationModal";
 
 // The chat writes to Supabase on finish; stub the store so the test never
 // touches the network. Trial handoff itself is covered by the modal's own path.
@@ -26,15 +27,18 @@ vi.mock("@/lib/application-modal", () => ({
 // Imported after the mocks so the component picks them up.
 const { GuidancePreviewChat } = await import("@/components/site/GuidancePreviewChat");
 
-/** Ticks one item in every category, then walks to the result screen. */
-async function completePreview() {
+/** Picks the exam, then ticks one item in every category, to the result screen. */
+async function completePreview(exam: ExamKey = "jee") {
   const user = userEvent.setup();
-  render(<GuidancePreviewChat exam="jee" />);
+  render(<GuidancePreviewChat />);
+
+  await user.click(screen.getByRole("button", { name: new RegExp(`^${exam}`, "i") }));
+  await user.click(screen.getByRole("button", { name: /^Next/i }));
 
   await user.click(screen.getByRole("button", { name: /Physics/i }));
   await user.click(screen.getByRole("button", { name: /^Start/i }));
 
-  for (const category of CATEGORIES) {
+  for (const category of getCategories(exam)) {
     await user.click(screen.getByLabelText(category.items[0].label));
     await user.click(screen.getByRole("button", { name: /Next|Almost done/i }));
   }
@@ -102,11 +106,55 @@ describe("trial CTA", () => {
   });
 });
 
+describe("exam step", () => {
+  it("offers only that exam's subjects", () => {
+    expect(SUBJECTS_BY_EXAM.jee).toContain("Maths");
+    expect(SUBJECTS_BY_EXAM.jee).not.toContain("Biology");
+    expect(SUBJECTS_BY_EXAM.neet).toContain("Biology");
+    expect(SUBJECTS_BY_EXAM.neet).not.toContain("Maths");
+  });
+
+  it("rephrases questions per exam while keeping item ids stable", () => {
+    const jee = getCategories("jee");
+    const neet = getCategories("neet");
+
+    const ids = (cs: ReturnType<typeof getCategories>) =>
+      cs.flatMap((c) => c.items.map((i) => i.id));
+    expect(ids(jee)).toEqual(ids(neet));
+
+    const jeeMocks = jee.find((c) => c.key === "mocks")!;
+    const neetMocks = neet.find((c) => c.key === "mocks")!;
+    expect(jeeMocks.question).toContain("JEE");
+    expect(neetMocks.question).toContain("NEET");
+
+    const jeeStudy = jee.find((c) => c.key === "study")!;
+    const neetStudy = neet.find((c) => c.key === "study")!;
+    const byId = (c: typeof jeeStudy, id: string) => c.items.find((i) => i.id === id)!.label;
+    expect(byId(neetStudy, "study_reread")).toContain("NCERT");
+    expect(byId(jeeStudy, "study_reread")).not.toContain("NCERT");
+  });
+
+  it("carries the chosen exam into the trial handoff", async () => {
+    const user = await completePreview("neet");
+    await user.click(screen.getByRole("button", { name: /trial/i }));
+
+    expect(open).toHaveBeenCalledWith("trial", "neet", { guidancePreviewId: "preview-uuid-1" });
+    expect(saveGuidancePreviewResponse.mock.calls[0][0].exam).toBe("neet");
+  });
+
+  it("builds the teaser evidence from the exam's own wording", async () => {
+    await completePreview("neet");
+    const stored = saveGuidancePreviewResponse.mock.calls[0][0];
+    expect(stored.note.teaser).toMatch(/^You said you /);
+    expect(EXAMS.map((e) => e.key)).toContain(stored.exam);
+  });
+});
+
 describe("generateNote", () => {
   it("splits teaser and fullNote, and keeps the full template out of the teaser", () => {
     const responses: Responses = { revision: ["rev_forget_weeks", "rev_no_schedule"] };
     const scored = scoreResponses(responses);
-    const note = generateNote(scored, null);
+    const note = generateNote(scored, "jee", null);
 
     expect(scored.primary).toBe("retention");
     expect(note.teaser).toContain(CLUSTERS.retention.teaser);
@@ -116,7 +164,7 @@ describe("generateNote", () => {
 
   it("puts the evidence sentence first, referencing what was ticked", () => {
     const scored = scoreResponses({ practice: ["prac_blank_start"] });
-    const note = generateNote(scored, null);
+    const note = generateNote(scored, "jee", null);
 
     expect(note.teaser).toMatch(/^You said you go blank on where to start/);
   });
@@ -127,7 +175,7 @@ describe("generateNote", () => {
       study: ["study_reread", "study_hours_nothing"],
       headspace: ["head_restart_mondays", "head_motivated_bursts"],
     });
-    const note = generateNote(scored, "I dropped a year.");
+    const note = generateNote(scored, "jee", "I dropped a year.");
 
     expect(scored.secondary).not.toBeNull();
     expect(note.fullNote).toContain(CLUSTERS[scored.secondary!].bridge);

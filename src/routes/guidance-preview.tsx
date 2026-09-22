@@ -52,7 +52,7 @@ function GuidancePreviewPage() {
             </p>
 
             <div className="mt-8">
-              <GuidancePreviewChat exam={exam} />
+              <GuidancePreviewChat initialExam={exam} />
             </div>
           </div>
         </section>

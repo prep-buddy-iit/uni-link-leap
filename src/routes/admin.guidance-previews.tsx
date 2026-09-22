@@ -3,7 +3,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminShell, useAdminGate, AdminLoading, AdminDenied } from "@/components/site/AdminShell";
 import { Search, Trash2 } from "lucide-react";
-import { CATEGORIES, getItem } from "@/lib/guidance-preview/questions";
+import { CATEGORY_KEYS, getCategories, getItem } from "@/lib/guidance-preview/questions";
+import type { ExamKey } from "@/components/ApplicationModal";
 import type { Responses } from "@/lib/guidance-preview/engine";
 
 export const Route = createFileRoute("/admin/guidance-previews")({
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/admin/guidance-previews")({
 type Preview = {
   id: string;
   created_at: string;
+  exam: ExamKey;
   subject: string;
   responses: Responses;
   free_text: string | null;
@@ -64,7 +66,7 @@ function AdminGuidancePreviews() {
       if (onlyUnmatched && r.handed_off) return false;
       if (!q) return true;
       const lead = leadByPreview[r.id];
-      const hay = `${r.subject} ${r.free_text ?? ""} ${lead?.name ?? ""} ${lead?.phone ?? ""}`;
+      const hay = `${r.exam} ${r.subject} ${r.free_text ?? ""} ${lead?.name ?? ""} ${lead?.phone ?? ""}`;
       return hay.toLowerCase().includes(q.toLowerCase());
     });
   }, [rows, q, onlyUnmatched, leadByPreview]);
@@ -125,13 +127,16 @@ function AdminGuidancePreviews() {
             <tbody>
               {filtered.map((r) => {
                 const lead = leadByPreview[r.id];
-                const ticked = CATEGORIES.reduce(
-                  (n, c) => n + (r.responses?.[c.key]?.length ?? 0),
+                const ticked = CATEGORY_KEYS.reduce(
+                  (n, key) => n + (r.responses?.[key]?.length ?? 0),
                   0,
                 );
                 return (
                   <tr key={r.id} className="border-t border-border/40 hover:bg-black/[0.02]">
-                    <td className="p-3 font-semibold">{r.subject}</td>
+                    <td className="p-3 font-semibold">
+                      <div className="mono text-xs uppercase text-ink-muted">{r.exam}</div>
+                      <div>{r.subject}</div>
+                    </td>
                     <td className="p-3 text-ink-muted">{ticked} items</td>
                     <td className="p-3 text-ink-muted">
                       {lead ? (
@@ -208,7 +213,9 @@ function PreviewDetail({
         <button onClick={onClose} className="absolute right-4 top-4 text-2xl">
           ×
         </button>
-        <h2 className="font-display text-2xl font-bold">{preview.subject}</h2>
+        <h2 className="font-display text-2xl font-bold">
+          {preview.exam.toUpperCase()} · {preview.subject}
+        </h2>
         <p className="mt-1 text-sm text-ink-muted">
           Taken {new Date(preview.created_at).toLocaleString()} ·{" "}
           {lead ? `matched to ${lead.name} (${lead.phone})` : "not yet matched to a trial signup"}
@@ -219,7 +226,7 @@ function PreviewDetail({
             What they ticked
           </p>
           <div className="mt-2 space-y-3">
-            {CATEGORIES.map((c) => {
+            {getCategories(preview.exam).map((c) => {
               const ids = preview.responses?.[c.key] ?? [];
               if (ids.length === 0) return null;
               return (
@@ -227,7 +234,7 @@ function PreviewDetail({
                   <p className="text-xs font-semibold text-ink">{c.question}</p>
                   <ul className="mt-1 list-disc pl-5 text-sm text-ink-muted">
                     {ids.map((id) => (
-                      <li key={id}>{getItem(id)?.label ?? id}</li>
+                      <li key={id}>{getItem(id, preview.exam)?.label ?? id}</li>
                     ))}
                   </ul>
                 </div>

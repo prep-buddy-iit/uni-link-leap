@@ -1,16 +1,42 @@
+import type { ExamKey } from "@/components/ApplicationModal";
 import type { ClusterKey } from "./clusters";
 
-export const SUBJECTS = [
-  "Physics",
-  "Chemistry",
-  "Maths",
-  "Biology",
-  "All of them, honestly",
-] as const;
+export const EXAMS: { key: ExamKey; label: string; blurb: string }[] = [
+  { key: "jee", label: "JEE", blurb: "Main or Advanced" },
+  { key: "neet", label: "NEET", blurb: "UG" },
+];
 
-export type Subject = (typeof SUBJECTS)[number];
+/**
+ * Text that reads differently depending on the exam. A plain string is used as
+ * is for both.
+ */
+type Localised = string | Record<ExamKey, string>;
+
+function resolve(value: Localised, exam: ExamKey): string {
+  return typeof value === "string" ? value : value[exam];
+}
+
+export const SUBJECTS_BY_EXAM: Record<ExamKey, readonly string[]> = {
+  jee: ["Physics", "Chemistry", "Maths", "All of them, honestly"],
+  neet: ["Physics", "Chemistry", "Biology", "All of them, honestly"],
+};
 
 export type CategoryKey = "study" | "practice" | "revision" | "mocks" | "headspace";
+
+type RawItem = {
+  id: string;
+  label: Localised;
+  evidence: Localised;
+  /** Internal scoring weights. Never rendered. */
+  weights: Partial<Record<ClusterKey, number>>;
+};
+
+type RawCategory = {
+  key: CategoryKey;
+  question: Localised;
+  hint: Localised;
+  items: RawItem[];
+};
 
 export type Item = {
   id: string;
@@ -21,7 +47,6 @@ export type Item = {
    * "you said you ...". Kept lower-case and verb-first so it reads inside a list.
    */
   evidence: string;
-  /** Internal scoring weights. Never rendered. */
   weights: Partial<Record<ClusterKey, number>>;
 };
 
@@ -34,7 +59,11 @@ export type Category = {
   items: Item[];
 };
 
-export const CATEGORIES: Category[] = [
+/**
+ * Item ids are shared across exams on purpose - only the wording changes, so
+ * scoring and stored responses stay comparable between JEE and NEET.
+ */
+const RAW_CATEGORIES: RawCategory[] = [
   {
     key: "study",
     question: "When you sit down to study, which of these sound like you?",
@@ -54,8 +83,14 @@ export const CATEGORIES: Category[] = [
       },
       {
         id: "study_reread",
-        label: "I mostly re-read notes rather than test myself",
-        evidence: "revise by re-reading rather than testing yourself",
+        label: {
+          jee: "I mostly re-read notes rather than solve problems myself",
+          neet: "I mostly re-read NCERT and notes rather than test myself",
+        },
+        evidence: {
+          jee: "re-read notes rather than solving problems yourself",
+          neet: "re-read NCERT rather than testing yourself",
+        },
         weights: { retention: 3 },
       },
       {
@@ -74,13 +109,22 @@ export const CATEGORIES: Category[] = [
   },
   {
     key: "practice",
-    question: "Now the questions themselves - what usually happens?",
+    question: {
+      jee: "Now the problems themselves - what usually happens?",
+      neet: "Now the questions themselves - what usually happens?",
+    },
     hint: "Think about your last few practice sessions.",
     items: [
       {
         id: "prac_blank_start",
-        label: "I understand the theory but go blank on where to start",
-        evidence: "go blank on where to start despite knowing the theory",
+        label: {
+          jee: "I understand the theory but go blank on where to start",
+          neet: "I know the concept but can't apply it to the question",
+        },
+        evidence: {
+          jee: "go blank on where to start despite knowing the theory",
+          neet: "know the concept but cannot apply it to the question",
+        },
         weights: { application: 4 },
       },
       {
@@ -91,8 +135,14 @@ export const CATEGORIES: Category[] = [
       },
       {
         id: "prac_only_easy",
-        label: "I can do the standard ones, but anything twisted stops me",
-        evidence: "stall on anything that twists the standard question",
+        label: {
+          jee: "I can do the standard problems, but anything twisted stops me",
+          neet: "I can do direct questions, but application-based ones stop me",
+        },
+        evidence: {
+          jee: "stall on anything that twists the standard problem",
+          neet: "stall on application-based questions",
+        },
         weights: { application: 3, foundation: 1 },
       },
       {
@@ -103,8 +153,14 @@ export const CATEGORIES: Category[] = [
       },
       {
         id: "prac_one_question_long",
-        label: "I'll spend 15 minutes on one question rather than move on",
-        evidence: "spend fifteen minutes on one question rather than move on",
+        label: {
+          jee: "I'll spend 15 minutes on one problem rather than move on",
+          neet: "I'll spend 5 minutes on one question rather than move on",
+        },
+        evidence: {
+          jee: "spend fifteen minutes on one problem rather than move on",
+          neet: "spend five minutes on one question rather than move on",
+        },
         weights: { timing: 4 },
       },
     ],
@@ -128,8 +184,14 @@ export const CATEGORIES: Category[] = [
       },
       {
         id: "rev_formulae_slip",
-        label: "Formulae slip away unless I've used them very recently",
-        evidence: "lose formulae unless you have used them recently",
+        label: {
+          jee: "Formulae slip away unless I've used them very recently",
+          neet: "Facts and diagrams slip away unless I've revised them recently",
+        },
+        evidence: {
+          jee: "lose formulae unless you have used them recently",
+          neet: "lose facts and diagrams unless you have revised them recently",
+        },
         weights: { retention: 3 },
       },
       {
@@ -142,7 +204,10 @@ export const CATEGORIES: Category[] = [
   },
   {
     key: "mocks",
-    question: "What happens in mocks and school tests?",
+    question: {
+      jee: "What happens in JEE mocks and school tests?",
+      neet: "What happens in NEET mocks and school tests?",
+    },
     hint: "Skip any that don't apply yet.",
     items: [
       {
@@ -216,10 +281,40 @@ export const CATEGORIES: Category[] = [
   },
 ];
 
-const ITEM_INDEX: Record<string, Item> = Object.fromEntries(
-  CATEGORIES.flatMap((c) => c.items).map((i) => [i.id, i]),
+/** Category keys in order. Safe to use before an exam has been picked. */
+export const CATEGORY_KEYS = RAW_CATEGORIES.map((c) => c.key);
+
+const RAW_ITEM_INDEX: Record<string, RawItem> = Object.fromEntries(
+  RAW_CATEGORIES.flatMap((c) => c.items).map((i) => [i.id, i]),
 );
 
-export function getItem(id: string): Item | undefined {
-  return ITEM_INDEX[id];
+/** The questionnaire, worded for the exam the student picked. */
+export function getCategories(exam: ExamKey): Category[] {
+  return RAW_CATEGORIES.map((c) => ({
+    key: c.key,
+    question: resolve(c.question, exam),
+    hint: resolve(c.hint, exam),
+    items: c.items.map((i) => ({
+      id: i.id,
+      label: resolve(i.label, exam),
+      evidence: resolve(i.evidence, exam),
+      weights: i.weights,
+    })),
+  }));
+}
+
+export function getItem(id: string, exam: ExamKey): Item | undefined {
+  const raw = RAW_ITEM_INDEX[id];
+  if (!raw) return undefined;
+  return {
+    id: raw.id,
+    label: resolve(raw.label, exam),
+    evidence: resolve(raw.evidence, exam),
+    weights: raw.weights,
+  };
+}
+
+/** Weights are exam-independent, so scoring does not need the exam. */
+export function getWeights(id: string): Partial<Record<ClusterKey, number>> {
+  return RAW_ITEM_INDEX[id]?.weights ?? {};
 }

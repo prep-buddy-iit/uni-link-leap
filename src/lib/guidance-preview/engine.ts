@@ -1,5 +1,6 @@
+import type { ExamKey } from "@/components/ApplicationModal";
 import { CLUSTERS, CLUSTER_KEYS, type ClusterKey } from "./clusters";
-import { CATEGORIES, getItem, type CategoryKey } from "./questions";
+import { CATEGORY_KEYS, getItem, getWeights, type CategoryKey } from "./questions";
 
 /** What the student ticked, keyed by category. */
 export type Responses = Partial<Record<CategoryKey, string[]>>;
@@ -18,14 +19,12 @@ export type Scored = {
 const SECONDARY_MIN_RATIO = 0.45;
 
 export function scoreResponses(responses: Responses): Scored {
-  const checked = CATEGORIES.flatMap((c) => responses[c.key] ?? []);
+  const checked = CATEGORY_KEYS.flatMap((key) => responses[key] ?? []);
 
   const totals = Object.fromEntries(CLUSTER_KEYS.map((k) => [k, 0])) as Record<ClusterKey, number>;
 
   for (const id of checked) {
-    const item = getItem(id);
-    if (!item) continue;
-    for (const [cluster, weight] of Object.entries(item.weights)) {
+    for (const [cluster, weight] of Object.entries(getWeights(id))) {
       totals[cluster as ClusterKey] += weight ?? 0;
     }
   }
@@ -42,8 +41,8 @@ export function scoreResponses(responses: Responses): Scored {
       : null;
 
   const drivers = checked
-    .filter((id) => (getItem(id)?.weights[primary] ?? 0) > 0)
-    .sort((a, b) => (getItem(b)!.weights[primary] ?? 0) - (getItem(a)!.weights[primary] ?? 0));
+    .filter((id) => (getWeights(id)[primary] ?? 0) > 0)
+    .sort((a, b) => (getWeights(b)[primary] ?? 0) - (getWeights(a)[primary] ?? 0));
 
   return { primary, secondary, drivers };
 }
@@ -52,10 +51,10 @@ export function scoreResponses(responses: Responses): Scored {
  * Turns the strongest drivers into the single evidence sentence the teaser
  * leads with. Caps at two so the sentence stays readable.
  */
-function evidenceSentence(drivers: string[]): string {
+function evidenceSentence(drivers: string[], exam: ExamKey): string {
   const phrases = drivers
     .slice(0, 2)
-    .map((id) => getItem(id)?.evidence)
+    .map((id) => getItem(id, exam)?.evidence)
     .filter((p): p is string => Boolean(p));
 
   if (phrases.length === 0) return "";
@@ -78,9 +77,9 @@ export type Note = {
  * `teaser` is the only thing the free result screen may render. `fullNote` is
  * generated and stored at the same time, but stays behind the trial.
  */
-export function generateNote(scored: Scored, freeText?: string | null): Note {
+export function generateNote(scored: Scored, exam: ExamKey, freeText?: string | null): Note {
   const primary = CLUSTERS[scored.primary];
-  const evidence = evidenceSentence(scored.drivers);
+  const evidence = evidenceSentence(scored.drivers, exam);
 
   const teaser = [evidence, primary.teaser].filter(Boolean).join(" ");
 
