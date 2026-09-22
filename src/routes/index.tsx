@@ -200,33 +200,39 @@ function HowItWorks() {
 
 function CommunityPreview() {
   const cards = [
-    { label: "JEE WhatsApp",  href: COMMUNITIES.jee.whatsapp,  icon: MessageCircle, bg: "linear-gradient(135deg,#22c35e,#12a04a)" },
-    { label: "NEET WhatsApp", href: COMMUNITIES.neet.whatsapp, icon: MessageCircle, bg: "linear-gradient(135deg,#22c35e,#12a04a)" },
+    { label: "JEE", title: "JEE WhatsApp", body: "PYQ breakdowns, mock-day threads and mentor AMAs with IITians.", href: COMMUNITIES.jee.whatsapp },
+    { label: "NEET", title: "NEET WhatsApp", body: "Biology doubt threads, NCERT drills and AMAs with AIIMS mentors.", href: COMMUNITIES.neet.whatsapp },
   ];
+  const ref = useReveal<HTMLDivElement>();
   return (
     <section className="mx-auto max-w-7xl px-5 py-20 sm:py-24">
-      <div className="max-w-3xl">
-        <p className="eyebrow">Community</p>
-        <h2 className="mt-3 font-display text-3xl sm:text-4xl font-bold">You're not doing this alone.</h2>
-        <p className="mt-3 text-ink-muted">
-          Pick the community that matches your exam. Daily prompts, mentor AMAs and doubt threads.
-        </p>
-      </div>
-      <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {cards.map((c) => {
-          const Icon = c.icon;
-          return (
+      <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-14">
+        <div className="lg:col-span-5">
+          <p className="eyebrow">Community</p>
+          <h2 className="mt-3 font-display text-3xl sm:text-4xl font-bold">You're not doing this alone.</h2>
+          <p className="mt-4 text-ink-muted">
+            Pick the community that matches your exam. Daily prompts, mentor AMAs and doubt threads -
+            free to join, no application needed.
+          </p>
+        </div>
+        <div ref={ref} className="reveal grid gap-4 sm:grid-cols-2 lg:col-span-7">
+          {cards.map((c) => (
             <a key={c.label} href={c.href} target="_blank" rel="noreferrer"
-              className="card-lift rounded-2xl p-5 text-white" style={{ backgroundImage: c.bg }}>
-              <div className="flex items-center gap-2 font-display font-bold text-lg">
-                <Icon className="h-5 w-5" /> {c.label}
+              className="card-lift flex flex-col rounded-2xl p-6 text-white"
+              style={{ backgroundImage: "linear-gradient(135deg,#22c35e,#12a04a)" }}>
+              <div className="flex items-center gap-3">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/20">
+                  <MessageCircle className="h-5 w-5" />
+                </span>
+                <span className="font-display text-lg font-bold">{c.title}</span>
               </div>
-              <p className="mt-4 inline-flex items-center gap-1 text-sm font-semibold">
+              <p className="mt-3 flex-1 text-sm leading-relaxed text-white/90">{c.body}</p>
+              <span className="mt-5 inline-flex w-fit items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-sm font-semibold">
                 Join <ArrowRight className="h-3.5 w-3.5" />
-              </p>
+              </span>
             </a>
-          );
-        })}
+          ))}
+        </div>
       </div>
     </section>
   );
