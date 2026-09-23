@@ -29,9 +29,9 @@ export function Footer() {
               { l: "Contact Us", to: "/contact" },
             ]} />
             <FooterCol h="Trust" items={[
-              { l: "Trust & Safety", href: "#" },
-              { l: "Privacy Policy", href: "#" },
-              { l: "Terms", href: "#" },
+              { l: "Trust & Safety", to: "/trust-and-safety" },
+              { l: "Privacy Policy", to: "/privacy-policy" },
+              { l: "Terms", to: "/terms" },
             ]} />
           </div>
         </div>
@@ -50,13 +50,13 @@ function FooterCol({ h, items }: { h: string; items: Item[] }) {
   return (
     <div>
       <div className="mono text-xs uppercase tracking-wider text-ink">{h}</div>
-      <ul className="mt-3 space-y-2 text-sm text-ink-muted">
+      <ul className="mt-2 text-sm text-ink-muted">
         {items.map((it) => (
           <li key={it.l}>
             {it.to ? (
-              <Link to={it.to} className="hover:text-ink">{it.l}</Link>
+              <Link to={it.to} className="inline-block py-1.5 hover:text-ink">{it.l}</Link>
             ) : (
-              <a href={it.href} className="hover:text-ink">{it.l}</a>
+              <a href={it.href} className="inline-block py-1.5 hover:text-ink">{it.l}</a>
             )}
           </li>
         ))}

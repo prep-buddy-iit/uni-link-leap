@@ -17,6 +17,7 @@ import { PageBackdrop } from "@/components/site/PageBackdrop";
 import { UrgencyStrip } from "@/components/site/UrgencyStrip";
 import { nextJeeSession } from "@/lib/exam-dates";
 import { EXAM } from "@/lib/exam-content";
+import { absoluteUrl } from "@/lib/site";
 
 const ex = EXAM.jee;
 
@@ -29,9 +30,9 @@ export const Route = createFileRoute("/jee")({
       { property: "og:title", content: ex.metaTitle },
       { property: "og:description", content: ex.metaDesc },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/jee" },
+      { property: "og:url", content: absoluteUrl("/jee") },
     ],
-    links: [{ rel: "canonical", href: "/jee" }],
+    links: [{ rel: "canonical", href: absoluteUrl("/jee") }],
     scripts: [
       {
         type: "application/ld+json",
@@ -123,7 +124,7 @@ function JeePage() {
               <p className="eyebrow">{ex.heroEyebrow}</p>
               <h1 className="mt-4 font-display font-bold text-4xl sm:text-5xl lg:text-6xl leading-[1.05]">
                 A mentor who checks on your JEE prep{" "}
-                <span className="text-gradient-primary">every single day.</span>
+                <span className="text-primary">every single day.</span>
               </h1>
               <p className="mt-5 text-lg text-ink-muted max-w-xl">{ex.heroSubhead}</p>
               <div className="mt-7 flex flex-col sm:flex-row gap-3">
@@ -145,7 +146,7 @@ function JeePage() {
         <PricingCards exam="jee" />
         <TrialBanner exam="jee" />
         <SessionBanner exam="jee" />
-        <MentorsPreview mentors={ex.mentors} headline={`IITians who <span class='text-gradient-primary'>recently cracked JEE</span>.`} />
+        <MentorsPreview mentors={ex.mentors} headline={`IITians who <span class='text-primary'>recently cracked JEE</span>.`} />
         <Testimonials items={ex.testimonials} />
         <CommunityCards exam="jee" />
         <KnowledgeHub posts={ex.hub} />

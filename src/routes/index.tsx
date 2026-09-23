@@ -8,9 +8,10 @@ import { Footer } from "@/components/site/Footer";
 import { HeroVideoCard } from "@/components/site/HeroVideoCard";
 import { TrustBar } from "@/components/site/TrustBar";
 import { PageBackdrop } from "@/components/site/PageBackdrop";
-import { useReveal } from "@/hooks/useReveal";
 import { COMMUNITIES } from "@/lib/exam-content";
 import { GuidancePreviewChat } from "@/components/site/GuidancePreviewChat";
+import { MethodPanel } from "@/components/site/MethodPanel";
+import { absoluteUrl } from "@/lib/site";
 
 const TITLE = "PrepBuddy - 1-on-1 Mentorship for JEE & NEET | Class 11, 12 & Droppers";
 const DESC = "PrepBuddy pairs Class 11, 12 and Droppers with a dedicated topper-mentor - IITians for JEE, AIIMS/medical students for NEET. Personalized plans, daily accountability, weekly review calls. Start your 3-day trial for ₹99.";
@@ -23,19 +24,19 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESC },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/" },
+      { property: "og:url", content: absoluteUrl("/") },
     ],
-    links: [{ rel: "canonical", href: "/" }],
+    links: [{ rel: "canonical", href: absoluteUrl("/") }],
     scripts: [{
       type: "application/ld+json",
       children: JSON.stringify({
         "@context": "https://schema.org",
         "@type": "Organization",
         name: "PrepBuddy",
-        url: "/",
+        url: absoluteUrl("/"),
         description: DESC,
         areaServed: "IN",
-        sameAs: ["/jee", "/neet"],
+        sameAs: [absoluteUrl("/jee"), absoluteUrl("/neet")],
       }),
     }],
   }),
@@ -63,12 +64,12 @@ function Hero() {
   return (
     <section className="relative">
       <PageBackdrop />
-      <div className="mx-auto max-w-7xl px-5 pt-14 sm:pt-20 pb-14 grid lg:grid-cols-[1.05fr_1fr] items-center gap-10 lg:gap-14">
+      <div className="mx-auto max-w-7xl px-5 pt-14 sm:pt-20 pb-16 sm:pb-20 grid lg:grid-cols-[1.05fr_1fr] items-center gap-10 lg:gap-14">
         <div>
           <p className="eyebrow">1-on-1 Mentorship, not another coaching batch</p>
           <h1 className="mt-4 font-display font-bold text-4xl sm:text-5xl lg:text-6xl leading-[1.05]">
             A mentor who checks on your prep{" "}
-            <span className="text-gradient-primary">every single day.</span>
+            <span className="text-primary">every single day.</span>
           </h1>
           <p className="mt-5 text-lg text-ink-muted max-w-xl">
             One dedicated mentor, a study plan built around your actual mock scores, and daily accountability -
@@ -76,17 +77,17 @@ function Hero() {
           </p>
           <div className="mt-7 flex items-center gap-4">
             <div className="flex -space-x-2">
-              {["#ff7a45,#ff5c8a", "#2a4fe0,#8b5cf6", "#8b5cf6,#5b7cff", "#ff5c8a,#8b5cf6"].map((g, i) => (
+              {["#4a7fe8", "#8b4fdb", "#4372d1", "#8b4fdb"].map((c, i) => (
                 <div key={i} className="h-9 w-9 rounded-full ring-2 ring-background"
-                  style={{ backgroundImage: `linear-gradient(135deg, ${g})` }} />
+                  style={{ backgroundColor: c }} />
               ))}
             </div>
             <p className="text-sm text-ink-muted">
               Trusted by <b className="text-ink">150+ students</b> and their parents
             </p>
           </div>
-          <p className="mt-6 text-sm text-primary font-semibold">
-            <a href="#guidance-preview">Pick your exam below →</a>
+          <p className="mt-6 text-sm text-primary-strong font-semibold">
+            <a href="#guidance-preview" className="inline-block py-1">Pick your exam below →</a>
           </p>
         </div>
         <HeroVideoCard />
@@ -98,12 +99,12 @@ function Hero() {
 function GuidancePreview() {
   return (
     <section id="guidance-preview" className="bg-white/50 border-y border-border/60 scroll-mt-24">
-      <div className="mx-auto max-w-7xl px-5 py-20 sm:py-24 grid lg:grid-cols-[1fr_1.05fr] items-center gap-10 lg:gap-14">
+      <div className="mx-auto max-w-7xl px-5 py-20 sm:py-28 grid lg:grid-cols-[1fr_1.05fr] items-center gap-10 lg:gap-14">
         <div>
           <p className="eyebrow">Two minutes, no signup</p>
           <h2 className="mt-4 font-display text-3xl sm:text-4xl font-bold leading-[1.1]">
             Not sure what's actually going wrong?{" "}
-            <span className="text-gradient-primary">Find out before you pay anything.</span>
+            <span className="text-primary">Find out before you pay anything.</span>
           </h2>
           <p className="mt-5 text-lg text-ink-muted max-w-xl">
             Answer a few questions about how prep is really going - the honest version, not the
@@ -137,26 +138,36 @@ function WhyMentorship() {
     { icon: LineChart,      title: "Mock Analysis",     body: "Error-pattern review after every mock, so the same mistake doesn't repeat for months." },
     { icon: HeartHandshake, title: "Stress Management", body: "A mentor who's been through the exam recently - practical calm, not generic motivation." },
   ];
-  const ref = useReveal<HTMLDivElement>();
   return (
-    <section id="why" className="mx-auto max-w-7xl px-5 py-20 sm:py-24">
-      <div className="max-w-3xl">
-        <p className="eyebrow">Why mentorship works</p>
-        <h2 className="mt-3 font-display text-3xl sm:text-4xl font-bold">
-          Prep doesn't fail from lack of content. It fails from{" "}
-          <span className="text-gradient-primary">lack of a plan someone is actually watching.</span>
-        </h2>
-      </div>
-      <div ref={ref} className="reveal mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        {items.map(({ icon: Icon, title, body }) => (
-          <div key={title} className="glass-card card-lift rounded-2xl p-5">
-            <div className="grid h-11 w-11 place-items-center rounded-xl gradient-primary text-white">
-              <Icon className="h-5 w-5" />
-            </div>
-            <h3 className="mt-4 font-display text-lg font-bold">{title}</h3>
-            <p className="mt-2 text-sm text-ink-muted">{body}</p>
+    <section id="why" className="mx-auto max-w-7xl px-5 py-16 sm:py-20">
+      <div className="grid gap-10 lg:grid-cols-12 lg:gap-16">
+        {/* Asymmetric: the argument stays pinned on the left while the list scrolls past it. */}
+        <div className="lg:col-span-5">
+          <div className="lg:sticky lg:top-28">
+            <p className="eyebrow">Why mentorship works</p>
+            <h2 className="mt-3 font-display text-3xl sm:text-4xl font-bold leading-[1.15]">
+              Prep doesn't fail from lack of content. It fails from{" "}
+              <span className="text-primary">lack of a plan someone is actually watching.</span>
+            </h2>
+            <MethodPanel />
           </div>
-        ))}
+        </div>
+
+        {/* A divided list, not a card grid: no boxes, no shadows, no hover lift. */}
+        <ul className="lg:col-span-7 lg:border-l lg:border-border lg:pl-16">
+          {items.map(({ icon: Icon, title, body }, i) => (
+            <li
+              key={title}
+              className={"flex gap-5 py-6 " + (i > 0 ? "border-t border-border" : "lg:pt-1")}
+            >
+              <Icon className="mt-1 h-5 w-5 shrink-0 text-primary" strokeWidth={1.75} />
+              <div>
+                <h3 className="font-display text-lg font-bold">{title}</h3>
+                <p className="mt-1.5 text-ink-muted">{body}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );
@@ -170,26 +181,37 @@ function HowItWorks() {
     { icon: MessagesSquare, title: "Daily guidance + weekly review call",    body: "Short daily check-ins, one deeper call every week." },
   ];
   return (
-    <section id="how" className="bg-white/50 border-y border-border/60">
-      <div className="mx-auto max-w-6xl px-5 py-20 sm:py-24">
+    <section id="how" className="bg-white border-y border-border">
+      <div className="mx-auto max-w-5xl px-5 py-16 sm:py-20">
         <div className="max-w-3xl">
           <p className="eyebrow">How it works</p>
           <h2 className="mt-3 font-display text-3xl sm:text-4xl font-bold">Four steps. No middlemen.</h2>
         </div>
-        <ol className="relative mt-12 space-y-6">
-          <div className="absolute left-6 top-6 bottom-6 w-px bg-gradient-to-b from-primary via-secondary to-accent hidden sm:block" />
+
+        {/* One continuous rule threaded through the step markers - a real
+            timeline rather than four identical boxes stacked up. */}
+        <ol className="mt-12 pl-12 sm:pl-16">
           {steps.map((s, i) => (
-            <li key={s.title} className="relative flex gap-5">
-              <div className="relative z-10 grid h-12 w-12 shrink-0 place-items-center rounded-full gradient-primary text-white font-display font-bold shadow-glass">
+            <li key={s.title} className={"relative " + (i === steps.length - 1 ? "pb-0" : "pb-10")}>
+              <span
+                aria-hidden
+                className="absolute -left-12 sm:-left-16 top-0 grid h-6 w-6 sm:h-8 sm:w-8 place-items-center rounded-full border border-border bg-white mono text-[0.65rem] sm:text-xs font-semibold text-primary-strong"
+              >
                 {String(i + 1).padStart(2, "0")}
+              </span>
+              {/* Connector runs from this marker to the next one, so the rule
+                  always lands exactly on the markers at any text length. */}
+              {i < steps.length - 1 && (
+                <span
+                  aria-hidden
+                  className="absolute left-[-36px] sm:left-[-48px] top-6 sm:top-8 bottom-0 w-px bg-border"
+                />
+              )}
+              <div className="flex items-center gap-2 text-ink">
+                <s.icon className="h-4 w-4 text-primary" strokeWidth={1.75} />
+                <h3 className="font-display font-bold text-lg sm:text-xl">{s.title}</h3>
               </div>
-              <div className="glass-card card-lift flex-1 rounded-2xl p-5">
-                <div className="flex items-center gap-2 text-ink">
-                  <s.icon className="h-4 w-4 text-primary" />
-                  <h3 className="font-display font-bold text-lg">{s.title}</h3>
-                </div>
-                <p className="mt-1.5 text-sm text-ink-muted">{s.body}</p>
-              </div>
+              <p className="mt-1.5 max-w-2xl text-ink-muted">{s.body}</p>
             </li>
           ))}
         </ol>
@@ -203,10 +225,9 @@ function CommunityPreview() {
     { label: "JEE", title: "JEE WhatsApp", body: "PYQ breakdowns, mock-day threads and mentor AMAs with IITians.", href: COMMUNITIES.jee.whatsapp },
     { label: "NEET", title: "NEET WhatsApp", body: "Biology doubt threads, NCERT drills and AMAs with AIIMS mentors.", href: COMMUNITIES.neet.whatsapp },
   ];
-  const ref = useReveal<HTMLDivElement>();
   return (
-    <section className="mx-auto max-w-7xl px-5 py-20 sm:py-24">
-      <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-14">
+    <section className="mx-auto max-w-7xl px-5 py-14 sm:py-16">
+      <div className="grid items-end gap-8 lg:grid-cols-12 lg:gap-14">
         <div className="lg:col-span-5">
           <p className="eyebrow">Community</p>
           <h2 className="mt-3 font-display text-3xl sm:text-4xl font-bold">You're not doing this alone.</h2>
@@ -215,20 +236,33 @@ function CommunityPreview() {
             free to join, no application needed.
           </p>
         </div>
-        <div ref={ref} className="reveal grid gap-4 sm:grid-cols-2 lg:col-span-7">
-          {cards.map((c) => (
-            <a key={c.label} href={c.href} target="_blank" rel="noreferrer"
-              className="card-lift flex flex-col rounded-2xl p-6 text-white"
-              style={{ backgroundImage: "linear-gradient(135deg,#22c35e,#12a04a)" }}>
-              <div className="flex items-center gap-3">
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white/20">
-                  <MessageCircle className="h-5 w-5" />
-                </span>
-                <span className="font-display text-lg font-bold">{c.title}</span>
-              </div>
-              <p className="mt-3 flex-1 text-sm leading-relaxed text-white/90">{c.body}</p>
-              <span className="mt-5 inline-flex w-fit items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-sm font-semibold">
-                Join <ArrowRight className="h-3.5 w-3.5" />
+
+        {/* One panel split by a rule, rather than two matching tiles side by side. */}
+        <div className="overflow-hidden rounded-xl border border-border bg-white lg:col-span-7">
+          {cards.map((c, i) => (
+            <a
+              key={c.label}
+              href={c.href}
+              target="_blank"
+              rel="noreferrer"
+              className={
+                "group flex items-center gap-4 px-5 py-5 sm:px-6 transition-colors hover:bg-muted/60 " +
+                (i > 0 ? "border-t border-border" : "")
+              }
+            >
+              <span
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-lg text-white"
+                style={{ backgroundColor: "var(--whatsapp)" }}
+              >
+                <MessageCircle className="h-5 w-5" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-display font-bold text-ink">{c.title}</span>
+                <span className="mt-0.5 block text-sm text-ink-muted">{c.body}</span>
+              </span>
+              <span className="inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-primary-strong">
+                Join
+                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
               </span>
             </a>
           ))}

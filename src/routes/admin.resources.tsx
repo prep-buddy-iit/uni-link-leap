@@ -99,7 +99,7 @@ function AdminResources() {
           <button key={t} onClick={() => setTab(t)}
             className={
               "px-4 py-2.5 text-sm font-semibold capitalize border-b-2 -mb-px transition " +
-              (tab === t ? "border-primary text-primary" : "border-transparent text-ink-muted hover:text-ink")
+              (tab === t ? "border-primary text-primary-strong" : "border-transparent text-ink-muted hover:text-ink")
             }>
             {t} <span className="ml-1 mono text-xs text-ink-muted">({counts[t]})</span>
           </button>
@@ -111,11 +111,11 @@ function AdminResources() {
       ) : (
         <div className="grid gap-4">
           {filtered.map((r) => (
-            <div key={r.id} className="glass-strong rounded-2xl p-5">
+            <div key={r.id} className="panel-raised rounded-2xl p-5">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="mono text-[10px] uppercase tracking-wider text-primary">{r.kind}</span>
+                    <span className="mono text-[10px] uppercase tracking-wider text-primary-strong">{r.kind}</span>
                     <span className="mono text-[10px] uppercase tracking-wider text-ink-muted">· {r.exam}</span>
                     <span className="mono text-[10px] text-ink-muted">· {new Date(r.created_at).toLocaleDateString()}</span>
                   </div>
@@ -174,7 +174,7 @@ function AdminResources() {
 
       <p className="text-xs text-ink-muted text-center pt-8">
         Approved items appear on the public{" "}
-        <Link to="/resources" className="text-primary font-semibold">Resources page</Link>.
+        <Link to="/resources" className="text-primary-strong font-semibold">Resources page</Link>.
       </p>
 
       <VideoLightbox open={videoOpen !== null} onClose={() => setVideoOpen(null)} videoId={videoOpen ?? ""} />

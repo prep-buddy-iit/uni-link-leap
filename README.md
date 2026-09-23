@@ -1,26 +1,58 @@
-# IIT JEE Connect
+# PrepBuddy
 
-I want a lead capturing website for the iit jee aspirtants to connect them with iitian mentors
+Marketing and lead-capture site for [yourprepbuddy.com](https://yourprepbuddy.com) — 1-on-1
+mentorship for India's JEE and NEET aspirants. Students are paired with a dedicated topper-mentor
+(IITians for JEE, AIIMS / medical-college students for NEET) who builds a study plan from real mock
+scores and runs daily accountability check-ins.
 
-This project was built with [Lovable](https://lovable.dev).
+## Stack
 
-**Live app**: https://uni-link-leap.lovable.app
+| Layer      | Choice                                             |
+| ---------- | -------------------------------------------------- |
+| Framework  | TanStack Start (SSR) + TanStack Router file routes |
+| UI         | React 19, Tailwind CSS v4, Radix primitives        |
+| Data       | Supabase (leads, contacts, mentors, resources)     |
+| Deploy     | Nitro → Cloudflare                                  |
+| Tests      | Vitest + Testing Library                            |
 
-## Build with Lovable
+## Getting started
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/d1b86c75-1143-4960-a5b1-06dee2b4648a).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Requires Node.js 20+ and [Bun](https://bun.sh) (the lockfile is `bun.lock`).
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+bun install
+cp .env.example .env   # fill in the Supabase keys
+bun run dev
 ```
+
+| Script             | What it does                          |
+| ------------------ | ------------------------------------- |
+| `bun run dev`      | Dev server with HMR                   |
+| `bun run build`    | Production build                      |
+| `bun run preview`  | Serve the production build locally    |
+| `bun run test`     | Run the Vitest suite once             |
+| `bun run lint`     | ESLint over the repo                  |
+| `bun run format`   | Prettier write                        |
+
+## Layout
+
+```
+src/
+  routes/              file-based routes (public pages, /admin/*, sitemap.xml)
+  components/site/     page sections — hero, pricing, mentors, footer, …
+  components/ui/       Radix-based primitives
+  lib/                 site config, exam content, guidance-preview engine
+  integrations/supabase/
+public/                favicon, logo, og-image, robots.txt, llms.txt
+```
+
+- **Brand + design tokens** live in `src/styles.css`.
+- **Canonical origin, OG image and absolute-URL helpers** live in `src/lib/site.ts`.
+- **Exam-specific copy** (mentors, FAQs, testimonials, plans) lives in `src/lib/exam-content.ts`.
+- **WhatsApp community invite links** live in `src/lib/whatsapp.ts`.
+
+## Notes
+
+This repository is connected to a Lovable project: commits pushed to the connected branch sync back
+into that editor, so avoid rewriting published history (no force pushes, rebases or amends of pushed
+commits) and keep the branch in a working state. See `AGENTS.md`.

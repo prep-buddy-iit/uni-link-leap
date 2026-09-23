@@ -1,8 +1,13 @@
 import type { ExamKey } from "@/components/ApplicationModal";
+import {
+  WHATSAPP_JEE_GROUP_URL,
+  WHATSAPP_NEET_GROUP_URL,
+  communityJoinUrl,
+} from "@/lib/whatsapp";
 
 export type Mentor = {
   name: string; rank: string; institute: string; specialty: string;
-  initials: string; g: string; exam: ExamKey;
+  initials: string; exam: ExamKey;
 };
 
 export type FAQ = { q: string; a: string };
@@ -11,7 +16,8 @@ export type Testimonial = { quote: string; name: string; meta: string };
 
 export const COMMUNITIES: Record<ExamKey, { whatsapp: string; perks: string[] }> = {
   jee: {
-    whatsapp: "https://chat.whatsapp.com/",
+    // TODO: set WHATSAPP_JEE_GROUP_URL in src/lib/whatsapp.ts once the real invite exists.
+    whatsapp: communityJoinUrl(WHATSAPP_JEE_GROUP_URL, "JEE"),
     perks: [
       "PYQ breakdowns and mock-day threads",
       "Doubt threads answered by IITian mentors",
@@ -19,7 +25,8 @@ export const COMMUNITIES: Record<ExamKey, { whatsapp: string; perks: string[] }>
     ],
   },
   neet: {
-    whatsapp: "https://chat.whatsapp.com/",
+    // TODO: set WHATSAPP_NEET_GROUP_URL in src/lib/whatsapp.ts once the real invite exists.
+    whatsapp: communityJoinUrl(WHATSAPP_NEET_GROUP_URL, "NEET"),
     perks: [
       "NCERT line-by-line drills and Biology doubts",
       "Doubt threads answered by AIIMS mentors",
@@ -29,19 +36,19 @@ export const COMMUNITIES: Record<ExamKey, { whatsapp: string; perks: string[] }>
 };
 
 export const JEE_MENTORS: Mentor[] = [
-  { name: "Aarav R.",   rank: "AIR 312",  institute: "IIT Bombay",    specialty: "Physics · Rotational Mechanics", initials: "AR", g: "#ff7a45,#ff5c8a", exam: "jee" },
-  { name: "Ishita P.",  rank: "AIR 512",  institute: "IIT Delhi",     specialty: "Maths · Calculus & Coordinate",  initials: "IP", g: "#2a4fe0,#8b5cf6", exam: "jee" },
-  { name: "Rahul K.",   rank: "AIR 189",  institute: "IIT Madras",    specialty: "Chemistry · Physical & Organic", initials: "RK", g: "#8b5cf6,#5b7cff", exam: "jee" },
-  { name: "Meera S.",   rank: "AIR 640",  institute: "IIT Kanpur",    specialty: "Full-stack JEE · Dropper strategy", initials: "MS", g: "#ff5c8a,#8b5cf6", exam: "jee" },
-  { name: "Karthik V.", rank: "AIR 428",  institute: "IIT Kharagpur", specialty: "Physics · Mechanics & E&M",      initials: "KV", g: "#2a4fe0,#5b7cff", exam: "jee" },
+  { name: "Aarav R.",   rank: "AIR 312",  institute: "IIT Bombay",    specialty: "Physics · Rotational Mechanics", initials: "AR", exam: "jee" },
+  { name: "Ishita P.",  rank: "AIR 512",  institute: "IIT Delhi",     specialty: "Maths · Calculus & Coordinate",  initials: "IP", exam: "jee" },
+  { name: "Rahul K.",   rank: "AIR 189",  institute: "IIT Madras",    specialty: "Chemistry · Physical & Organic", initials: "RK", exam: "jee" },
+  { name: "Meera S.",   rank: "AIR 640",  institute: "IIT Kanpur",    specialty: "Full-stack JEE · Dropper strategy", initials: "MS", exam: "jee" },
+  { name: "Karthik V.", rank: "AIR 428",  institute: "IIT Kharagpur", specialty: "Physics · Mechanics & E&M",      initials: "KV", exam: "jee" },
 ];
 
 export const NEET_MENTORS: Mentor[] = [
-  { name: "Ananya M.",  rank: "NEET AIR 145", institute: "AIIMS Delhi",    specialty: "Biology · Human Physiology",    initials: "AM", g: "#22c35e,#12a04a", exam: "neet" },
-  { name: "Rohan T.",   rank: "NEET AIR 289", institute: "AIIMS Bhopal",   specialty: "Chemistry · Organic mechanisms", initials: "RT", g: "#2a4fe0,#22c35e", exam: "neet" },
-  { name: "Sara J.",    rank: "NEET AIR 92",  institute: "MAMC, Delhi",    specialty: "Biology · Genetics & Evolution", initials: "SJ", g: "#ff7a45,#22c35e", exam: "neet" },
-  { name: "Vikram L.",  rank: "NEET AIR 512", institute: "JIPMER",         specialty: "Physics · Modern Physics",       initials: "VL", g: "#8b5cf6,#22c35e", exam: "neet" },
-  { name: "Priya G.",   rank: "NEET AIR 340", institute: "AIIMS Rishikesh", specialty: "Biology · Botany · Dropper strategy", initials: "PG", g: "#ff5c8a,#22c35e", exam: "neet" },
+  { name: "Ananya M.",  rank: "NEET AIR 145", institute: "AIIMS Delhi",    specialty: "Biology · Human Physiology",    initials: "AM", exam: "neet" },
+  { name: "Rohan T.",   rank: "NEET AIR 289", institute: "AIIMS Bhopal",   specialty: "Chemistry · Organic mechanisms", initials: "RT", exam: "neet" },
+  { name: "Sara J.",    rank: "NEET AIR 92",  institute: "MAMC, Delhi",    specialty: "Biology · Genetics & Evolution", initials: "SJ", exam: "neet" },
+  { name: "Vikram L.",  rank: "NEET AIR 512", institute: "JIPMER",         specialty: "Physics · Modern Physics",       initials: "VL", exam: "neet" },
+  { name: "Priya G.",   rank: "NEET AIR 340", institute: "AIIMS Rishikesh", specialty: "Biology · Botany · Dropper strategy", initials: "PG", exam: "neet" },
 ];
 
 export const ALL_MENTORS: Mentor[] = [...JEE_MENTORS, ...NEET_MENTORS];

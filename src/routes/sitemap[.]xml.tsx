@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 
-// TODO: replace with the project URL once a custom domain is set.
-const BASE_URL = "";
+import { SITE_URL } from "@/lib/site";
+
+// Sitemap <loc> values have to be absolute URLs.
+const BASE_URL = SITE_URL;
 
 type Entry = { path: string; changefreq?: string; priority?: string };
 
@@ -16,6 +18,10 @@ const ENTRIES: Entry[] = [
   { path: "/find-a-mentor",    changefreq: "weekly",  priority: "0.7" },
   { path: "/become-a-mentor",  changefreq: "monthly", priority: "0.6" },
   { path: "/contact",          changefreq: "monthly", priority: "0.5" },
+  { path: "/guidance-preview", changefreq: "monthly", priority: "0.5" },
+  { path: "/trust-and-safety", changefreq: "yearly",  priority: "0.3" },
+  { path: "/privacy-policy",   changefreq: "yearly",  priority: "0.3" },
+  { path: "/terms",            changefreq: "yearly",  priority: "0.3" },
   ...ARTICLES.map((a) => ({ path: `/resources/${a.slug}`, changefreq: "monthly", priority: "0.6" })),
 ];
 

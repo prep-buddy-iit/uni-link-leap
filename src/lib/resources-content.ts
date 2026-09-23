@@ -7,7 +7,6 @@ export type Author = {
   institute: string;
   bio: string;
   initials: string;
-  g: string;
 };
 
 export type ArticleCategory = "Motivation" | "Strategy" | "Mock Analysis" | "Exam Updates";
@@ -54,7 +53,6 @@ export const AUTHORS: Record<string, Author> = {
     institute: "IIT Bombay",
     bio: "3rd-year Mechanical at IIT Bombay. Coaches PrepBuddy Physics students on rotational mechanics and problem-decomposition strategy.",
     initials: "AR",
-    g: "#ff7a45,#ff5c8a",
   },
   "ishita-p": {
     slug: "ishita-p",
@@ -63,7 +61,6 @@ export const AUTHORS: Record<string, Author> = {
     institute: "IIT Delhi",
     bio: "Computer Science at IIT Delhi. Focus on Maths - calculus, coordinate geometry, and building a PYQ-driven revision loop.",
     initials: "IP",
-    g: "#2a4fe0,#8b5cf6",
   },
   "rahul-k": {
     slug: "rahul-k",
@@ -72,7 +69,6 @@ export const AUTHORS: Record<string, Author> = {
     institute: "IIT Madras",
     bio: "Chemical Engineering at IIT Madras. Two years of 1:1 mentorship on Physical and Organic Chemistry for droppers.",
     initials: "RK",
-    g: "#8b5cf6,#5b7cff",
   },
   "ananya-m": {
     slug: "ananya-m",
@@ -81,7 +77,6 @@ export const AUTHORS: Record<string, Author> = {
     institute: "AIIMS Delhi",
     bio: "2nd-year MBBS at AIIMS Delhi. Coaches PrepBuddy NEET students on Human Physiology and NCERT-first revision.",
     initials: "AM",
-    g: "#22c35e,#12a04a",
   },
   "sara-j": {
     slug: "sara-j",
@@ -90,7 +85,6 @@ export const AUTHORS: Record<string, Author> = {
     institute: "MAMC, Delhi",
     bio: "MBBS at Maulana Azad Medical College. Focus on Biology - genetics, evolution, and mock-error tagging.",
     initials: "SJ",
-    g: "#ff7a45,#22c35e",
   },
   "rohan-t": {
     slug: "rohan-t",
@@ -99,7 +93,6 @@ export const AUTHORS: Record<string, Author> = {
     institute: "AIIMS Bhopal",
     bio: "MBBS at AIIMS Bhopal. Guest contributor - writes on Organic Chemistry mechanisms and dropper-year mental resilience.",
     initials: "RT",
-    g: "#2a4fe0,#22c35e",
   },
 };
 

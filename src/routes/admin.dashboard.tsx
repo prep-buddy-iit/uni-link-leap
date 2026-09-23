@@ -74,7 +74,7 @@ function AdminDashboard() {
         <>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {cards.map((c) => (
-              <Link key={c.to} to={c.to} className="glass-strong rounded-2xl p-5 hover:border-primary/40 transition">
+              <Link key={c.to} to={c.to} className="panel-raised rounded-2xl p-5 hover:border-primary/40 transition">
                 <div className="flex items-center justify-between">
                   <c.icon className="h-5 w-5 text-primary" />
                   <TrendingUp className="h-4 w-4 text-ink-muted" />
@@ -87,7 +87,7 @@ function AdminDashboard() {
           </div>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            <div className="glass-strong rounded-2xl p-6">
+            <div className="panel-raised rounded-2xl p-6">
               <h3 className="font-display text-lg font-bold">Weekly velocity</h3>
               <ul className="mt-4 space-y-2 text-sm">
                 <li className="flex justify-between"><span className="text-ink-muted">New leads (7d)</span><span className="mono font-semibold">{stats.leads.last7}</span></li>
@@ -95,7 +95,7 @@ function AdminDashboard() {
                 <li className="flex justify-between"><span className="text-ink-muted">New contacts (7d)</span><span className="mono font-semibold">{stats.contacts.last7}</span></li>
               </ul>
             </div>
-            <div className="glass-strong rounded-2xl p-6">
+            <div className="panel-raised rounded-2xl p-6">
               <h3 className="font-display text-lg font-bold">Needs your attention</h3>
               <ul className="mt-4 space-y-2 text-sm">
                 <li className="flex justify-between"><span className="text-ink-muted">Unreviewed leads</span><span className="mono font-semibold">{stats.leads.new}</span></li>

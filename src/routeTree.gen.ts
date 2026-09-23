@@ -16,8 +16,11 @@ import { Route as FindAMentorRouteImport } from './routes/find-a-mentor'
 import { Route as GuidancePreviewRouteImport } from './routes/guidance-preview'
 import { Route as JeeRouteImport } from './routes/jee'
 import { Route as NeetRouteImport } from './routes/neet'
+import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as ResourcesRouteImport } from './routes/resources'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as TrustAndSafetyRouteImport } from './routes/trust-and-safety'
 import { Route as AdminContactsRouteImport } from './routes/admin.contacts'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
@@ -61,6 +64,11 @@ const NeetRoute = NeetRouteImport.update({
   path: '/neet',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResourcesRoute = ResourcesRouteImport.update({
   id: '/resources',
   path: '/resources',
@@ -69,6 +77,16 @@ const ResourcesRoute = ResourcesRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrustAndSafetyRoute = TrustAndSafetyRouteImport.update({
+  id: '/trust-and-safety',
+  path: '/trust-and-safety',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminContactsRoute = AdminContactsRouteImport.update({
@@ -115,8 +133,11 @@ export interface FileRoutesByFullPath {
   '/guidance-preview': typeof GuidancePreviewRoute
   '/jee': typeof JeeRoute
   '/neet': typeof NeetRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/resources': typeof ResourcesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
+  '/trust-and-safety': typeof TrustAndSafetyRoute
   '/admin/contacts': typeof AdminContactsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/leads': typeof AdminLeadsRoute
@@ -133,8 +154,11 @@ export interface FileRoutesByTo {
   '/guidance-preview': typeof GuidancePreviewRoute
   '/jee': typeof JeeRoute
   '/neet': typeof NeetRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/resources': typeof ResourcesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
+  '/trust-and-safety': typeof TrustAndSafetyRoute
   '/admin/contacts': typeof AdminContactsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/leads': typeof AdminLeadsRoute
@@ -152,8 +176,11 @@ export interface FileRoutesById {
   '/guidance-preview': typeof GuidancePreviewRoute
   '/jee': typeof JeeRoute
   '/neet': typeof NeetRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/resources': typeof ResourcesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
+  '/trust-and-safety': typeof TrustAndSafetyRoute
   '/admin/contacts': typeof AdminContactsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/leads': typeof AdminLeadsRoute
@@ -172,8 +199,11 @@ export interface FileRouteTypes {
     | '/guidance-preview'
     | '/jee'
     | '/neet'
+    | '/privacy-policy'
     | '/resources'
     | '/sitemap.xml'
+    | '/terms'
+    | '/trust-and-safety'
     | '/admin/contacts'
     | '/admin/dashboard'
     | '/admin/leads'
@@ -190,8 +220,11 @@ export interface FileRouteTypes {
     | '/guidance-preview'
     | '/jee'
     | '/neet'
+    | '/privacy-policy'
     | '/resources'
     | '/sitemap.xml'
+    | '/terms'
+    | '/trust-and-safety'
     | '/admin/contacts'
     | '/admin/dashboard'
     | '/admin/leads'
@@ -208,8 +241,11 @@ export interface FileRouteTypes {
     | '/guidance-preview'
     | '/jee'
     | '/neet'
+    | '/privacy-policy'
     | '/resources'
     | '/sitemap.xml'
+    | '/terms'
+    | '/trust-and-safety'
     | '/admin/contacts'
     | '/admin/dashboard'
     | '/admin/leads'
@@ -227,8 +263,11 @@ export interface RootRouteChildren {
   GuidancePreviewRoute: typeof GuidancePreviewRoute
   JeeRoute: typeof JeeRoute
   NeetRoute: typeof NeetRoute
+  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   ResourcesRoute: typeof ResourcesRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TermsRoute: typeof TermsRoute
+  TrustAndSafetyRoute: typeof TrustAndSafetyRoute
   AdminContactsRoute: typeof AdminContactsRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
@@ -288,6 +327,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NeetRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy-policy': {
+      id: '/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PrivacyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/resources': {
       id: '/resources'
       path: '/resources'
@@ -300,6 +346,20 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/trust-and-safety': {
+      id: '/trust-and-safety'
+      path: '/trust-and-safety'
+      fullPath: '/trust-and-safety'
+      preLoaderRoute: typeof TrustAndSafetyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/contacts': {
@@ -374,8 +434,11 @@ const rootRouteChildren: RootRouteChildren = {
   GuidancePreviewRoute: GuidancePreviewRoute,
   JeeRoute: JeeRoute,
   NeetRoute: NeetRoute,
+  PrivacyPolicyRoute: PrivacyPolicyRoute,
   ResourcesRoute: ResourcesRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TermsRoute: TermsRoute,
+  TrustAndSafetyRoute: TrustAndSafetyRoute,
   AdminContactsRoute: AdminContactsRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminLeadsRoute: AdminLeadsRoute,

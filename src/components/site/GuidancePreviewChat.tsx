@@ -136,7 +136,7 @@ export function GuidancePreviewChat({
   const subjects = exam ? SUBJECTS_BY_EXAM[exam] : [];
 
   return (
-    <div className={"glass-strong rounded-3xl p-6 sm:p-8 " + className}>
+    <div className={"panel-raised rounded-3xl p-6 sm:p-8 " + className}>
       <div className="flex items-center gap-2 text-ink-muted">
         <Sparkles className="h-4 w-4 text-primary" />
         <p className="eyebrow !mb-0">Free guidance preview</p>
@@ -144,7 +144,7 @@ export function GuidancePreviewChat({
 
       <div className="mt-4 h-1.5 w-full rounded-full bg-black/10" role="presentation">
         <div
-          className="h-full rounded-full gradient-primary transition-all duration-500"
+          className="h-full rounded-full bg-primary transition-all duration-500"
           style={{ width: `${Math.max(progress, 4)}%` }}
         />
       </div>
@@ -288,14 +288,14 @@ function ResultScreen({
   className?: string;
 }) {
   return (
-    <div className={"glass-strong rounded-3xl p-6 sm:p-8 " + className}>
+    <div className={"panel-raised rounded-3xl p-6 sm:p-8 " + className}>
       <div className="flex items-center gap-2 text-ink-muted">
         <Sparkles className="h-4 w-4 text-primary" />
         <p className="eyebrow !mb-0">Here's what your answers point at</p>
       </div>
 
       <h2 className="mt-4 font-display text-2xl sm:text-3xl font-bold">
-        <span className="text-gradient-primary">{note.teaserLabel}</span>
+        <span className="text-primary">{note.teaserLabel}</span>
       </h2>
 
       <p className="mt-4 text-lg text-ink-muted leading-relaxed">{note.teaser}</p>
@@ -402,7 +402,7 @@ function Chip({
       className={
         "rounded-full border px-4 py-2 text-sm transition " +
         (active
-          ? "gradient-primary text-white border-transparent"
+          ? "bg-primary text-white border-transparent"
           : "bg-white border-input text-ink hover:border-primary")
       }
     >

@@ -5,6 +5,7 @@ import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 import { PageBackdrop } from "@/components/site/PageBackdrop";
 import { GuidancePreviewChat } from "@/components/site/GuidancePreviewChat";
 import type { ExamKey } from "@/components/ApplicationModal";
+import { absoluteUrl } from "@/lib/site";
 
 const TITLE = "Free Guidance Preview - PrepBuddy";
 const DESC =
@@ -23,9 +24,9 @@ export const Route = createFileRoute("/guidance-preview")({
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESC },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "/guidance-preview" },
+      { property: "og:url", content: absoluteUrl("/guidance-preview") },
     ],
-    links: [{ rel: "canonical", href: "/guidance-preview" }],
+    links: [{ rel: "canonical", href: absoluteUrl("/guidance-preview") }],
   }),
   component: GuidancePreviewPage,
 });
@@ -44,7 +45,7 @@ function GuidancePreviewPage() {
             <p className="eyebrow">Two minutes, no signup</p>
             <h1 className="mt-4 font-display font-bold text-3xl sm:text-4xl leading-[1.1]">
               Tell us how prep is actually going.{" "}
-              <span className="text-gradient-primary">We'll tell you what it points at.</span>
+              <span className="text-primary">We'll tell you what it points at.</span>
             </h1>
             <p className="mt-4 text-ink-muted">
               No score, no rank prediction, no lecture. Just the pattern a mentor would spot in your

@@ -43,7 +43,7 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} noValidate className="glass-strong rounded-3xl p-6 sm:p-8 space-y-4">
+    <form onSubmit={onSubmit} noValidate className="panel-raised rounded-3xl p-6 sm:p-8 space-y-4">
       {done && (
         <div className="flex items-start gap-2 rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-sm text-emerald-800">
           <CheckCircle2 className="h-4 w-4 mt-0.5" />

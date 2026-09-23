@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { X, Loader2, MessageCircle } from "lucide-react";
 import { COMMUNITIES } from "@/lib/exam-content";
+import { teamChatUrl } from "@/lib/whatsapp";
 
 export type PlanKey = "trial" | "month1" | "month3" | "month6" | "session";
 export type ExamKey = "jee" | "neet";
@@ -155,7 +156,7 @@ export function ApplicationModal({
             <p className="eyebrow">{examLabel ? `${examLabel} Application` : "Application"}</p>
             <h2 className="mt-1 font-display text-2xl font-bold">
               Get matched with your{" "}
-              <span className="text-gradient-primary">
+              <span className="text-primary">
                 {exam === "neet" ? "AIIMS/medical mentor" : exam === "jee" ? "IITian mentor" : "topper mentor"}
               </span>
             </h2>
@@ -188,7 +189,7 @@ export function ApplicationModal({
                         className={
                           "rounded-full border px-3.5 py-1.5 text-sm transition " +
                           (active
-                            ? "gradient-primary text-white border-transparent"
+                            ? "bg-primary text-white border-transparent"
                             : "bg-white border-input text-ink hover:border-primary")
                         }
                       >
@@ -226,7 +227,7 @@ export function ApplicationModal({
 
         {step === "done" && (
           <div className="p-6 sm:p-8 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl gradient-primary text-white text-3xl">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-white text-3xl">
               🎉
             </div>
             <h2 className="font-display text-2xl font-bold">You're in!</h2>
@@ -236,9 +237,10 @@ export function ApplicationModal({
             </p>
 
             <div className="mt-6 text-left">
-              <a href={community?.whatsapp ?? "https://chat.whatsapp.com/"} target="_blank" rel="noreferrer"
-                className="group block rounded-2xl p-4 text-white card-lift"
-                style={{ backgroundImage: "linear-gradient(135deg,#22c35e,#12a04a)" }}
+              {/* TODO: the real group invites live in src/lib/whatsapp.ts - swap them there. */}
+              <a href={community?.whatsapp ?? teamChatUrl("Hi! I just applied on PrepBuddy - please send me the community invite link.")} target="_blank" rel="noreferrer"
+                className="group block rounded-2xl p-4 text-white link-card"
+                style={{ backgroundColor: "var(--whatsapp)" }}
               >
                 <div className="flex items-center gap-2 font-semibold">
                   <MessageCircle className="h-5 w-5" /> {examLabel ? `${examLabel} WhatsApp` : "WhatsApp Community"}

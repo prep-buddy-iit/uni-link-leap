@@ -53,7 +53,7 @@ function AdminLogin() {
             <p className="mt-2 text-sm text-ink-muted text-center">
               Restricted access. Contact the site owner if you need credentials.
             </p>
-            <form onSubmit={onSubmit} className="mt-8 glass-strong rounded-3xl p-6 space-y-4">
+            <form onSubmit={onSubmit} className="mt-8 panel-raised rounded-3xl p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1.5">Email</label>
                 <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required

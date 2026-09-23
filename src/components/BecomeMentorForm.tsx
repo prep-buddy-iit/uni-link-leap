@@ -51,8 +51,8 @@ export function BecomeMentorForm() {
 
   if (done) {
     return (
-      <div className="glass-strong rounded-3xl p-8 text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl gradient-primary text-white">
+      <div className="panel-raised rounded-3xl p-8 text-center">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-white">
           <CheckCircle2 className="h-8 w-8" />
         </div>
         <h3 className="font-display text-2xl font-bold">Application received</h3>
@@ -73,7 +73,7 @@ export function BecomeMentorForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} noValidate className="glass-strong rounded-3xl p-6 sm:p-8 space-y-4">
+    <form onSubmit={onSubmit} noValidate className="panel-raised rounded-3xl p-6 sm:p-8 space-y-4">
       <div className="grid sm:grid-cols-2 gap-4">
         <Field label="Full name" error={errors.name}>
           <input value={name} onChange={(e) => setName(e.target.value)}

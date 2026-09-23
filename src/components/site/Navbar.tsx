@@ -25,7 +25,7 @@ export function Navbar() {
         to="/"
         onClick={onClick}
         activeOptions={{ exact: true }}
-        className="text-sm font-medium text-ink-muted hover:text-primary transition"
+        className="text-sm font-medium text-ink-muted hover:text-primary-strong transition"
         activeProps={{ className: "text-ink" }}
       >
         Home
@@ -35,7 +35,7 @@ export function Navbar() {
         onClick={onClick}
         className={
           "text-sm font-medium transition rounded-full " +
-          (onJee ? "gradient-primary text-white px-4 py-1.5 shadow-glass" : "text-ink-muted hover:text-primary")
+          (onJee ? "bg-primary-strong text-white px-4 py-1.5 shadow-glass" : "text-ink-muted hover:text-primary-strong")
         }
       >
         JEE
@@ -45,7 +45,7 @@ export function Navbar() {
         onClick={onClick}
         className={
           "text-sm font-medium transition rounded-full " +
-          (onNeet ? "gradient-primary text-white px-4 py-1.5 shadow-glass" : "text-ink-muted hover:text-primary")
+          (onNeet ? "bg-primary-strong text-white px-4 py-1.5 shadow-glass" : "text-ink-muted hover:text-primary-strong")
         }
       >
         NEET
@@ -53,7 +53,7 @@ export function Navbar() {
       <Link
         to="/resources"
         onClick={onClick}
-        className="text-sm font-medium text-ink-muted hover:text-primary transition"
+        className="text-sm font-medium text-ink-muted hover:text-primary-strong transition"
         activeProps={{ className: "text-ink" }}
       >
         Resources
@@ -61,7 +61,7 @@ export function Navbar() {
       <Link
         to="/contact"
         onClick={onClick}
-        className="text-sm font-medium text-ink-muted hover:text-primary transition"
+        className="text-sm font-medium text-ink-muted hover:text-primary-strong transition"
         activeProps={{ className: "text-ink" }}
       >
         Contact Us
@@ -127,12 +127,14 @@ export function Navbar() {
       </div>
 
       {open && (
-        <div className="md:hidden border-t border-border/60 bg-white px-5 py-4">
-          <div className="flex flex-col gap-3">
+        <div className="md:hidden border-t border-border bg-white px-5 py-3">
+          {/* Stacked links need a real tap target; the scope stops at the nav
+              links so the CTA buttons keep their own sizing. */}
+          <div className="flex flex-col [&>a]:block [&>a]:py-2.5">
             <NavLinks onClick={() => setOpen(false)} />
-            <div className="mt-2 flex flex-col gap-2 sm:hidden">
-              <CTAs onClick={() => setOpen(false)} />
-            </div>
+          </div>
+          <div className="mt-3 flex flex-col gap-2 sm:hidden">
+            <CTAs onClick={() => setOpen(false)} />
           </div>
         </div>
       )}

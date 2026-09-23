@@ -5,6 +5,7 @@ import { Footer } from "@/components/site/Footer";
 import { PageBackdrop } from "@/components/site/PageBackdrop";
 import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 import { articleBySlug, AUTHORS, ARTICLES } from "@/lib/resources-content";
+import { absoluteUrl } from "@/lib/site";
 
 export const Route = createFileRoute("/resources/$slug")({
   loader: ({ params }) => {
@@ -27,12 +28,12 @@ export const Route = createFileRoute("/resources/$slug")({
         { property: "og:title", content: a.title },
         { property: "og:description", content: a.description },
         { property: "og:type", content: "article" },
-        { property: "og:url", content: url },
+        { property: "og:url", content: absoluteUrl(url) },
         { property: "article:published_time", content: a.datePublished },
         { property: "article:modified_time", content: a.dateModified },
         { property: "article:author", content: author.name },
       ],
-      links: [{ rel: "canonical", href: url }],
+      links: [{ rel: "canonical", href: absoluteUrl(url) }],
       scripts: [
         {
           type: "application/ld+json",
@@ -79,7 +80,7 @@ function NotFound() {
       <div className="mx-auto max-w-3xl px-5 py-24 text-center">
         <h1 className="font-display text-3xl font-bold">Article not found</h1>
         <p className="mt-3 text-ink-muted">The article you're looking for doesn't exist or has been moved.</p>
-        <Link to="/resources" className="mt-6 inline-flex items-center gap-2 text-primary font-semibold">
+        <Link to="/resources" className="mt-6 inline-flex items-center gap-2 text-primary-strong font-semibold">
           <ArrowLeft className="h-4 w-4" /> Back to Resources
         </Link>
       </div>
@@ -105,7 +106,7 @@ function ArticlePage() {
           <PageBackdrop />
           <div className="mx-auto max-w-3xl px-5 pt-10 sm:pt-14 pb-6">
             <div className="flex items-center gap-2">
-              <span className="mono text-[10px] uppercase tracking-wider text-primary">{article.category}</span>
+              <span className="mono text-[10px] uppercase tracking-wider text-primary-strong">{article.category}</span>
               <span className="text-ink-muted">·</span>
               <span className="mono text-[10px] uppercase tracking-wider text-ink-muted inline-flex items-center gap-1">
                 <Clock className="h-3 w-3" /> {article.readMinutes} min read
@@ -117,8 +118,7 @@ function ArticlePage() {
             <p className="mt-5 text-lg text-ink-muted">{article.description}</p>
 
             <div className="mt-8 flex items-center gap-3">
-              <div className="h-11 w-11 rounded-full grid place-items-center text-white text-sm font-bold shrink-0"
-                style={{ backgroundImage: `linear-gradient(135deg, ${author.g})` }}>
+              <div className="h-11 w-11 rounded-full grid place-items-center bg-secondary-tint text-secondary text-sm font-bold shrink-0">
                 {author.initials}
               </div>
               <div>
@@ -141,22 +141,21 @@ function ArticlePage() {
             ))}
           </div>
 
-          <div className="mt-14 rounded-3xl gradient-primary text-white p-8 text-center">
+          <div className="mt-14 rounded-3xl bg-primary text-white p-8 text-center">
             <h3 className="font-display text-xl font-bold">
               Want a mentor to walk this plan through with you?
             </h3>
-            <p className="mt-2 text-white/90 text-sm">
+            <p className="mt-2 text-white text-sm">
               Start your ₹99, 3-day {examLabel} trial and get a plan built from your last mock score.
             </p>
-            <Link to={examLink} hash="plans" className="mt-5 inline-flex items-center pill-btn bg-white text-primary hover:opacity-90">
+            <Link to={examLink} hash="plans" className="mt-5 inline-flex items-center pill-btn bg-white text-primary-strong hover:opacity-90">
               Start your {examLabel} trial →
             </Link>
           </div>
 
           {/* Author bio */}
-          <div className="mt-10 glass-strong rounded-3xl p-6 flex items-start gap-4">
-            <div className="h-14 w-14 rounded-2xl grid place-items-center text-white text-lg font-bold shrink-0"
-              style={{ backgroundImage: `linear-gradient(135deg, ${author.g})` }}>
+          <div className="mt-10 panel-raised rounded-3xl p-6 flex items-start gap-4">
+            <div className="h-14 w-14 rounded-lg grid place-items-center bg-secondary-tint text-secondary text-lg font-bold shrink-0">
               {author.initials}
             </div>
             <div>
@@ -173,8 +172,8 @@ function ArticlePage() {
               <div className="grid sm:grid-cols-3 gap-4">
                 {related.map((r) => (
                   <Link key={r.slug} to="/resources/$slug" params={{ slug: r.slug }}
-                    className="glass-strong card-lift rounded-2xl p-5 block">
-                    <span className="mono text-[10px] uppercase tracking-wider text-primary">{r.category}</span>
+                    className="panel-raised link-card rounded-2xl p-5 block">
+                    <span className="mono text-[10px] uppercase tracking-wider text-primary-strong">{r.category}</span>
                     <h4 className="mt-2 font-display text-sm font-bold text-ink">{r.title}</h4>
                   </Link>
                 ))}

@@ -11,11 +11,11 @@ export function KnowledgeHub({ posts }: { posts: Post[] }) {
         </div>
         <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {posts.map((p) => (
-            <article key={p.title} className="glass-strong card-lift rounded-3xl p-6 flex flex-col">
-              <span className="mono text-xs uppercase tracking-wider text-primary">{p.tag}</span>
+            <article key={p.title} className="rounded-2xl border border-border bg-white p-6 flex flex-col">
+              <span className="mono text-xs uppercase tracking-wider text-primary-strong">{p.tag}</span>
               <h3 className="mt-3 font-display text-lg font-bold text-ink">{p.title}</h3>
               <p className="mt-2 text-sm text-ink-muted">{p.body}</p>
-              <span className="mt-4 text-sm font-semibold text-primary inline-flex items-center gap-1">
+              <span className="mt-4 text-sm font-semibold text-primary-strong inline-flex items-center gap-1">
                 Read <ArrowRight className="h-3.5 w-3.5" />
               </span>
             </article>

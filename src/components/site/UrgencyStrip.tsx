@@ -29,16 +29,15 @@ export function UrgencyStrip({ target, template, fallback }: Props) {
     <div className="w-full bg-ink text-white">
       <div className="mx-auto max-w-7xl px-5 py-2 text-center text-xs sm:text-sm">
         {showFallback ? (
-          <span className="text-white/90">{fallback}</span>
+          <span className="text-white">{fallback}</span>
         ) : (
-          <span className="text-white/90">
+          <span className="text-white">
             {renderTemplate(template, {
               label: target!.label,
               days: (
                 <span
                   key="days"
-                  className="font-mono font-semibold text-[hsl(var(--accent,25_95%_55%))] text-primary"
-                  style={{ color: "hsl(25 95% 55%)" }}
+                  className="font-mono font-semibold text-secondary-on-dark"
                 >
                   {days} {days === 1 ? "day" : "days"}
                 </span>

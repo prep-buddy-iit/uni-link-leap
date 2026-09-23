@@ -133,7 +133,7 @@ function AdminLeads() {
         </button>
       </div>
 
-      <div className="glass-strong rounded-2xl overflow-hidden">
+      <div className="panel-raised rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-black/5">
@@ -152,7 +152,7 @@ function AdminLeads() {
                   <td className="p-3 font-semibold">
                     {r.name}
                     {isGuidancePreviewLead(r.notes) && (
-                      <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary align-middle">
+                      <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-primary-tint px-2 py-0.5 text-[10px] font-medium text-primary-deep align-middle">
                         <Sparkles className="h-2.5 w-2.5" /> Preview
                       </span>
                     )}

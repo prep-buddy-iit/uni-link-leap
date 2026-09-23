@@ -57,7 +57,7 @@ export function PhotoLightbox({
       </button>
       <figure className="relative max-w-5xl w-full" onClick={(e) => e.stopPropagation()}>
         <img src={photo.src} alt={photo.caption} className="max-h-[80vh] w-full object-contain rounded-2xl shadow-lift" />
-        <figcaption className="mt-4 text-center text-sm text-white/85">
+        <figcaption className="mt-4 text-center text-sm text-white">
           <span className="mono text-xs uppercase tracking-wider text-white/60">{photo.institute}</span>
           <span className="mx-2 text-white/40">·</span>
           {photo.caption}

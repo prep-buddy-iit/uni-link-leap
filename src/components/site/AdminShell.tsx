@@ -81,7 +81,7 @@ export function AdminShell({ title, subtitle, children }: { title: string; subti
                   to={n.to}
                   className={
                     "flex items-center gap-2 px-4 py-2.5 text-sm font-semibold border-b-2 -mb-px transition whitespace-nowrap " +
-                    (active ? "border-primary text-primary" : "border-transparent text-ink-muted hover:text-ink")
+                    (active ? "border-primary text-primary-strong" : "border-transparent text-ink-muted hover:text-ink")
                   }
                 >
                   <Icon className="h-3.5 w-3.5" />

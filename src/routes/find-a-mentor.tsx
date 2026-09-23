@@ -6,6 +6,7 @@ import { PageBackdrop } from "@/components/site/PageBackdrop";
 import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 import { ALL_MENTORS } from "@/lib/exam-content";
 import type { ExamKey } from "@/components/ApplicationModal";
+import { absoluteUrl } from "@/lib/site";
 
 const TITLE = "Meet Our Mentors - PrepBuddy JEE & NEET Mentors";
 const DESC = "Every PrepBuddy mentor is a verified topper - IITians for JEE, AIIMS/medical-college students for NEET. Browse mentor credentials; matching happens when you start your trial.";
@@ -17,9 +18,9 @@ export const Route = createFileRoute("/find-a-mentor")({
       { name: "description", content: DESC },
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESC },
-      { property: "og:url", content: "/find-a-mentor" },
+      { property: "og:url", content: absoluteUrl("/find-a-mentor") },
     ],
-    links: [{ rel: "canonical", href: "/find-a-mentor" }],
+    links: [{ rel: "canonical", href: absoluteUrl("/find-a-mentor") }],
     scripts: [
       {
         type: "application/ld+json",
@@ -67,7 +68,7 @@ function FindMentorPage() {
             <p className="eyebrow">Meet our mentors</p>
             <h1 className="mt-4 font-display font-bold text-4xl sm:text-5xl lg:text-6xl leading-[1.05]">
               Every mentor is a{" "}
-              <span className="text-gradient-primary">verified topper</span>.
+              <span className="text-primary">verified topper</span>.
             </h1>
             <p className="mt-5 text-lg text-ink-muted max-w-2xl mx-auto">
               IITians for JEE, AIIMS/medical-college students for NEET - each has been through a 4-stage
@@ -84,7 +85,7 @@ function FindMentorPage() {
                 className={
                   "rounded-full px-5 py-2 text-sm font-semibold transition " +
                   (filter === f
-                    ? "gradient-primary text-white shadow-glass"
+                    ? "bg-primary-strong text-white shadow-glass"
                     : "bg-white border border-input text-ink hover:border-primary")
                 }>
                 {f === "all" ? "All" : f.toUpperCase()}
@@ -96,15 +97,16 @@ function FindMentorPage() {
         <section className="mx-auto max-w-7xl px-5 pb-20">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {filtered.map((m) => (
-              <div key={m.name + m.exam} className="glass-strong card-lift rounded-3xl p-5">
+              <div key={m.name + m.exam} className="panel-raised rounded-3xl p-5">
                 <div className="flex items-start justify-between">
-                  <div className="h-16 w-16 rounded-2xl grid place-items-center text-white font-display text-2xl font-bold"
-                    style={{ backgroundImage: `linear-gradient(135deg, ${m.g})` }}>
+                  <div className="h-16 w-16 rounded-lg grid place-items-center bg-secondary-tint text-secondary font-display text-2xl font-bold">
                     {m.initials}
                   </div>
                   <span className={
                     "mono text-[10px] uppercase tracking-wider rounded-full px-2.5 py-1 " +
-                    (m.exam === "jee" ? "bg-primary/10 text-primary" : "bg-[#12a04a]/10 text-[#12a04a]")
+                    (m.exam === "jee"
+                      ? "bg-primary-tint text-primary-deep"
+                      : "bg-secondary-tint text-secondary")
                   }>
                     {m.exam.toUpperCase()}
                   </span>
@@ -113,7 +115,7 @@ function FindMentorPage() {
                 <p className="mono text-xs text-ink-muted mt-0.5">{m.rank} · {m.institute}</p>
                 <p className="mt-2 text-sm text-ink">{m.specialty}</p>
                 <Link to={m.exam === "jee" ? "/jee" : "/neet"} hash="plans"
-                  className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
+                  className="mt-4 inline-flex items-center gap-1 py-1 text-sm font-semibold text-primary-strong hover:underline">
                   Start Your Trial →
                 </Link>
               </div>
@@ -122,19 +124,18 @@ function FindMentorPage() {
         </section>
 
         <section className="mx-auto max-w-7xl px-5 pb-24">
-          <div className="relative overflow-hidden rounded-3xl gradient-dark text-white p-10 sm:p-14 text-center">
-            <div className="blob right-[-10%] top-[-40%] h-[420px] w-[420px]" style={{ background: "radial-gradient(circle, #8b5cf6, transparent 60%)" }} />
-            <h2 className="font-display text-3xl sm:text-4xl font-bold">
+          <div className="relative overflow-hidden rounded-3xl bg-ink text-white p-10 sm:p-14 text-center">
+                <h2 className="font-display text-3xl sm:text-4xl font-bold text-white">
               Not sure who's right for you?
             </h2>
-            <p className="mt-3 text-white/85 max-w-xl mx-auto">
+            <p className="mt-3 text-white max-w-xl mx-auto">
               Start with the ₹99 trial - we'll match you.
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
-              <Link to="/jee" hash="plans" className="pill-btn bg-white text-primary hover:opacity-90">
+              <Link to="/jee" hash="plans" className="pill-btn bg-white text-primary-strong hover:opacity-90">
                 Start with JEE →
               </Link>
-              <Link to="/neet" hash="plans" className="pill-btn bg-white text-primary hover:opacity-90">
+              <Link to="/neet" hash="plans" className="pill-btn bg-white text-primary-strong hover:opacity-90">
                 Start with NEET →
               </Link>
             </div>

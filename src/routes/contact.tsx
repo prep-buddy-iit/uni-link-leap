@@ -1,13 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { MessageCircle, Mail, MapPin } from "lucide-react";
+import { MessageCircle, Mail, MapPin, Phone } from "lucide-react";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { ContactForm } from "@/components/ContactForm";
 import { PageBackdrop } from "@/components/site/PageBackdrop";
 import { Breadcrumbs } from "@/components/site/Breadcrumbs";
+import { absoluteUrl } from "@/lib/site";
+import { teamChatUrl, CONTACT_PHONE_DISPLAY, CONTACT_PHONE_TEL } from "@/lib/whatsapp";
 
 const TITLE = "Contact Us - PrepBuddy JEE & NEET Mentorship";
-const DESC = "Questions about PrepBuddy's 1-on-1 JEE and NEET mentorship? Reach us on WhatsApp, email, or send us a message.";
+const DESC =
+  "Questions about PrepBuddy's 1-on-1 JEE and NEET mentorship? Reach us on WhatsApp, email, or send us a message.";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -16,9 +19,9 @@ export const Route = createFileRoute("/contact")({
       { name: "description", content: DESC },
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESC },
-      { property: "og:url", content: "/contact" },
+      { property: "og:url", content: absoluteUrl("/contact") },
     ],
-    links: [{ rel: "canonical", href: "/contact" }],
+    links: [{ rel: "canonical", href: absoluteUrl("/contact") }],
     scripts: [
       {
         type: "application/ld+json",
@@ -37,7 +40,8 @@ export const Route = createFileRoute("/contact")({
           "@context": "https://schema.org",
           "@type": "LocalBusiness",
           name: "PrepBuddy",
-          description: "1-on-1 mentorship for JEE and NEET aspirants, delivered online across India.",
+          description:
+            "1-on-1 mentorship for JEE and NEET aspirants, delivered online across India.",
           url: "/",
           email: "hello@prepbuddy.co",
           areaServed: "IN",
@@ -66,10 +70,11 @@ function ContactPage() {
             <p className="eyebrow">Get in touch</p>
             <h1 className="mt-4 font-display font-bold text-4xl sm:text-5xl leading-tight">
               Questions about JEE or NEET mentorship?{" "}
-              <span className="text-gradient-primary">We're here.</span>
+              <span className="text-primary">We're here.</span>
             </h1>
             <p className="mt-4 text-lg text-ink-muted max-w-2xl mx-auto">
-              Whether you're a student, a parent, or a topper interested in mentoring - we usually reply within 4 hours.
+              Whether you're a student, a parent, or a topper interested in mentoring - we usually
+              reply within 4 hours.
             </p>
           </div>
         </section>
@@ -80,10 +85,10 @@ function ContactPage() {
               <InfoCard
                 icon={<MessageCircle className="h-5 w-5" />}
                 title="WhatsApp"
-                sub="Fastest response - usually under an hour."
+                sub={`${CONTACT_PHONE_DISPLAY} - fastest response, usually under an hour.`}
                 cta="Chat on WhatsApp →"
-                href="https://wa.me/919999999999"
-                bg="linear-gradient(135deg,#22c35e,#12a04a)"
+                href={teamChatUrl("Hi! I have a question about PrepBuddy mentorship.")}
+                bg="var(--whatsapp)"
               />
               <InfoCard
                 icon={<Mail className="h-5 w-5" />}
@@ -91,13 +96,21 @@ function ContactPage() {
                 sub="hello@prepbuddy.co"
                 cta="Send us an email →"
                 href="mailto:hello@prepbuddy.co"
-                bg="var(--gradient-primary)"
+                bg="var(--primary-strong)"
+              />
+              <InfoCard
+                icon={<Phone className="h-5 w-5" />}
+                title="Call us"
+                sub={CONTACT_PHONE_DISPLAY}
+                cta="Call now →"
+                href={`tel:${CONTACT_PHONE_TEL}`}
+                bg="var(--secondary)"
               />
               <InfoCard
                 icon={<MapPin className="h-5 w-5" />}
                 title="Location"
                 sub="Hyderabad, India - mentoring online, nationwide."
-                bg="var(--gradient-accent)"
+                bg="var(--ink)"
               />
             </div>
             <ContactForm />
@@ -109,19 +122,35 @@ function ContactPage() {
   );
 }
 
-function InfoCard({ icon, title, sub, cta, href, bg }: {
-  icon: React.ReactNode; title: string; sub: string; cta?: string; href?: string; bg: string;
+function InfoCard({
+  icon,
+  title,
+  sub,
+  cta,
+  href,
+  bg,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  sub: React.ReactNode;
+  cta?: string;
+  href?: string;
+  bg: string;
 }) {
   return (
-    <div className="rounded-3xl p-6 text-white card-lift" style={{ backgroundImage: bg }}>
+    <div className="rounded-3xl p-6 text-white" style={{ backgroundColor: bg }}>
       <div className="flex items-center gap-2 font-display text-lg font-bold">
         <span className="grid h-9 w-9 place-items-center rounded-xl bg-white/20">{icon}</span>
         {title}
       </div>
-      <p className="mt-3 text-white/90 text-sm">{sub}</p>
+      <p className="mt-3 text-white text-sm">{sub}</p>
       {cta && href && (
-        <a href={href} target="_blank" rel="noreferrer"
-          className="mt-4 inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-sm font-semibold">
+        <a
+          href={href}
+          target="_blank"
+          rel="noreferrer"
+          className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[color:var(--whatsapp)]"
+        >
           {cta}
         </a>
       )}

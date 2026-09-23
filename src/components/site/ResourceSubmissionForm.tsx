@@ -72,7 +72,7 @@ export function ResourceSubmissionForm({ onClose }: { onClose: () => void }) {
 
         {done ? (
           <div className="p-10 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl gradient-primary text-white">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-white">
               <CheckCircle2 className="h-8 w-8" />
             </div>
             <h3 className="font-display text-2xl font-bold">Thanks - submission received</h3>
@@ -98,7 +98,7 @@ export function ResourceSubmissionForm({ onClose }: { onClose: () => void }) {
                   <button type="button" key={k} onClick={() => setKind(k)}
                     className={
                       "rounded-xl border px-3 py-2.5 text-sm font-semibold capitalize transition " +
-                      (kind === k ? "border-primary bg-primary/5 text-primary" : "border-input text-ink-muted hover:text-ink")
+                      (kind === k ? "border-primary bg-primary-tint text-primary-deep" : "border-input text-ink-muted hover:text-ink")
                     }>
                     {k}
                   </button>

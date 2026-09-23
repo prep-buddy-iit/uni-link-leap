@@ -111,12 +111,12 @@ function AdminContacts() {
 
       <div className="grid gap-3">
         {filtered.map((r) => (
-          <div key={r.id} className="glass-strong rounded-2xl p-5">
+          <div key={r.id} className="panel-raised rounded-2xl p-5">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-display text-lg font-bold">{r.name}</span>
-                  {r.topic && <span className="mono text-[10px] uppercase tracking-wider text-primary">· {r.topic}</span>}
+                  {r.topic && <span className="mono text-[10px] uppercase tracking-wider text-primary-strong">· {r.topic}</span>}
                 </div>
                 <p className="mt-1 text-xs text-ink-muted">
                   {r.email && <>{r.email} · </>}{r.phone && <>{r.phone} · </>}<span className="mono">{new Date(r.created_at).toLocaleString()}</span>
@@ -149,7 +149,7 @@ function AdminContacts() {
             <p className="mt-1 text-sm text-ink-muted">
               {open.email && <>{open.email} · </>}{open.phone && <>{open.phone} · </>}{new Date(open.created_at).toLocaleString()}
             </p>
-            {open.topic && <p className="mt-2 mono text-xs uppercase tracking-wider text-primary">Topic: {open.topic}</p>}
+            {open.topic && <p className="mt-2 mono text-xs uppercase tracking-wider text-primary-strong">Topic: {open.topic}</p>}
             <div className="mt-6 whitespace-pre-wrap text-ink leading-relaxed">{open.message}</div>
           </div>
         </div>

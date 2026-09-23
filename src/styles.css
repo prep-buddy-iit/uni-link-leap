@@ -19,14 +19,18 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
-  --color-primary-light: var(--primary-light);
+  --color-primary-strong: var(--primary-strong);
+  --color-primary-deep: var(--primary-deep);
+  --color-primary-tint: var(--primary-tint);
+  --color-whatsapp: var(--whatsapp);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary-tint: var(--secondary-tint);
+  --color-secondary-on-dark: var(--secondary-on-dark);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
-  --color-accent-pink: var(--accent-pink);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
@@ -34,25 +38,40 @@
   --color-ring: var(--ring);
   --color-ink: var(--ink);
   --color-ink-muted: var(--ink-muted);
-  --font-display: "Space Grotesk", system-ui, sans-serif;
-  --font-sans: "Inter", system-ui, sans-serif;
+  /* Archivo: a grotesk with newspaper bones - headlines read as stated, not styled. */
+  --font-display: "Archivo", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --font-sans: "Source Sans 3", system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
 :root {
-  --radius: 1rem;
+  --radius: 0.75rem;
 
-  /* PrepBuddy palette */
-  --brand-blue: #2a4fe0;
-  --brand-blue-light: #5b7cff;
-  --brand-purple: #8b5cf6;
-  --brand-orange: #ff7a45;
-  --brand-pink: #ff5c8a;
+  /* PrepBuddy brand.
+     These are FLAT, SOLID colors. The blue-to-violet gradient exists in the
+     logo file only - nothing in the UI may reintroduce it. */
+  --brand-blue: #4a7fe8;
+  /* Same hue, darkened just enough to clear WCAG AA (4.5:1) for text-bearing
+     surfaces: white button labels and inline links. #4a7fe8 itself measures
+     3.82:1, which only clears AA Large. */
+  --brand-blue-strong: #406dc8;
+  /* Kept as an alias: one accessible blue now covers text on white, on the
+     off-white ground, and on a tint of the blue itself. */
+  --brand-blue-deep: #406dc8;
+  --brand-blue-tint: #f1f5fd;
+  /* WhatsApp surfaces that carry white text. The brand green is far too light
+     for that (2.3:1); this is the darkest-but-recognisable green that clears AA. */
+  --brand-whatsapp: #188842;
+  --brand-violet: #8b4fdb;
+  --brand-violet-tint: #f7f3fc;
+  /* Violet lightened for use on the dark ink bar, where the brand violet
+     only reaches 3.44:1. */
+  --brand-violet-on-dark: #b48bea;
 
-  --ink: #14162b;
-  --ink-muted: #565973;
+  --ink: #1a1a2e;
+  --ink-muted: #5a5c72;
 
-  --background: #f5f6fc;
+  --background: #fafafa;
   --foreground: var(--ink);
 
   --card: #ffffff;
@@ -62,34 +81,34 @@
 
   --primary: var(--brand-blue);
   --primary-foreground: #ffffff;
-  --primary-light: var(--brand-blue-light);
+  --primary-strong: var(--brand-blue-strong);
+  --primary-deep: var(--brand-blue-deep);
+  --primary-tint: var(--brand-blue-tint);
 
-  --secondary: var(--brand-purple);
+  /* Secondary violet: credential tags, stat highlights, small badges, hover
+     accents. Solid with white text, or the tint with violet text. */
+  --secondary: var(--brand-violet);
   --secondary-foreground: #ffffff;
+  --secondary-tint: var(--brand-violet-tint);
+  --secondary-on-dark: var(--brand-violet-on-dark);
 
-  --muted: #eef0fb;
+  --muted: #f1f1f5;
   --muted-foreground: var(--ink-muted);
 
-  --accent: var(--brand-orange);
+  --accent: var(--brand-violet);
   --accent-foreground: #ffffff;
-  --accent-pink: var(--brand-pink);
 
-  --destructive: #e33d5a;
+  --destructive: #d4304c;
   --destructive-foreground: #ffffff;
 
-  --border: rgba(20, 22, 43, 0.08);
-  --input: rgba(20, 22, 43, 0.12);
+  --border: rgba(26, 26, 46, 0.1);
+  --input: rgba(26, 26, 46, 0.16);
   --ring: var(--brand-blue);
+  --whatsapp: var(--brand-whatsapp);
 
-  --gradient-primary: linear-gradient(135deg, #2a4fe0 0%, #8b5cf6 100%);
-  --gradient-accent: linear-gradient(135deg, #ff7a45 0%, #ff5c8a 100%);
-  --gradient-dark: linear-gradient(135deg, #14162b 0%, #2a2e5e 100%);
-
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.9);
-  --shadow-soft: 0 8px 24px -12px rgba(20, 22, 43, 0.12);
-  --shadow-glass: 0 20px 50px -20px rgba(42, 79, 224, 0.25);
-  --shadow-lift: 0 24px 60px -24px rgba(42, 79, 224, 0.35);
+  --shadow-soft: 0 8px 24px -12px rgba(26, 26, 46, 0.12);
+  --shadow-glass: 0 18px 44px -22px rgba(26, 26, 46, 0.18);
+  --shadow-lift: 0 22px 52px -26px rgba(26, 26, 46, 0.24);
 }
 
 @layer base {
@@ -99,40 +118,27 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
+    font-size: 1.0625rem;
     -webkit-font-smoothing: antialiased;
   }
   h1, h2, h3, h4 {
     font-family: var(--font-display);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.028em;
     color: var(--color-ink);
   }
 }
 
-@utility gradient-primary { background-image: var(--gradient-primary); }
-@utility gradient-accent { background-image: var(--gradient-accent); }
-@utility gradient-dark { background-image: var(--gradient-dark); }
-@utility text-gradient-primary {
-  background-image: var(--gradient-primary);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-@utility text-gradient-accent {
-  background-image: var(--gradient-accent);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-@utility glass-card {
-  background: var(--glass-bg);
-  backdrop-filter: blur(16px) saturate(140%);
-  border: 1px solid var(--glass-border);
+/* Flat panel surfaces. Previously translucent + backdrop-blur ("glass"); now
+   solid white with a hairline border, which is what reads as a product rather
+   than a template - and costs nothing to composite. */
+@utility panel {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
   box-shadow: var(--shadow-soft);
 }
-@utility glass-strong {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.95);
+@utility panel-raised {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
   box-shadow: var(--shadow-glass);
 }
 @utility pill-btn {
@@ -147,12 +153,12 @@
   will-change: transform;
 }
 @utility pill-btn-primary {
-  background-image: var(--gradient-primary);
+  background-color: var(--primary-strong);
   color: #fff;
-  box-shadow: 0 10px 24px -10px rgba(42, 79, 224, 0.55);
+  box-shadow: 0 8px 20px -10px rgba(26, 26, 46, 0.35);
 }
 @utility pill-btn-primary-hover {
-  &:hover { transform: translateY(-2px); box-shadow: 0 16px 32px -12px rgba(42, 79, 224, 0.65); }
+  &:hover { background-color: var(--primary); }
 }
 @utility eyebrow {
   font-family: var(--font-mono);
@@ -163,38 +169,14 @@
   color: var(--color-ink-muted);
 }
 @utility mono { font-family: var(--font-mono); }
-@utility blob {
-  position: absolute;
-  border-radius: 9999px;
-  filter: blur(80px);
-  opacity: 0.35;
-  pointer-events: none;
-  z-index: -1;
-}
-@utility float-slow {
-  animation: pb-float 5s ease-in-out infinite;
-}
-@utility reveal {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-}
-@utility reveal-in {
-  opacity: 1;
-  transform: translateY(0);
-}
-@utility card-lift {
-  transition: transform 250ms ease, box-shadow 250ms ease;
-  &:hover { transform: translateY(-5px); box-shadow: var(--shadow-lift); }
+/* For cards that are genuinely clickable. A border and ground shift - no lift,
+   no shadow bloom - so the hover reads as an affordance rather than an effect. */
+@utility link-card {
+  transition: border-color 150ms ease, background-color 150ms ease;
+  &:hover { border-color: color-mix(in srgb, var(--primary) 35%, transparent); background-color: #fff; }
 }
 
-@keyframes pb-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-}
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
-  .float-slow { animation: none !important; }
   html { scroll-behavior: auto; }
 }

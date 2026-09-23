@@ -111,7 +111,7 @@ function AdminMentors() {
         </button>
       </div>
 
-      <div className="glass-strong rounded-2xl overflow-hidden">
+      <div className="panel-raised rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-black/5">

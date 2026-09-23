@@ -1,9 +1,10 @@
+/**
+ * Retired. The page backdrop used to paint blurred radial-gradient blobs behind
+ * the hero. The brand has no gradients outside the logo file, so sections now
+ * sit on the flat off-white background.
+ *
+ * Kept as a no-op so the call sites stay stable; safe to delete along with them.
+ */
 export function PageBackdrop() {
-  return (
-    <>
-      <div className="blob left-[-10%] top-[-10%] h-[420px] w-[420px]" style={{ background: "radial-gradient(circle, #5b7cff, transparent 60%)" }} />
-      <div className="blob right-[-15%] top-[10%] h-[520px] w-[520px]" style={{ background: "radial-gradient(circle, #ff7a45, transparent 60%)" }} />
-      <div className="blob left-[30%] top-[40%] h-[420px] w-[420px]" style={{ background: "radial-gradient(circle, #8b5cf6, transparent 60%)" }} />
-    </>
-  );
+  return null;
 }

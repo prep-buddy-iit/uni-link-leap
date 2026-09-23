@@ -16,6 +16,7 @@ import {
   type ResourceSubmission,
 } from "@/lib/resource-submissions";
 import { getApprovedSubmissionPhotoUrl } from "@/lib/resource-images.functions";
+import { absoluteUrl } from "@/lib/site";
 
 
 const TITLE = "Resources - JEE & NEET Strategy, Motivation & Campus Life | PrepBuddy";
@@ -31,9 +32,9 @@ export const Route = createFileRoute("/resources")({
       { name: "description", content: DESC },
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESC },
-      { property: "og:url", content: "/resources" },
+      { property: "og:url", content: absoluteUrl("/resources") },
     ],
-    links: [{ rel: "canonical", href: "/resources" }],
+    links: [{ rel: "canonical", href: absoluteUrl("/resources") }],
     scripts: [
       {
         type: "application/ld+json",
@@ -178,7 +179,7 @@ function ResourcesPage() {
             <p className="eyebrow">Resources & Motivation</p>
             <h1 className="mt-4 font-display font-bold text-4xl sm:text-5xl lg:text-6xl leading-[1.05]">
               Strategy, motivation, and a look at{" "}
-              <span className="text-gradient-primary">where you're headed.</span>
+              <span className="text-primary">where you're headed.</span>
             </h1>
             <p className="mt-5 text-lg text-ink-muted max-w-2xl mx-auto">
               Written by our mentors and IITians from campuses across the country - plus a look inside the colleges you're working toward.
@@ -206,7 +207,7 @@ function ResourcesPage() {
                 <button key={k} onClick={() => setTab(k)}
                   className={
                     "rounded-full px-4 py-1.5 text-sm font-semibold transition " +
-                    (tab === k ? "gradient-primary text-white shadow-glass" : "text-ink-muted hover:text-ink")
+                    (tab === k ? "bg-primary-strong text-white shadow-glass" : "text-ink-muted hover:text-ink")
                   }>
                   {l}
                 </button>
@@ -241,21 +242,20 @@ function ResourcesPage() {
                 const author = AUTHORS[a.authorSlug];
                 return (
                   <Link key={a.slug} to="/resources/$slug" params={{ slug: a.slug }}
-                    className="glass-strong card-lift rounded-3xl p-6 flex flex-col group">
+                    className="panel-raised link-card rounded-3xl p-6 flex flex-col group">
                     <div className="flex items-center gap-2">
-                      <span className="mono text-[10px] uppercase tracking-wider text-primary">{a.category}</span>
+                      <span className="mono text-[10px] uppercase tracking-wider text-primary-strong">{a.category}</span>
                       <span className="mono text-[10px] uppercase tracking-wider text-ink-muted">·</span>
                       <span className="mono text-[10px] uppercase tracking-wider text-ink-muted inline-flex items-center gap-1">
                         <Clock className="h-3 w-3" /> {a.readMinutes} min
                       </span>
                     </div>
-                    <h3 className="mt-3 font-display text-lg font-bold text-ink group-hover:text-primary transition">
+                    <h3 className="mt-3 font-display text-lg font-bold text-ink group-hover:text-primary-strong transition">
                       {a.title}
                     </h3>
                     <p className="mt-2 text-sm text-ink-muted flex-1">{a.description}</p>
                     <div className="mt-5 flex items-center gap-3 pt-4 border-t border-border/60">
-                      <div className="h-9 w-9 rounded-full grid place-items-center text-white text-xs font-bold shrink-0"
-                        style={{ backgroundImage: `linear-gradient(135deg, ${author.g})` }}>
+                      <div className="h-9 w-9 rounded-full grid place-items-center bg-secondary-tint text-secondary text-xs font-bold shrink-0">
                         {author.initials}
                       </div>
                       <div className="min-w-0">
@@ -272,14 +272,14 @@ function ResourcesPage() {
               <div className="mt-14">
                 <div className="flex items-center gap-2 mb-6">
                   <Users className="h-4 w-4 text-primary" />
-                  <p className="mono text-[10px] uppercase tracking-wider text-primary">From the community</p>
+                  <p className="mono text-[10px] uppercase tracking-wider text-primary-strong">From the community</p>
                 </div>
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
                   {communityArticles.map((a) => (
                     <button key={a.id} onClick={() => setOpenArticle(a)}
-                      className="glass-strong card-lift rounded-3xl p-6 flex flex-col text-left group">
+                      className="panel-raised link-card rounded-3xl p-6 flex flex-col text-left group">
                       <span className="mono text-[10px] uppercase tracking-wider text-ink-muted">Community · Article</span>
-                      <h3 className="mt-3 font-display text-lg font-bold text-ink group-hover:text-primary transition">{a.title}</h3>
+                      <h3 className="mt-3 font-display text-lg font-bold text-ink group-hover:text-primary-strong transition">{a.title}</h3>
                       {a.description && <p className="mt-2 text-sm text-ink-muted flex-1">{a.description}</p>}
                       <p className="mt-4 pt-4 border-t border-border/60 text-xs text-ink-muted">
                         By <span className="font-semibold text-ink">{a.submitter_name}</span>
@@ -304,13 +304,13 @@ function ResourcesPage() {
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {videos.map((v) => (
                   <button key={v.id} onClick={() => setVideoOpen(v.videoId)}
-                    className="glass-strong card-lift rounded-3xl p-3 text-left group">
+                    className="panel-raised link-card rounded-3xl p-3 text-left group">
                     <div className="relative overflow-hidden rounded-2xl aspect-video">
                       <img src={v.thumbnail} alt={v.title}
                         className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]" />
-                      <span className="absolute inset-0 bg-gradient-to-tr from-ink/40 via-transparent to-transparent" />
+                      <span className="absolute inset-0 bg-ink/25" />
                       <span className="absolute inset-0 flex items-center justify-center">
-                        <span className="grid h-14 w-14 place-items-center rounded-full bg-white/95 shadow-lift transition group-hover:scale-110">
+                        <span className="grid h-14 w-14 place-items-center rounded-full bg-white/95 shadow-lift transition group-hover:scale-105">
                           <Play className="h-5 w-5 translate-x-0.5 text-primary" fill="currentColor" />
                         </span>
                       </span>
@@ -333,18 +333,18 @@ function ResourcesPage() {
                 <div className="mt-14">
                   <div className="flex items-center gap-2 mb-6">
                     <Users className="h-4 w-4 text-primary" />
-                    <p className="mono text-[10px] uppercase tracking-wider text-primary">From the community</p>
+                    <p className="mono text-[10px] uppercase tracking-wider text-primary-strong">From the community</p>
                   </div>
                   <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
                     {communityVideos.map((v) => (
                       <button key={v.id} onClick={() => setVideoOpen(v.videoId!)}
-                        className="glass-strong card-lift rounded-3xl p-3 text-left group">
+                        className="panel-raised link-card rounded-3xl p-3 text-left group">
                         <div className="relative overflow-hidden rounded-2xl aspect-video">
                           <img src={`https://img.youtube.com/vi/${v.videoId}/hqdefault.jpg`} alt={v.title}
                             className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]" />
-                          <span className="absolute inset-0 bg-gradient-to-tr from-ink/40 via-transparent to-transparent" />
+                          <span className="absolute inset-0 bg-ink/25" />
                           <span className="absolute inset-0 flex items-center justify-center">
-                            <span className="grid h-14 w-14 place-items-center rounded-full bg-white/95 shadow-lift transition group-hover:scale-110">
+                            <span className="grid h-14 w-14 place-items-center rounded-full bg-white/95 shadow-lift transition group-hover:scale-105">
                               <Play className="h-5 w-5 translate-x-0.5 text-primary" fill="currentColor" />
                             </span>
                           </span>
@@ -385,7 +385,7 @@ function ResourcesPage() {
                       "w-full object-cover transition duration-500 group-hover:scale-[1.05] " +
                       (p.span === "tall" ? "aspect-[3/4]" : p.span === "wide" ? "aspect-[4/3]" : "aspect-square")
                     } />
-                  <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/85 to-transparent p-3 opacity-0 group-hover:opacity-100 transition">
+                  <span className="absolute inset-x-0 bottom-0 bg-ink/80 p-3 opacity-0 group-hover:opacity-100 transition">
                     <span className="mono text-[10px] uppercase tracking-wider text-white/70 block">{p.institute}</span>
                     <span className="text-xs text-white font-medium">{p.caption}</span>
                   </span>
@@ -397,19 +397,18 @@ function ResourcesPage() {
 
         {/* Closing CTA */}
         <section className="mx-auto max-w-7xl px-5 pb-24">
-          <div className="relative overflow-hidden rounded-3xl gradient-dark text-white p-10 sm:p-14 text-center">
-            <div className="blob right-[-10%] top-[-40%] h-[420px] w-[420px]" style={{ background: "radial-gradient(circle, #8b5cf6, transparent 60%)" }} />
-            <h2 className="font-display text-3xl sm:text-4xl font-bold">
+          <div className="relative overflow-hidden rounded-3xl bg-ink text-white p-10 sm:p-14 text-center">
+                <h2 className="font-display text-3xl sm:text-4xl font-bold text-white">
               Want a mentor who's been where you're headed?
             </h2>
-            <p className="mt-3 text-white/85 max-w-xl mx-auto">
+            <p className="mt-3 text-white max-w-xl mx-auto">
               Start with the ₹99, 3-day trial - we'll match you to a topper who's cleared the same exam.
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
-              <Link to="/jee" hash="plans" className="pill-btn bg-white text-primary hover:opacity-90">
+              <Link to="/jee" hash="plans" className="pill-btn bg-white text-primary-strong hover:opacity-90">
                 Start with JEE →
               </Link>
-              <Link to="/neet" hash="plans" className="pill-btn bg-white text-primary hover:opacity-90">
+              <Link to="/neet" hash="plans" className="pill-btn bg-white text-primary-strong hover:opacity-90">
                 Start with NEET →
               </Link>
             </div>
@@ -427,7 +426,7 @@ function ResourcesPage() {
             <button onClick={() => setOpenArticle(null)} className="absolute right-4 top-4 rounded-full p-2 hover:bg-black/5" aria-label="Close">
               <X className="h-5 w-5" />
             </button>
-            <span className="mono text-[10px] uppercase tracking-wider text-primary">Community · Article</span>
+            <span className="mono text-[10px] uppercase tracking-wider text-primary-strong">Community · Article</span>
             <h2 className="mt-2 font-display text-2xl sm:text-3xl font-bold break-words">{openArticle.title}</h2>
             <p className="mt-2 text-sm text-ink-muted break-words">
               By <span className="font-semibold text-ink">{openArticle.submitter_name}</span>

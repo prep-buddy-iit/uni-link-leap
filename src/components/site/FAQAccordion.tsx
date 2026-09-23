@@ -5,7 +5,7 @@ import type { FAQ } from "@/lib/exam-content";
 export function FAQAccordion({ faqs, title = "Real questions students ask us." }: { faqs: FAQ[]; title?: string }) {
   const [openIdx, setOpenIdx] = useState<number | null>(0);
   return (
-    <section className="mx-auto max-w-3xl px-5 py-20 sm:py-24">
+    <section className="mx-auto max-w-3xl px-5 py-16 sm:py-20">
       <div className="text-center">
         <p className="eyebrow">FAQ</p>
         <h2 className="mt-3 font-display text-3xl sm:text-4xl font-bold">{title}</h2>
@@ -14,7 +14,7 @@ export function FAQAccordion({ faqs, title = "Real questions students ask us." }
         {faqs.map((f, i) => {
           const isOpen = openIdx === i;
           return (
-            <div key={f.q} className="glass-card rounded-2xl overflow-hidden">
+            <div key={f.q} className="rounded-lg border border-border bg-white overflow-hidden">
               <button
                 onClick={() => setOpenIdx(isOpen ? null : i)}
                 className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"

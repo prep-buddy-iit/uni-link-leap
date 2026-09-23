@@ -11,7 +11,9 @@ import type { ErrorComponentProps } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
+import { reportClientError } from "../lib/error-reporting";
+import { SITE_URL, SITE_NAME, OG_IMAGE, OG_IMAGE_ALT, absoluteUrl } from "@/lib/site";
+import { CONTACT_PHONE_TEL } from "@/lib/whatsapp";
 import { Toaster } from "@/components/ui/sonner";
 import { ApplicationModalProvider } from "@/lib/application-modal";
 import { FloatingWhatsAppButton } from "@/components/site/FloatingWhatsAppButton";
@@ -26,11 +28,36 @@ function NotFoundComponent() {
           The page you're looking for doesn't exist or has been moved. Try one of these:
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
-          <Link to="/" className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold text-white gradient-primary">Home</Link>
-          <Link to="/jee" className="inline-flex items-center justify-center rounded-full border border-input bg-white px-5 py-2.5 text-sm font-semibold text-ink">JEE Mentorship</Link>
-          <Link to="/neet" className="inline-flex items-center justify-center rounded-full border border-input bg-white px-5 py-2.5 text-sm font-semibold text-ink">NEET Mentorship</Link>
-          <Link to="/find-a-mentor" className="inline-flex items-center justify-center rounded-full border border-input bg-white px-5 py-2.5 text-sm font-semibold text-ink">Meet Mentors</Link>
-          <Link to="/contact" className="inline-flex items-center justify-center rounded-full border border-input bg-white px-5 py-2.5 text-sm font-semibold text-ink">Contact</Link>
+          <Link
+            to="/"
+            className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold text-white bg-primary"
+          >
+            Home
+          </Link>
+          <Link
+            to="/jee"
+            className="inline-flex items-center justify-center rounded-full border border-input bg-white px-5 py-2.5 text-sm font-semibold text-ink"
+          >
+            JEE Mentorship
+          </Link>
+          <Link
+            to="/neet"
+            className="inline-flex items-center justify-center rounded-full border border-input bg-white px-5 py-2.5 text-sm font-semibold text-ink"
+          >
+            NEET Mentorship
+          </Link>
+          <Link
+            to="/find-a-mentor"
+            className="inline-flex items-center justify-center rounded-full border border-input bg-white px-5 py-2.5 text-sm font-semibold text-ink"
+          >
+            Meet Mentors
+          </Link>
+          <Link
+            to="/contact"
+            className="inline-flex items-center justify-center rounded-full border border-input bg-white px-5 py-2.5 text-sm font-semibold text-ink"
+          >
+            Contact
+          </Link>
         </div>
       </div>
     </div>
@@ -41,7 +68,7 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
+    reportClientError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
 
   return (
@@ -55,8 +82,11 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
-            onClick={() => { router.invalidate(); reset(); }}
-            className="inline-flex items-center rounded-full px-5 py-2.5 text-sm font-semibold text-white gradient-primary"
+            onClick={() => {
+              router.invalidate();
+              reset();
+            }}
+            className="inline-flex items-center rounded-full px-5 py-2.5 text-sm font-semibold text-white bg-primary"
           >
             Try again
           </button>
@@ -84,18 +114,34 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "PrepBuddy pairs Class 11, 12 and Droppers with a dedicated topper-mentor - IITians for JEE, AIIMS/medical students for NEET. Personalized plans, daily accountability, weekly review calls.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:site_name", content: "PrepBuddy" },
-      { property: "og:title", content: "PrepBuddy - 1-on-1 Mentorship for JEE & NEET | Class 11, 12 & Droppers" },
+      { property: "og:site_name", content: SITE_NAME },
+      { property: "og:locale", content: "en_IN" },
+      { property: "og:url", content: SITE_URL },
+      {
+        property: "og:title",
+        content: "PrepBuddy - 1-on-1 Mentorship for JEE & NEET | Class 11, 12 & Droppers",
+      },
       {
         property: "og:description",
         content:
           "PrepBuddy pairs Class 11, 12 and Droppers with a dedicated topper-mentor - IITians for JEE, AIIMS/medical students for NEET. Personalized plans, daily accountability, weekly review calls.",
       },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "PrepBuddy - 1-on-1 Mentorship for JEE & NEET | Class 11, 12 & Droppers" },
-      { name: "twitter:description", content: "PrepBuddy pairs Class 11, 12 and Droppers with a dedicated topper-mentor - IITians for JEE, AIIMS/medical students for NEET. Personalized plans, daily accountability, weekly review calls." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/727af470-17da-43e0-ac5e-50105ceb5a9c/id-preview-3bdbcaef--d1b86c75-1143-4960-a5b1-06dee2b4648a.lovable.app-1784099037468.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/727af470-17da-43e0-ac5e-50105ceb5a9c/id-preview-3bdbcaef--d1b86c75-1143-4960-a5b1-06dee2b4648a.lovable.app-1784099037468.png" },
+      {
+        name: "twitter:title",
+        content: "PrepBuddy - 1-on-1 Mentorship for JEE & NEET | Class 11, 12 & Droppers",
+      },
+      {
+        name: "twitter:description",
+        content:
+          "PrepBuddy pairs Class 11, 12 and Droppers with a dedicated topper-mentor - IITians for JEE, AIIMS/medical students for NEET. Personalized plans, daily accountability, weekly review calls.",
+      },
+      { property: "og:image", content: OG_IMAGE },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: OG_IMAGE_ALT },
+      { name: "twitter:image", content: OG_IMAGE },
+      { name: "twitter:image:alt", content: OG_IMAGE_ALT },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -104,7 +150,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap",
       },
     ],
     scripts: [
@@ -113,12 +159,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Organization",
-          name: "PrepBuddy",
-          url: "/",
-          logo: "/logo.png",
+          name: SITE_NAME,
+          url: SITE_URL,
+          logo: absoluteUrl("/logo.png"),
           description:
             "1-on-1 mentorship for JEE and NEET aspirants - IITians for JEE, AIIMS/medical students for NEET. Personalized plans, daily accountability, weekly review calls.",
           areaServed: "IN",
+          telephone: CONTACT_PHONE_TEL,
+          contactPoint: {
+            "@type": "ContactPoint",
+            telephone: CONTACT_PHONE_TEL,
+            contactType: "customer support",
+            areaServed: "IN",
+            availableLanguage: ["en", "hi"],
+          },
           address: {
             "@type": "PostalAddress",
             addressLocality: "Hyderabad",
@@ -132,8 +186,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "WebSite",
-          name: "PrepBuddy",
-          url: "/",
+          name: SITE_NAME,
+          url: SITE_URL,
         }),
       },
     ],
