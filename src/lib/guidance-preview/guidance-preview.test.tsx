@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -29,27 +30,51 @@ vi.mock("@/lib/application-modal", () => ({
 }));
 
 // Imported after the mocks so the component picks them up.
-const { GuidancePreviewChat } = await import("@/components/site/GuidancePreviewChat");
+const { PrepCheckProvider, usePrepCheck } = await import("@/lib/prep-check");
+const { PrepCheckBot } = await import("@/components/site/PrepCheckBot");
 
-/** Walks the whole questionnaire, ticking one item per category, to the result. */
-async function completePreview(exam: ExamKey = "jee") {
-  const user = userEvent.setup();
-  render(<GuidancePreviewChat />);
+/** Stands in for a page CTA that launches the bot, optionally with an exam. */
+function AutoOpen({ exam }: { exam?: ExamKey }) {
+  const { open } = usePrepCheck();
+  useEffect(() => {
+    open(exam);
+  }, [open, exam]);
+  return null;
+}
 
-  await user.click(screen.getByRole("button", { name: new RegExp(`^${exam}`, "i") }));
-  await user.click(screen.getByRole("button", { name: /^Next/i }));
+/** Mounts the floating assistant the way the root route does. */
+function renderBot(options: { autoOpenWith?: ExamKey; autoOpen?: boolean } = {}) {
+  render(
+    <PrepCheckProvider>
+      {(options.autoOpen || options.autoOpenWith) && <AutoOpen exam={options.autoOpenWith} />}
+      <PrepCheckBot />
+    </PrepCheckProvider>,
+  );
+  return userEvent.setup();
+}
 
-  await user.click(screen.getByRole("button", { name: /Physics/i }));
-  await user.click(screen.getByRole("button", { name: /^Start/i }));
-
+/** Ticks one item per category and answers the rest, up to the result card. */
+async function answerEverything(user: ReturnType<typeof userEvent.setup>, exam: ExamKey) {
   for (const category of getCategories(exam)) {
-    await user.click(screen.getByLabelText(category.items[0].label));
-    await user.click(screen.getByRole("button", { name: /Next|Almost done/i }));
+    await user.click(await screen.findByRole("button", { name: category.items[0].label }));
+    await user.click(screen.getByRole("button", { name: /^Continue$/ }));
   }
+  await user.click(await screen.findByRole("button", { name: /Skip this/i }));
+}
 
-  await user.click(screen.getByRole("button", { name: /Almost there/i }));
+/** Walks the whole questionnaire, from the closed launcher, to the result. */
+async function completePreview(exam: ExamKey = "jee") {
+  const user = renderBot();
 
-  await user.type(screen.getByLabelText("Your name"), "Aarav Sharma");
+  // Closed by default - the student opens it from the corner.
+  await user.click(screen.getByRole("button", { name: /open the prepbuddy prep check/i }));
+
+  await user.click(await screen.findByRole("button", { name: new RegExp(`^${exam}`, "i") }));
+  await user.click(await screen.findByRole("button", { name: "Physics" }));
+
+  await answerEverything(user, exam);
+
+  await user.type(await screen.findByLabelText("Your name"), "Aarav Sharma");
   await user.type(screen.getByLabelText("Phone number"), "9876543210");
   await user.click(screen.getByRole("button", { name: /See what this points at/i }));
 
@@ -65,6 +90,9 @@ function saved(): GuidancePreviewLead {
 beforeEach(() => {
   saveGuidancePreviewLead.mockClear();
   open.mockClear();
+  // The bot keeps a half-finished prep check in sessionStorage for the session,
+  // which would otherwise leak from one test into the next.
+  window.sessionStorage.clear();
 });
 afterEach(cleanup);
 
@@ -135,19 +163,14 @@ describe("contact step", () => {
   });
 
   it("refuses to submit without a valid name and phone", async () => {
-    const user = userEvent.setup();
-    render(<GuidancePreviewChat initialExam="jee" />);
+    // ?exam=jee opens the bot straight onto the subject question.
+    const user = renderBot({ autoOpenWith: "jee" });
 
-    await user.click(screen.getByRole("button", { name: /Physics/i }));
-    await user.click(screen.getByRole("button", { name: /^Start/i }));
-    for (const category of getCategories("jee")) {
-      await user.click(screen.getByLabelText(category.items[0].label));
-      await user.click(screen.getByRole("button", { name: /Next|Almost done/i }));
-    }
-    await user.click(screen.getByRole("button", { name: /Almost there/i }));
+    await user.click(await screen.findByRole("button", { name: "Physics" }));
+    await answerEverything(user, "jee");
 
     // Nothing filled in.
-    await user.click(screen.getByRole("button", { name: /See what this points at/i }));
+    await user.click(await screen.findByRole("button", { name: /See what this points at/i }));
     expect(saveGuidancePreviewLead).not.toHaveBeenCalled();
     expect(screen.getByText("Please enter your name.")).toBeTruthy();
 
@@ -157,6 +180,63 @@ describe("contact step", () => {
     await user.click(screen.getByRole("button", { name: /See what this points at/i }));
     expect(saveGuidancePreviewLead).not.toHaveBeenCalled();
     expect(screen.getByText("Please enter a valid phone number.")).toBeTruthy();
+  });
+});
+
+describe("floating bot", () => {
+  const LAUNCHER = /open the prepbuddy prep check/i;
+  const MINIMISE = /close the prep check/i;
+
+  it("starts closed and opens from the corner launcher", async () => {
+    const user = renderBot();
+
+    expect(screen.queryByRole("dialog")).toBeNull();
+    await user.click(screen.getByRole("button", { name: LAUNCHER }));
+
+    const panel = screen.getByRole("dialog", { name: "PrepBuddy Prep Check" });
+    expect(panel).toBeTruthy();
+    // Focus lands inside the panel rather than being left on the page behind it.
+    expect(document.activeElement).toBe(panel);
+  });
+
+  it("keeps the answers already given when minimised and reopened", async () => {
+    const user = renderBot({ autoOpen: true });
+
+    await user.click(await screen.findByRole("button", { name: /^JEE/ }));
+    await user.click(await screen.findByRole("button", { name: "Physics" }));
+    const firstItem = getCategories("jee")[0].items[0].label;
+    await user.click(await screen.findByRole("button", { name: firstItem }));
+
+    await user.click(screen.getByRole("button", { name: MINIMISE }));
+    expect(screen.queryByRole("dialog")).toBeNull();
+
+    await user.click(screen.getByRole("button", { name: LAUNCHER }));
+
+    // Same question, same tick - not back at the start.
+    const reopened = screen.getByRole("button", { name: firstItem });
+    expect(reopened.getAttribute("aria-pressed")).toBe("true");
+    expect(screen.queryByRole("button", { name: /^NEET/ })).toBeNull();
+  });
+
+  it("minimises on Escape", async () => {
+    const user = renderBot({ autoOpen: true });
+
+    await screen.findByRole("dialog");
+    await user.keyboard("{Escape}");
+
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(screen.getByRole("button", { name: LAUNCHER })).toBeTruthy();
+  });
+
+  it("reopens on the result instead of restarting once it has been finished", async () => {
+    const user = await completePreview();
+    const { note } = saved();
+
+    await user.click(screen.getByRole("button", { name: MINIMISE }));
+    await user.click(screen.getByRole("button", { name: LAUNCHER }));
+
+    expect(screen.getByText(note.teaserLabel)).toBeTruthy();
+    expect(screen.queryByRole("button", { name: /^JEE/ })).toBeNull();
   });
 });
 

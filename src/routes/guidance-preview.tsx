@@ -1,9 +1,11 @@
+import { useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 import { PageBackdrop } from "@/components/site/PageBackdrop";
-import { GuidancePreviewChat } from "@/components/site/GuidancePreviewChat";
+import { PrepCheckLaunchCard } from "@/components/site/PrepCheckLaunchCard";
+import { usePrepCheck } from "@/lib/prep-check";
 import type { ExamKey } from "@/components/ApplicationModal";
 import { absoluteUrl } from "@/lib/site";
 
@@ -33,6 +35,13 @@ export const Route = createFileRoute("/guidance-preview")({
 
 function GuidancePreviewPage() {
   const { exam } = Route.useSearch();
+  const { open } = usePrepCheck();
+
+  // This page exists to run the prep check, so it opens the assistant itself
+  // rather than making the student find the corner button.
+  useEffect(() => {
+    open(exam);
+  }, [open, exam]);
 
   return (
     <div className="relative min-h-screen overflow-x-clip bg-background">
@@ -53,7 +62,7 @@ function GuidancePreviewPage() {
             </p>
 
             <div className="mt-8">
-              <GuidancePreviewChat initialExam={exam} />
+              <PrepCheckLaunchCard exam={exam} />
             </div>
           </div>
         </section>

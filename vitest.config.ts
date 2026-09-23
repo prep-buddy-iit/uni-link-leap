@@ -9,6 +9,9 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     globals: true,
+    // Walking the prep check end to end goes through nine ~380ms bot pauses,
+    // which is comfortably past the 5s default.
+    testTimeout: 20000,
     include: ["src/**/*.{test,spec}.{ts,tsx}"],
   },
 });

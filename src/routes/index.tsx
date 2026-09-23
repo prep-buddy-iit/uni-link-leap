@@ -9,7 +9,7 @@ import { HeroVideoCard } from "@/components/site/HeroVideoCard";
 import { TrustBar } from "@/components/site/TrustBar";
 import { PageBackdrop } from "@/components/site/PageBackdrop";
 import { COMMUNITIES } from "@/lib/exam-content";
-import { GuidancePreviewChat } from "@/components/site/GuidancePreviewChat";
+import { PrepCheckLaunchCard } from "@/components/site/PrepCheckLaunchCard";
 import { MethodPanel } from "@/components/site/MethodPanel";
 import { absoluteUrl } from "@/lib/site";
 
@@ -124,7 +124,7 @@ function GuidancePreview() {
             ))}
           </ul>
         </div>
-        <GuidancePreviewChat />
+        <PrepCheckLaunchCard />
       </div>
     </section>
   );

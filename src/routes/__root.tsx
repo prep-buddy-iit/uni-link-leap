@@ -17,6 +17,8 @@ import { CONTACT_PHONE_TEL } from "@/lib/whatsapp";
 import { Toaster } from "@/components/ui/sonner";
 import { ApplicationModalProvider } from "@/lib/application-modal";
 import { FloatingWhatsAppButton } from "@/components/site/FloatingWhatsAppButton";
+import { PrepCheckProvider } from "@/lib/prep-check";
+import { PrepCheckBot } from "@/components/site/PrepCheckBot";
 
 function NotFoundComponent() {
   return (
@@ -218,10 +220,15 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ApplicationModalProvider>
-        <Outlet />
+        {/* The prep check lives above the router so a student can carry a
+            half-finished questionnaire from page to page. */}
+        <PrepCheckProvider>
+          <Outlet />
+          <FloatingWhatsAppButton />
+          <PrepCheckBot />
+        </PrepCheckProvider>
       </ApplicationModalProvider>
       <Toaster richColors position="top-center" />
-      <FloatingWhatsAppButton />
     </QueryClientProvider>
   );
 }
