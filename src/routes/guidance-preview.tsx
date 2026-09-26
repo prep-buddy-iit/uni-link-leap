@@ -7,7 +7,7 @@ import { PageBackdrop } from "@/components/site/PageBackdrop";
 import { PrepCheckLaunchCard } from "@/components/site/PrepCheckLaunchCard";
 import { usePrepCheck } from "@/lib/prep-check";
 import type { ExamKey } from "@/components/ApplicationModal";
-import { absoluteUrl } from "@/lib/site";
+import { absoluteUrl, breadcrumbSchema } from "@/lib/site";
 
 const TITLE = "Free Guidance Preview - PrepBuddy";
 const DESC =
@@ -29,6 +29,12 @@ export const Route = createFileRoute("/guidance-preview")({
       { property: "og:url", content: absoluteUrl("/guidance-preview") },
     ],
     links: [{ rel: "canonical", href: absoluteUrl("/guidance-preview") }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify(breadcrumbSchema([{ name: "Free Guidance Preview", path: "/guidance-preview" }])),
+      },
+    ],
   }),
   component: GuidancePreviewPage,
 });

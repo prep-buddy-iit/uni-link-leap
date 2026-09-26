@@ -18,13 +18,22 @@ import type { GuidancePreviewLead } from "./store";
 import type { ExamKey } from "@/components/ApplicationModal";
 
 // The questionnaire writes straight to `leads` on finish; stub that so the test
-// never touches the network.
-const saveGuidancePreviewLead = vi.fn(async (_lead: GuidancePreviewLead) => true);
+// never touches the network. It resolves to the id of the row it wrote, which
+// is what links the trial signup back to these answers.
+const PREVIEW_LEAD_ID = "11111111-2222-4333-8444-555555555555";
+const saveGuidancePreviewLead = vi.fn(async (_lead: GuidancePreviewLead) => PREVIEW_LEAD_ID);
 vi.mock("@/lib/guidance-preview/store", () => ({
   saveGuidancePreviewLead: (lead: GuidancePreviewLead) => saveGuidancePreviewLead(lead),
 }));
 
-const open = vi.fn<(plan: string, exam: ExamKey, opts: { name: string; phone: string }) => void>();
+const open =
+  vi.fn<
+    (
+      plan: string,
+      exam: ExamKey,
+      opts: { name: string; phone: string; guidancePreviewId?: string },
+    ) => void
+  >();
 vi.mock("@/lib/application-modal", () => ({
   useApplicationModal: () => ({ open }),
 }));
@@ -146,7 +155,31 @@ describe("trial CTA", () => {
 
     expect(open.mock.calls[0][0]).toBe("trial");
     expect(open.mock.calls[0][1]).toBe("jee");
-    expect(open.mock.calls[0][2]).toEqual({ name: "Aarav Sharma", phone: "9876543210" });
+    expect(open.mock.calls[0][2]).toEqual({
+      name: "Aarav Sharma",
+      phone: "9876543210",
+      guidancePreviewId: PREVIEW_LEAD_ID,
+    });
+  });
+
+  it("hands the trial form the id of the lead row the preview wrote", async () => {
+    const user = await completePreview();
+    await user.click(screen.getByRole("button", { name: /trial/i }));
+
+    // Without this the signup and the answers behind it are two unrelated rows
+    // in `leads`, findable only by manually matching phone numbers.
+    expect(open.mock.calls[0][2].guidancePreviewId).toBe(PREVIEW_LEAD_ID);
+  });
+
+  it("still opens the trial form when the preview could not be stored", async () => {
+    saveGuidancePreviewLead.mockResolvedValueOnce(null as unknown as string);
+
+    const user = await completePreview();
+    await user.click(screen.getByRole("button", { name: /trial/i }));
+
+    // A dropped write loses the link, never the signup.
+    expect(open.mock.calls[0][0]).toBe("trial");
+    expect(open.mock.calls[0][2].guidancePreviewId).toBeUndefined();
   });
 });
 

@@ -34,6 +34,8 @@ type Lead = {
   notes: string | null;
   status: string;
   created_at: string;
+  /** Set when this signup came through the Free Guidance Preview. */
+  guidance_preview_id: string | null;
 };
 
 const STATUSES = ["new", "contacted", "qualified", "converted", "lost"] as const;
@@ -49,9 +51,13 @@ function AdminLeads() {
 
   useEffect(() => {
     if (gate !== "ok") return;
-    supabase.from("leads").select("*").order("created_at", { ascending: false }).then(({ data }) => {
-      setRows((data ?? []) as Lead[]);
-    });
+    supabase
+      .from("leads")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .then(({ data }) => {
+        setRows((data ?? []) as Lead[]);
+      });
   }, [gate]);
 
   const filtered = useMemo(() => {
@@ -59,10 +65,17 @@ function AdminLeads() {
       if (statusFilter !== "all" && r.status !== statusFilter) return false;
       if (onlyPreviews && !isGuidancePreviewLead(r.notes)) return false;
       if (!q) return true;
-      const hay = `${r.name} ${r.phone} ${r.email ?? ""} ${r.exam ?? ""} ${r.current_class}`.toLowerCase();
+      const hay =
+        `${r.name} ${r.phone} ${r.email ?? ""} ${r.exam ?? ""} ${r.current_class}`.toLowerCase();
       return hay.includes(q.toLowerCase());
     });
   }, [rows, q, statusFilter, onlyPreviews]);
+
+  // The preview row is already in `rows`; every lead is fetched in one go.
+  const byId = useMemo(() => new Map(rows.map((r) => [r.id, r])), [rows]);
+  const linkedPreview = open?.guidance_preview_id
+    ? (byId.get(open.guidance_preview_id) ?? null)
+    : null;
 
   async function updateStatus(id: string, status: string) {
     setBusy(id);
@@ -85,7 +98,23 @@ function AdminLeads() {
 
   function exportCsv() {
     // subjects/problems carry the guidance preview's subject and ticked options.
-    const headers = ["created_at", "name", "phone", "email", "exam", "current_class", "target_year", "prep_status", "plan", "source", "status", "subjects", "problems", "notes"];
+    const headers = [
+      "created_at",
+      "name",
+      "phone",
+      "email",
+      "exam",
+      "current_class",
+      "target_year",
+      "prep_status",
+      "plan",
+      "source",
+      "status",
+      "subjects",
+      "problems",
+      "notes",
+      "guidance_preview_id",
+    ];
     const csv = [
       headers.join(","),
       ...filtered.map((r) =>
@@ -111,21 +140,39 @@ function AdminLeads() {
   if (gate === "denied") return <AdminDenied onSignOut={() => supabase.auth.signOut()} />;
 
   return (
-    <AdminShell title="Leads / Mentees" subtitle={`${rows.length} total leads captured from the site.`}>
+    <AdminShell
+      title="Leads / Mentees"
+      subtitle={`${rows.length} total leads captured from the site.`}
+    >
       <div className="flex flex-wrap items-center gap-3 mb-4">
         <div className="relative flex-1 min-w-[220px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-ink-muted" />
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search name, phone, email…"
-            className="w-full rounded-xl border border-input bg-white pl-9 pr-3 py-2.5 text-sm outline-none focus:border-primary" />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search name, phone, email…"
+            className="w-full rounded-xl border border-input bg-white pl-9 pr-3 py-2.5 text-sm outline-none focus:border-primary"
+          />
         </div>
-        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}
-          className="rounded-xl border border-input bg-white px-3 py-2.5 text-sm">
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="rounded-xl border border-input bg-white px-3 py-2.5 text-sm"
+        >
           <option value="all">All statuses</option>
-          {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+          {STATUSES.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
         </select>
         <label className="flex items-center gap-2 text-sm text-ink-muted">
-          <input type="checkbox" checked={onlyPreviews} onChange={(e) => setOnlyPreviews(e.target.checked)}
-            className="h-4 w-4 accent-primary" />
+          <input
+            type="checkbox"
+            checked={onlyPreviews}
+            onChange={(e) => setOnlyPreviews(e.target.checked)}
+            className="h-4 w-4 accent-primary"
+          />
           From guidance preview
         </label>
         <button onClick={exportCsv} className="pill-btn border border-input text-sm h-10 px-3">
@@ -156,6 +203,11 @@ function AdminLeads() {
                         <Sparkles className="h-2.5 w-2.5" /> Preview
                       </span>
                     )}
+                    {r.guidance_preview_id && (
+                      <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-secondary-tint px-2 py-0.5 text-[10px] font-medium text-secondary align-middle">
+                        <Sparkles className="h-2.5 w-2.5" /> From preview
+                      </span>
+                    )}
                   </td>
                   <td className="p-3 text-ink-muted">
                     <div>{r.phone}</div>
@@ -163,19 +215,41 @@ function AdminLeads() {
                   </td>
                   <td className="p-3 text-ink-muted">
                     <div className="mono text-xs uppercase">{r.exam ?? "-"}</div>
-                    <div className="text-xs">{r.current_class}{r.target_year ? ` · ${r.target_year}` : ""}</div>
+                    <div className="text-xs">
+                      {r.current_class}
+                      {r.target_year ? ` · ${r.target_year}` : ""}
+                    </div>
                   </td>
                   <td className="p-3">
-                    <select value={r.status} disabled={busy === r.id} onChange={(e) => updateStatus(r.id, e.target.value)}
-                      className="rounded-lg border border-input bg-white px-2 py-1 text-xs">
-                      {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+                    <select
+                      value={r.status}
+                      disabled={busy === r.id}
+                      onChange={(e) => updateStatus(r.id, e.target.value)}
+                      className="rounded-lg border border-input bg-white px-2 py-1 text-xs"
+                    >
+                      {STATUSES.map((s) => (
+                        <option key={s} value={s}>
+                          {s}
+                        </option>
+                      ))}
                     </select>
                   </td>
-                  <td className="p-3 text-xs text-ink-muted mono">{new Date(r.created_at).toLocaleDateString()}</td>
+                  <td className="p-3 text-xs text-ink-muted mono">
+                    {new Date(r.created_at).toLocaleDateString()}
+                  </td>
                   <td className="p-3">
                     <div className="flex gap-1">
-                      <button onClick={() => setOpen(r)} className="px-2 py-1 text-xs rounded-lg border border-input hover:bg-black/5">View</button>
-                      <button onClick={() => remove(r.id)} disabled={busy === r.id} className="p-1.5 rounded-lg text-destructive hover:bg-destructive/10">
+                      <button
+                        onClick={() => setOpen(r)}
+                        className="px-2 py-1 text-xs rounded-lg border border-input hover:bg-black/5"
+                      >
+                        View
+                      </button>
+                      <button
+                        onClick={() => remove(r.id)}
+                        disabled={busy === r.id}
+                        className="p-1.5 rounded-lg text-destructive hover:bg-destructive/10"
+                      >
                         <Trash2 className="h-3.5 w-3.5" />
                       </button>
                     </div>
@@ -183,7 +257,11 @@ function AdminLeads() {
                 </tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan={6} className="p-12 text-center text-ink-muted">No leads match your filters.</td></tr>
+                <tr>
+                  <td colSpan={6} className="p-12 text-center text-ink-muted">
+                    No leads match your filters.
+                  </td>
+                </tr>
               )}
             </tbody>
           </table>
@@ -191,11 +269,21 @@ function AdminLeads() {
       </div>
 
       {open && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-ink/60 backdrop-blur-sm" onClick={() => setOpen(null)}>
-          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl bg-white p-8" onClick={(e) => e.stopPropagation()}>
-            <button onClick={() => setOpen(null)} className="absolute right-4 top-4 text-2xl">×</button>
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-ink/60 backdrop-blur-sm"
+          onClick={() => setOpen(null)}
+        >
+          <div
+            className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl bg-white p-8"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button onClick={() => setOpen(null)} className="absolute right-4 top-4 text-2xl">
+              ×
+            </button>
             <h2 className="font-display text-2xl font-bold">{open.name}</h2>
-            <p className="mt-1 text-sm text-ink-muted">Received {new Date(open.created_at).toLocaleString()}</p>
+            <p className="mt-1 text-sm text-ink-muted">
+              Received {new Date(open.created_at).toLocaleString()}
+            </p>
             <dl className="mt-6 grid grid-cols-2 gap-4 text-sm">
               <Field k="Phone" v={open.phone} />
               <Field k="Email" v={open.email} />
@@ -219,6 +307,40 @@ function AdminLeads() {
                   <p className="mt-1 text-sm whitespace-pre-wrap">{open.notes}</p>
                 </div>
               ))}
+
+            {/*
+              This signup came from the Free Guidance Preview, so the answers
+              behind it live on a different row. Pulled in here rather than left
+              for someone to find by searching the phone number.
+            */}
+            {open.guidance_preview_id && (
+              <div className="mt-8 border-t border-border pt-6">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-3.5 w-3.5 text-primary" />
+                  <p className="text-sm font-semibold text-ink">Came from the guidance preview</p>
+                </div>
+                {linkedPreview?.notes && isGuidancePreviewLead(linkedPreview.notes) ? (
+                  <>
+                    <p className="mt-1 text-xs text-ink-muted">
+                      Answered {new Date(linkedPreview.created_at).toLocaleString()}
+                      {linkedPreview.subjects?.length
+                        ? ` · weakest subject: ${linkedPreview.subjects.join(", ")}`
+                        : ""}
+                    </p>
+                    <GuidancePreviewNote
+                      notes={linkedPreview.notes}
+                      exam={linkedPreview.exam ?? open.exam}
+                    />
+                  </>
+                ) : (
+                  <p className="mt-1 text-xs text-ink-muted">
+                    The preview row is no longer in the table (id{" "}
+                    <span className="mono">{open.guidance_preview_id}</span>), so the answers cannot
+                    be shown.
+                  </p>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}

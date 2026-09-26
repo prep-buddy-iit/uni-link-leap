@@ -53,6 +53,7 @@ export type Database = {
           current_class: string
           email: string | null
           exam: string | null
+          guidance_preview_id: string | null
           id: string
           name: string
           notes: string | null
@@ -70,6 +71,7 @@ export type Database = {
           current_class: string
           email?: string | null
           exam?: string | null
+          guidance_preview_id?: string | null
           id?: string
           name: string
           notes?: string | null
@@ -87,6 +89,7 @@ export type Database = {
           current_class?: string
           email?: string | null
           exam?: string | null
+          guidance_preview_id?: string | null
           id?: string
           name?: string
           notes?: string | null

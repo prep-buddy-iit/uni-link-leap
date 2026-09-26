@@ -10,6 +10,8 @@ PrepBuddy is not a coaching institute. It does not teach syllabus content, run b
 - Mentors: JEE mentors are IITians; NEET mentors are AIIMS or top medical-college students. Every mentor passes a 4-stage selection (application, subject screener, mock mentoring session, final interview).
 - Format: 1-on-1 (never batches). Daily short check-ins + one deeper weekly review call. Plans are rebuilt weekly from the student's real mock scores.
 - Base: Hyderabad, India. Mentorship is delivered fully online, nationwide.
+- Scale: 150+ students mentored to date.
+- Contact: hello@prepbuddy.co
 
 ## Pricing (INR)
 
@@ -28,6 +30,14 @@ PrepBuddy is not a coaching institute. It does not teach syllabus content, run b
 - [Find a Mentor](/find-a-mentor): mentor profiles (credentialed toppers) across both exams.
 - [Become a Mentor](/become-a-mentor): application page for IITians and AIIMS/medical students who want to mentor.
 - [Contact](/contact): WhatsApp, email, contact form.
+- [Resources](/resources): free JEE and NEET preparation guides written by mentors — mock analysis, dropper strategy, revision planning.
+- [Free Guidance Preview](/guidance-preview): a 2-minute questionnaire that returns the pattern a mentor would spot in a first call. No signup, no score, no rank prediction.
+
+## Policies
+
+- [Trust & Safety](/trust-and-safety): mentor verification (4-stage), conduct rules, and safeguarding for minors.
+- [Privacy Policy](/privacy-policy): what we collect and how to have it removed. No advertising trackers; data is never sold.
+- [Terms](/terms): no rank, score or admission is guaranteed. Any results shown are individual past outcomes.
 
 ## Optional
 

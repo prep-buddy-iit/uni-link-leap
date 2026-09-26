@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { LegalPage, Section, List } from "@/components/site/LegalPage";
-import { absoluteUrl } from "@/lib/site";
+import { absoluteUrl, breadcrumbSchema } from "@/lib/site";
 
 const TITLE = "Privacy Policy | PrepBuddy";
 const DESC =
@@ -17,6 +17,12 @@ export const Route = createFileRoute("/privacy-policy")({
       { property: "og:url", content: absoluteUrl("/privacy-policy") },
     ],
     links: [{ rel: "canonical", href: absoluteUrl("/privacy-policy") }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify(breadcrumbSchema([{ name: "Privacy Policy", path: "/privacy-policy" }])),
+      },
+    ],
   }),
   component: PrivacyPolicyPage,
 });

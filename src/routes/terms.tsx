@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { LegalPage, Section, List } from "@/components/site/LegalPage";
-import { absoluteUrl } from "@/lib/site";
+import { absoluteUrl, breadcrumbSchema } from "@/lib/site";
 
 const TITLE = "Terms of Service | PrepBuddy";
 const DESC =
@@ -17,6 +17,12 @@ export const Route = createFileRoute("/terms")({
       { property: "og:url", content: absoluteUrl("/terms") },
     ],
     links: [{ rel: "canonical", href: absoluteUrl("/terms") }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify(breadcrumbSchema([{ name: "Terms", path: "/terms" }])),
+      },
+    ],
   }),
   component: TermsPage,
 });

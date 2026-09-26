@@ -18,6 +18,7 @@ import { UrgencyStrip } from "@/components/site/UrgencyStrip";
 import { nextJeeSession } from "@/lib/exam-dates";
 import { EXAM } from "@/lib/exam-content";
 import { absoluteUrl } from "@/lib/site";
+import { examPageSchemas } from "@/lib/exam-schema";
 
 const ex = EXAM.jee;
 
@@ -33,74 +34,7 @@ export const Route = createFileRoute("/jee")({
       { property: "og:url", content: absoluteUrl("/jee") },
     ],
     links: [{ rel: "canonical", href: absoluteUrl("/jee") }],
-    scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "EducationalOrganization",
-          name: "PrepBuddy - JEE Mentorship",
-          url: "/jee",
-          description: ex.metaDesc,
-          areaServed: "IN",
-          knowsAbout: ex.keywords.split(",").map((k) => k.trim()),
-          makesOffer: [
-            { "@type": "Offer", name: "JEE 3-Day Trial", price: "99", priceCurrency: "INR" },
-            { "@type": "Offer", name: "JEE 1 Month Mentorship", price: "1599", priceCurrency: "INR" },
-            { "@type": "Offer", name: "JEE 3 Months Mentorship", price: "3999", priceCurrency: "INR" },
-            { "@type": "Offer", name: "JEE 6 Months Mentorship", price: "5999", priceCurrency: "INR" },
-            { "@type": "Offer", name: "JEE 1-Hour 1:1 Session", price: "999", priceCurrency: "INR" },
-          ],
-        }),
-      },
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "FAQPage",
-          mainEntity: ex.faqs.map((f) => ({
-            "@type": "Question", name: f.q,
-            acceptedAnswer: { "@type": "Answer", text: f.a },
-          })),
-        }),
-      },
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: "/" },
-            { "@type": "ListItem", position: 2, name: "JEE Mentorship", item: "/jee" },
-          ],
-        }),
-      },
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "VideoObject",
-          name: "How PrepBuddy JEE mentorship works",
-          description: "A 2-minute walkthrough of a real week of 1-on-1 JEE mentorship at PrepBuddy.",
-          thumbnailUrl: "/favicon.png",
-          uploadDate: "2026-01-01",
-          embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-        }),
-      },
-      {
-        type: "application/ld+json",
-        children: JSON.stringify(
-          ex.mentors.map((m) => ({
-            "@context": "https://schema.org",
-            "@type": "Person",
-            name: m.name,
-            jobTitle: "JEE Mentor",
-            alumniOf: { "@type": "CollegeOrUniversity", name: m.institute },
-            description: `${m.rank} · ${m.specialty}`,
-          })),
-        ),
-      },
-    ],
+    scripts: examPageSchemas("jee"),
   }),
   component: JeePage,
 });

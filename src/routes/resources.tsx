@@ -16,7 +16,7 @@ import {
   type ResourceSubmission,
 } from "@/lib/resource-submissions";
 import { getApprovedSubmissionPhotoUrl } from "@/lib/resource-images.functions";
-import { absoluteUrl } from "@/lib/site";
+import { absoluteUrl, breadcrumbSchema } from "@/lib/site";
 
 
 const TITLE = "Resources - JEE & NEET Strategy, Motivation & Campus Life | PrepBuddy";
@@ -35,58 +35,54 @@ export const Route = createFileRoute("/resources")({
       { property: "og:url", content: absoluteUrl("/resources") },
     ],
     links: [{ rel: "canonical", href: absoluteUrl("/resources") }],
+    // VIDEOS and CAMPUS_PHOTOS are currently empty, and an empty collection
+    // must not emit `<script type="application/ld+json">[]</script>` — that is
+    // invalid structured data. Each block is only included when it has content.
     scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: "/" },
-            { "@type": "ListItem", position: 2, name: "Resources", item: "/resources" },
-          ],
-        }),
-      },
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "ItemList",
-          itemListElement: ARTICLES.map((a, i) => ({
-            "@type": "ListItem",
-            position: i + 1,
-            url: `/resources/${a.slug}`,
-            name: a.title,
-          })),
-        }),
-      },
-      {
-        type: "application/ld+json",
-        children: JSON.stringify(
-          VIDEOS.map((v) => ({
-            "@context": "https://schema.org",
-            "@type": "VideoObject",
-            name: v.title,
-            description: v.description,
-            thumbnailUrl: v.thumbnail,
-            uploadDate: v.uploadDate,
-            embedUrl: `https://www.youtube.com/embed/${v.videoId}`,
-          })),
-        ),
-      },
-      {
-        type: "application/ld+json",
-        children: JSON.stringify(
-          CAMPUS_PHOTOS.map((p) => ({
-            "@context": "https://schema.org",
-            "@type": "ImageObject",
-            contentUrl: p.src,
-            caption: p.caption,
-            name: p.institute,
-          })),
-        ),
-      },
-    ],
+      breadcrumbSchema([{ name: "Resources", path: "/resources" }]),
+      ...(ARTICLES.length
+        ? [
+            {
+              "@context": "https://schema.org",
+              "@type": "ItemList",
+              name: "PrepBuddy JEE and NEET preparation guides",
+              itemListElement: ARTICLES.map((a, i) => ({
+                "@type": "ListItem",
+                position: i + 1,
+                url: absoluteUrl(`/resources/${a.slug}`),
+                name: a.title,
+              })),
+            },
+          ]
+        : []),
+      ...(VIDEOS.length
+        ? [
+            VIDEOS.map((v) => ({
+              "@context": "https://schema.org",
+              "@type": "VideoObject",
+              name: v.title,
+              description: v.description,
+              thumbnailUrl: absoluteUrl(v.thumbnail),
+              uploadDate: v.uploadDate,
+              embedUrl: `https://www.youtube.com/embed/${v.videoId}`,
+            })),
+          ]
+        : []),
+      ...(CAMPUS_PHOTOS.length
+        ? [
+            CAMPUS_PHOTOS.map((p) => ({
+              "@context": "https://schema.org",
+              "@type": "ImageObject",
+              contentUrl: absoluteUrl(p.src),
+              caption: p.caption,
+              name: p.institute,
+            })),
+          ]
+        : []),
+    ].map((schema) => ({
+      type: "application/ld+json" as const,
+      children: JSON.stringify(schema),
+    })),
   }),
   component: ResourcesPage,
 });

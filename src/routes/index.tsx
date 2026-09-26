@@ -11,7 +11,7 @@ import { PageBackdrop } from "@/components/site/PageBackdrop";
 import { COMMUNITIES } from "@/lib/exam-content";
 import { PrepCheckLaunchCard } from "@/components/site/PrepCheckLaunchCard";
 import { MethodPanel } from "@/components/site/MethodPanel";
-import { absoluteUrl } from "@/lib/site";
+import { SITE_URL, absoluteUrl, heroVideoSchema } from "@/lib/site";
 
 const TITLE = "PrepBuddy - 1-on-1 Mentorship for JEE & NEET | Class 11, 12 & Droppers";
 const DESC = "PrepBuddy pairs Class 11, 12 and Droppers with a dedicated topper-mentor - IITians for JEE, AIIMS/medical students for NEET. Personalized plans, daily accountability, weekly review calls. Start your 3-day trial for ₹99.";
@@ -27,18 +27,42 @@ export const Route = createFileRoute("/")({
       { property: "og:url", content: absoluteUrl("/") },
     ],
     links: [{ rel: "canonical", href: absoluteUrl("/") }],
-    scripts: [{
-      type: "application/ld+json",
-      children: JSON.stringify({
+    // The Organization node lives once, in __root.tsx. Repeating it here made
+    // two competing Organization entities on "/", so this page describes the
+    // thing it actually sells instead, and points back at that one entity.
+    scripts: [
+      {
         "@context": "https://schema.org",
-        "@type": "Organization",
-        name: "PrepBuddy",
-        url: absoluteUrl("/"),
+        "@type": "Service",
+        "@id": `${SITE_URL}/#mentorship`,
+        name: "PrepBuddy 1-on-1 JEE & NEET Mentorship",
+        serviceType: "1-on-1 exam mentorship",
         description: DESC,
-        areaServed: "IN",
-        sameAs: [absoluteUrl("/jee"), absoluteUrl("/neet")],
-      }),
-    }],
+        url: absoluteUrl("/"),
+        provider: { "@id": `${SITE_URL}/#organization` },
+        areaServed: { "@type": "Country", name: "India" },
+        audience: {
+          "@type": "EducationalAudience",
+          educationalRole: "student",
+          audienceType: "JEE and NEET aspirants in Class 11, Class 12 and droppers",
+        },
+        hasOfferCatalog: {
+          "@type": "OfferCatalog",
+          name: "Mentorship tracks",
+          itemListElement: [
+            { name: "JEE Mentorship", path: "/jee" },
+            { name: "NEET Mentorship", path: "/neet" },
+          ].map((t) => ({
+            "@type": "Offer",
+            itemOffered: { "@type": "Service", name: t.name, url: absoluteUrl(t.path) },
+          })),
+        },
+      },
+      heroVideoSchema(),
+    ].map((schema) => ({
+      type: "application/ld+json" as const,
+      children: JSON.stringify(schema),
+    })),
   }),
   component: HomePage,
 });

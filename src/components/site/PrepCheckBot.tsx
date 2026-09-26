@@ -326,6 +326,8 @@ function PrepCheckPanel({
                 openApplication("trial", result.exam, {
                   name: result.name || undefined,
                   phone: result.phone || undefined,
+                  // Links the signup back to these answers in admin.
+                  guidancePreviewId: result.leadId ?? undefined,
                 });
               }}
               className="pill-btn pill-btn-primary pill-btn-primary-hover h-12 w-full text-sm"
@@ -361,7 +363,7 @@ function PanelHeader({
   return (
     <header className="flex items-center gap-3 border-b border-border bg-primary-tint px-4 py-3 sm:px-5">
       <img
-        src="/logo.png"
+        src="/logo-128.webp"
         alt=""
         className="h-9 w-9 shrink-0 rounded-full object-cover"
         aria-hidden="true"

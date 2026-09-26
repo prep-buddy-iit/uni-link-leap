@@ -45,6 +45,11 @@ export type PreviewResult = {
   phone: string;
   /** False when the write to `leads` failed. The teaser shows either way. */
   storedOk: boolean;
+  /**
+   * The `leads` row this questionnaire wrote. Handed to the trial form so the
+   * signup can point back at these answers. Null if the write failed.
+   */
+  leadId: string | null;
 };
 
 /** Why `finish()` declined to submit, so the caller can say so its own way. */
@@ -65,7 +70,8 @@ type SavedFlow = {
   responses: Responses;
   freeText: string;
   finished: boolean;
-  storedOk: boolean;
+  /** Kept so a reload does not sever the link to the trial signup. */
+  leadId: string | null;
 };
 
 const STORAGE_KEY = "prepbuddy.prep-check.v1";
@@ -142,7 +148,8 @@ export function usePreviewFlow() {
           exam: saved.exam,
           name: "",
           phone: "",
-          storedOk: saved.storedOk,
+          storedOk: saved.leadId !== null,
+          leadId: saved.leadId ?? null,
         });
       }
     }
@@ -161,7 +168,7 @@ export function usePreviewFlow() {
       responses,
       freeText,
       finished: result !== null,
-      storedOk: result?.storedOk ?? false,
+      leadId: result?.leadId ?? null,
     });
   }, [ready, stepIndex, exam, subject, responses, freeText, result]);
 
@@ -263,7 +270,7 @@ export function usePreviewFlow() {
 
     // Straight into `leads` - the same anonymous insert every other form on the
     // site uses. The full note goes with it; only `note.teaser` is rendered.
-    const storedOk = await saveGuidancePreviewLead({
+    const leadId = await saveGuidancePreviewLead({
       exam,
       subject,
       responses,
@@ -274,7 +281,14 @@ export function usePreviewFlow() {
     });
 
     setSubmitting(false);
-    setResult({ note, exam, name: name.trim(), phone: phone.trim(), storedOk });
+    setResult({
+      note,
+      exam,
+      name: name.trim(),
+      phone: phone.trim(),
+      storedOk: leadId !== null,
+      leadId,
+    });
     setStepIndex(steps.length);
     return { ok: true };
   }, [exam, freeText, name, phone, responses, steps.length, subject, totalChecked]);

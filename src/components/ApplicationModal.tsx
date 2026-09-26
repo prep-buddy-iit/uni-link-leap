@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 import { X, Loader2, MessageCircle } from "lucide-react";
 import { COMMUNITIES } from "@/lib/exam-content";
 import { teamChatUrl } from "@/lib/whatsapp";
@@ -48,13 +49,36 @@ type State = {
 };
 
 const empty = (plan: PlanKey = "trial", name = "", phone = ""): State => ({
-  name, phone, current_class: "", plan, problems: [], source: "",
+  name,
+  phone,
+  current_class: "",
+  plan,
+  problems: [],
+  source: "",
 });
 
 type Step = "form" | "done";
 
+type LeadInsert = Database["public"]["Tables"]["leads"]["Insert"];
+
+/**
+ * True when PostgREST refused the insert because a column is not in its schema
+ * cache - i.e. the migration that adds it has not run against this project yet.
+ * PGRST204 is the documented code; the message is checked too, since the code
+ * has moved between PostgREST versions.
+ */
+function isUnknownColumn(error: { code?: string; message?: string }, column: string): boolean {
+  return error.code === "PGRST204" || Boolean(error.message?.includes(column));
+}
+
 export function ApplicationModal({
-  open, onOpenChange, initialPlan, initialExam, initialName, initialPhone,
+  open,
+  onOpenChange,
+  initialPlan,
+  initialExam,
+  initialName,
+  initialPhone,
+  guidancePreviewId,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
@@ -64,6 +88,9 @@ export function ApplicationModal({
   // already collected these - no reason to ask twice.
   initialName?: string;
   initialPhone?: string;
+  // Set only when the student came through the Free Guidance Preview. Stored on
+  // the lead so admin can pull up the answers behind this signup.
+  guidancePreviewId?: string;
 }) {
   const [form, setForm] = useState<State>(empty(initialPlan ?? "trial", initialName, initialPhone));
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -82,7 +109,9 @@ export function ApplicationModal({
     if (!open) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = prev; };
+    return () => {
+      document.body.style.overflow = prev;
+    };
   }, [open]);
 
   if (!open) return null;
@@ -112,7 +141,8 @@ export function ApplicationModal({
     if (Object.keys(errs).length) return;
 
     setSubmitting(true);
-    const { error } = await supabase.from("leads").insert({
+
+    const lead: LeadInsert = {
       name: form.name.trim(),
       phone: form.phone.trim(),
       email: null,
@@ -122,7 +152,24 @@ export function ApplicationModal({
       source: form.source || null,
       subjects: [],
       exam: exam ?? null,
-    });
+    };
+
+    // The link to the guidance preview is only ever sent when there is one, so
+    // a direct signup can never be affected by it.
+    const payload: LeadInsert = guidancePreviewId
+      ? { ...lead, guidance_preview_id: guidancePreviewId }
+      : lead;
+
+    let { error } = await supabase.from("leads").insert(payload);
+
+    // `guidance_preview_id` arrives in a migration. If this build is live before
+    // that migration has run, PostgREST rejects the whole insert over the
+    // unknown column - so drop the link and keep the signup. Losing the
+    // cross-reference is a nuisance; losing a paid trial signup is not.
+    if (error && guidancePreviewId && isUnknownColumn(error, "guidance_preview_id")) {
+      console.warn("[leads] guidance_preview_id column missing - saved without the preview link");
+      ({ error } = await supabase.from("leads").insert(lead));
+    }
     setSubmitting(false);
     if (error) {
       console.error(error);
@@ -157,7 +204,11 @@ export function ApplicationModal({
             <h2 className="mt-1 font-display text-2xl font-bold">
               Get matched with your{" "}
               <span className="text-primary">
-                {exam === "neet" ? "AIIMS/medical mentor" : exam === "jee" ? "IITian mentor" : "topper mentor"}
+                {exam === "neet"
+                  ? "AIIMS/medical mentor"
+                  : exam === "jee"
+                    ? "IITian mentor"
+                    : "topper mentor"}
               </span>
             </h2>
             <p className="mt-2 text-sm text-ink-muted">
@@ -165,17 +216,37 @@ export function ApplicationModal({
             </p>
 
             <div className="mt-6 space-y-4">
-              <FieldInput label="Full name" value={form.name} onChange={(v) => update("name", v)}
-                error={errors.name} placeholder="e.g. Aarav Sharma" />
-              <FieldInput label="Phone number" value={form.phone} onChange={(v) => update("phone", v)}
-                error={errors.phone} type="tel" inputMode="tel" placeholder="98XXXXXXXX" />
+              <FieldInput
+                label="Full name"
+                value={form.name}
+                onChange={(v) => update("name", v)}
+                error={errors.name}
+                placeholder="e.g. Aarav Sharma"
+              />
+              <FieldInput
+                label="Phone number"
+                value={form.phone}
+                onChange={(v) => update("phone", v)}
+                error={errors.phone}
+                type="tel"
+                inputMode="tel"
+                placeholder="98XXXXXXXX"
+              />
 
-              <FieldSelect label="Class" value={form.current_class}
-                onChange={(v) => update("current_class", v)} options={CLASSES} placeholder="Select your class" />
+              <FieldSelect
+                label="Class"
+                value={form.current_class}
+                onChange={(v) => update("current_class", v)}
+                options={CLASSES}
+                placeholder="Select your class"
+              />
 
-              <FieldSelect label="Plan interested in" value={form.plan}
+              <FieldSelect
+                label="Plan interested in"
+                value={form.plan}
                 onChange={(v) => update("plan", v as PlanKey)}
-                options={PLAN_OPTIONS.map((k) => ({ value: k, label: PLAN_LABEL[k] }))} />
+                options={PLAN_OPTIONS.map((k) => ({ value: k, label: PLAN_LABEL[k] }))}
+              />
 
               <div>
                 <label className="block text-sm font-medium text-ink mb-2">
@@ -185,7 +256,10 @@ export function ApplicationModal({
                   {PROBLEMS.map((p) => {
                     const active = form.problems.includes(p);
                     return (
-                      <button type="button" key={p} onClick={() => toggleProblem(p)}
+                      <button
+                        type="button"
+                        key={p}
+                        onClick={() => toggleProblem(p)}
                         className={
                           "rounded-full border px-3.5 py-1.5 text-sm transition " +
                           (active
@@ -200,8 +274,13 @@ export function ApplicationModal({
                 </div>
               </div>
 
-              <FieldSelect label="How did you find PrepBuddy?" value={form.source}
-                onChange={(v) => update("source", v)} options={SOURCES} placeholder="Select one" />
+              <FieldSelect
+                label="How did you find PrepBuddy?"
+                value={form.source}
+                onChange={(v) => update("source", v)}
+                options={SOURCES}
+                placeholder="Select one"
+              />
             </div>
 
             {errors._root && (
@@ -210,11 +289,15 @@ export function ApplicationModal({
               </p>
             )}
 
-            <button type="submit" disabled={submitting}
+            <button
+              type="submit"
+              disabled={submitting}
               className="mt-6 w-full pill-btn pill-btn-primary pill-btn-primary-hover h-12 text-base disabled:opacity-70"
             >
               {submitting ? (
-                <><Loader2 className="h-4 w-4 animate-spin" /> Submitting…</>
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" /> Submitting…
+                </>
               ) : (
                 "Submit application →"
               )}
@@ -238,20 +321,31 @@ export function ApplicationModal({
 
             <div className="mt-6 text-left">
               {/* TODO: the real group invites live in src/lib/whatsapp.ts - swap them there. */}
-              <a href={community?.whatsapp ?? teamChatUrl("Hi! I just applied on PrepBuddy - please send me the community invite link.")} target="_blank" rel="noreferrer"
+              <a
+                href={
+                  community?.whatsapp ??
+                  teamChatUrl(
+                    "Hi! I just applied on PrepBuddy - please send me the community invite link.",
+                  )
+                }
+                target="_blank"
+                rel="noreferrer"
                 className="group block rounded-2xl p-4 text-white link-card"
                 style={{ backgroundColor: "var(--whatsapp)" }}
               >
                 <div className="flex items-center gap-2 font-semibold">
-                  <MessageCircle className="h-5 w-5" /> {examLabel ? `${examLabel} WhatsApp` : "WhatsApp Community"}
+                  <MessageCircle className="h-5 w-5" />{" "}
+                  {examLabel ? `${examLabel} WhatsApp` : "WhatsApp Community"}
                 </div>
                 <p className="mt-1 text-sm opacity-90">Daily study prompts & doubt-solving.</p>
                 <p className="mt-3 text-sm font-semibold">Join →</p>
               </a>
             </div>
 
-            <button onClick={() => onOpenChange(false)}
-              className="mt-6 pill-btn pill-btn-primary pill-btn-primary-hover px-8">
+            <button
+              onClick={() => onOpenChange(false)}
+              className="mt-6 pill-btn pill-btn-primary pill-btn-primary-hover px-8"
+            >
               Done
             </button>
           </div>
@@ -262,20 +356,38 @@ export function ApplicationModal({
 }
 
 function FieldInput({
-  label, value, onChange, error, type = "text", placeholder, inputMode,
+  label,
+  value,
+  onChange,
+  error,
+  type = "text",
+  placeholder,
+  inputMode,
 }: {
-  label: string; value: string; onChange: (v: string) => void; error?: string;
-  type?: string; placeholder?: string; inputMode?: "text" | "tel" | "email" | "numeric";
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  error?: string;
+  type?: string;
+  placeholder?: string;
+  inputMode?: "text" | "tel" | "email" | "numeric";
 }) {
   return (
     <div>
       <label className="block text-sm font-medium text-ink mb-1.5">{label}</label>
-      <input type={type} value={value} inputMode={inputMode}
-        onChange={(e) => onChange(e.target.value)} placeholder={placeholder}
+      <input
+        type={type}
+        value={value}
+        inputMode={inputMode}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
         className={
           "w-full rounded-xl border bg-white px-4 py-3 text-ink outline-none transition " +
-          (error ? "border-destructive" : "border-input focus:border-primary focus:ring-4 focus:ring-primary/15")
-        } />
+          (error
+            ? "border-destructive"
+            : "border-input focus:border-primary focus:ring-4 focus:ring-primary/15")
+        }
+      />
       {error && <p className="mt-1.5 text-xs text-destructive">{error}</p>}
     </div>
   );
@@ -284,21 +396,35 @@ function FieldInput({
 type Option = string | { value: string; label: string };
 
 function FieldSelect({
-  label, value, onChange, options, placeholder,
+  label,
+  value,
+  onChange,
+  options,
+  placeholder,
 }: {
-  label: string; value: string; onChange: (v: string) => void;
-  options: Option[]; placeholder?: string;
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: Option[];
+  placeholder?: string;
 }) {
   return (
     <div>
       <label className="block text-sm font-medium text-ink mb-1.5">{label}</label>
-      <select value={value} onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-xl border border-input bg-white px-4 py-3 text-ink outline-none focus:border-primary focus:ring-4 focus:ring-primary/15">
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full rounded-xl border border-input bg-white px-4 py-3 text-ink outline-none focus:border-primary focus:ring-4 focus:ring-primary/15"
+      >
         {placeholder && <option value="">{placeholder}</option>}
         {options.map((o) => {
           const val = typeof o === "string" ? o : o.value;
           const lbl = typeof o === "string" ? o : o.label;
-          return <option key={val} value={val}>{lbl}</option>;
+          return (
+            <option key={val} value={val}>
+              {lbl}
+            </option>
+          );
         })}
       </select>
     </div>

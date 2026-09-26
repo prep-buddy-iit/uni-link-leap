@@ -5,6 +5,12 @@ type OpenOptions = {
   // Prefill, carried in from the Free Guidance Preview, which already asked.
   name?: string;
   phone?: string;
+  /**
+   * The `leads` row the Free Guidance Preview wrote for this student. Stored on
+   * the signup so admin can show what they flagged before they ever spoke to a
+   * mentor. Undefined for every other entry point.
+   */
+  guidancePreviewId?: string;
 };
 
 type Ctx = {
@@ -22,7 +28,11 @@ export function ApplicationModalProvider({ children }: { children: ReactNode }) 
   const open = useCallback((p?: PlanKey, e?: ExamKey, options?: OpenOptions) => {
     setPlan(p);
     setExam(e);
-    setContact({ name: options?.name, phone: options?.phone });
+    setContact({
+      name: options?.name,
+      phone: options?.phone,
+      guidancePreviewId: options?.guidancePreviewId,
+    });
     setIsOpen(true);
   }, []);
 
@@ -38,6 +48,7 @@ export function ApplicationModalProvider({ children }: { children: ReactNode }) 
         initialExam={exam}
         initialName={contact.name}
         initialPhone={contact.phone}
+        guidancePreviewId={contact.guidancePreviewId}
       />
     </ApplicationModalContext.Provider>
   );

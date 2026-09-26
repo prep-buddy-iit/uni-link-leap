@@ -1,10 +1,14 @@
 import { useState } from "react";
 import { Play } from "lucide-react";
 import { VideoLightbox } from "@/components/VideoLightbox";
-const heroImage = "https://img.youtube.com/vi/GYszmNT-ks4/hqdefault.jpg";
+import { HERO_VIDEO } from "@/lib/site";
+
+// Same id the VideoObject JSON-LD describes, so the schema can never drift
+// from the video the page actually embeds.
+const heroImage = `https://i.ytimg.com/vi/${HERO_VIDEO.videoId}/maxresdefault.jpg`;
 
 export function HeroVideoCard({
-  videoId = "GYszmNT-ks4",
+  videoId = HERO_VIDEO.videoId,
   caption = "See how a real mentorship week works →",
 }: {
   videoId?: string;
@@ -24,8 +28,10 @@ export function HeroVideoCard({
             src={heroImage}
             alt="A PrepBuddy mentor on a video call with a student"
             width={1280}
-            height={800}
-            loading="lazy"
+            height={720}
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
             className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
           />
           <span className="absolute inset-0 bg-ink/25" />

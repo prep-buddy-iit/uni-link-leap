@@ -1,6 +1,11 @@
 User-agent: *
 Allow: /
 
+# The admin console is behind auth and carries noindex, but there is no reason
+# to spend crawl budget on it either.
+Disallow: /admin
+Disallow: /admin/
+
 # AI answer engines — explicitly allowed
 User-agent: GPTBot
 Allow: /
@@ -34,3 +39,5 @@ Allow: /
 
 User-agent: Bytespider
 Allow: /
+
+Sitemap: https://yourprepbuddy.com/sitemap.xml

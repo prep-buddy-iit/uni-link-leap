@@ -12,7 +12,14 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportClientError } from "../lib/error-reporting";
-import { SITE_URL, SITE_NAME, OG_IMAGE, OG_IMAGE_ALT, absoluteUrl } from "@/lib/site";
+import {
+  SITE_URL,
+  SITE_NAME,
+  OG_IMAGE,
+  OG_IMAGE_ALT,
+  SOCIAL_PROFILES,
+  absoluteUrl,
+} from "@/lib/site";
 import { CONTACT_PHONE_TEL } from "@/lib/whatsapp";
 import { Toaster } from "@/components/ui/sonner";
 import { ApplicationModalProvider } from "@/lib/application-modal";
@@ -148,6 +155,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", type: "image/png", href: "/favicon.png" },
+      // The hero thumbnail is the LCP element on /, /jee and /neet and is
+      // served from YouTube's image CDN, so warm that connection early.
+      { rel: "preconnect", href: "https://i.ytimg.com" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -160,13 +170,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
-          "@type": "Organization",
+          "@type": "EducationalOrganization",
+          "@id": `${SITE_URL}/#organization`,
           name: SITE_NAME,
           url: SITE_URL,
           logo: absoluteUrl("/logo.png"),
           description:
             "1-on-1 mentorship for JEE and NEET aspirants - IITians for JEE, AIIMS/medical students for NEET. Personalized plans, daily accountability, weekly review calls.",
           areaServed: "IN",
+          ...(SOCIAL_PROFILES.length ? { sameAs: SOCIAL_PROFILES } : {}),
           telephone: CONTACT_PHONE_TEL,
           contactPoint: {
             "@type": "ContactPoint",
@@ -188,8 +200,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "WebSite",
+          "@id": `${SITE_URL}/#website`,
           name: SITE_NAME,
           url: SITE_URL,
+          inLanguage: "en-IN",
+          publisher: { "@id": `${SITE_URL}/#organization` },
         }),
       },
     ],

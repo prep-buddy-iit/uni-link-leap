@@ -1,4 +1,15 @@
 import { Link } from "@tanstack/react-router";
+import { Instagram, Youtube, Linkedin } from "lucide-react";
+
+import { SOCIAL_PROFILES } from "@/lib/site";
+
+// Same URLs the Organization schema publishes as `sameAs`, so the profiles a
+// crawler is told about are the ones a reader can actually click.
+const SOCIALS = [
+  { label: "PrepBuddy on Instagram", icon: Instagram, href: SOCIAL_PROFILES[0] },
+  { label: "PrepBuddy on YouTube", icon: Youtube, href: SOCIAL_PROFILES[1] },
+  { label: "PrepBuddy on LinkedIn", icon: Linkedin, href: SOCIAL_PROFILES[2] },
+];
 
 
 export function Footer() {
@@ -8,12 +19,33 @@ export function Footer() {
         <div className="grid gap-10 lg:grid-cols-[1.3fr_2fr]">
           <div>
             <Link to="/" className="flex items-center gap-2">
-              <img src="/logo.png" alt="PrepBuddy logo" className="h-10 w-10 rounded-lg object-cover shadow-soft" />
+              <img
+                src="/logo-128.webp"
+                alt="PrepBuddy logo"
+                width={40}
+                height={40}
+                className="h-10 w-10 rounded-lg object-cover shadow-soft"
+              />
               <span className="font-display text-lg font-bold">PrepBuddy</span>
             </Link>
             <p className="mt-3 text-sm text-ink-muted max-w-sm">
               1-on-1 mentorship for JEE and NEET aspirants - IITians and AIIMS/medical students, personalized plans, daily accountability.
             </p>
+            <ul className="mt-4 flex items-center gap-2">
+              {SOCIALS.map(({ label, icon: Icon, href }) => (
+                <li key={label}>
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={label}
+                    className="grid h-9 w-9 place-items-center rounded-full border border-border text-ink-muted transition-colors hover:border-primary hover:text-primary"
+                  >
+                    <Icon className="h-4 w-4" strokeWidth={1.75} />
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
             <FooterCol h="Exams" items={[

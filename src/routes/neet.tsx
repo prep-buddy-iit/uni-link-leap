@@ -18,6 +18,7 @@ import { UrgencyStrip } from "@/components/site/UrgencyStrip";
 import { nextNeetExam } from "@/lib/exam-dates";
 import { EXAM } from "@/lib/exam-content";
 import { absoluteUrl } from "@/lib/site";
+import { examPageSchemas } from "@/lib/exam-schema";
 
 const ex = EXAM.neet;
 
@@ -33,74 +34,7 @@ export const Route = createFileRoute("/neet")({
       { property: "og:url", content: absoluteUrl("/neet") },
     ],
     links: [{ rel: "canonical", href: absoluteUrl("/neet") }],
-    scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "EducationalOrganization",
-          name: "PrepBuddy - NEET Mentorship",
-          url: "/neet",
-          description: ex.metaDesc,
-          areaServed: "IN",
-          knowsAbout: ex.keywords.split(",").map((k) => k.trim()),
-          makesOffer: [
-            { "@type": "Offer", name: "NEET 3-Day Trial", price: "99", priceCurrency: "INR" },
-            { "@type": "Offer", name: "NEET 1 Month Mentorship", price: "1599", priceCurrency: "INR" },
-            { "@type": "Offer", name: "NEET 3 Months Mentorship", price: "3999", priceCurrency: "INR" },
-            { "@type": "Offer", name: "NEET 6 Months Mentorship", price: "5999", priceCurrency: "INR" },
-            { "@type": "Offer", name: "NEET 1-Hour 1:1 Session", price: "999", priceCurrency: "INR" },
-          ],
-        }),
-      },
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "FAQPage",
-          mainEntity: ex.faqs.map((f) => ({
-            "@type": "Question", name: f.q,
-            acceptedAnswer: { "@type": "Answer", text: f.a },
-          })),
-        }),
-      },
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: "/" },
-            { "@type": "ListItem", position: 2, name: "NEET Mentorship", item: "/neet" },
-          ],
-        }),
-      },
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "VideoObject",
-          name: "How PrepBuddy NEET mentorship works",
-          description: "A 2-minute walkthrough of a real week of 1-on-1 NEET mentorship at PrepBuddy.",
-          thumbnailUrl: "/favicon.png",
-          uploadDate: "2026-01-01",
-          embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-        }),
-      },
-      {
-        type: "application/ld+json",
-        children: JSON.stringify(
-          ex.mentors.map((m) => ({
-            "@context": "https://schema.org",
-            "@type": "Person",
-            name: m.name,
-            jobTitle: "NEET Mentor",
-            alumniOf: { "@type": "CollegeOrUniversity", name: m.institute },
-            description: `${m.rank} · ${m.specialty}`,
-          })),
-        ),
-      },
-    ],
+    scripts: examPageSchemas("neet"),
   }),
   component: NeetPage,
 });

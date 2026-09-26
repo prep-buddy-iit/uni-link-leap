@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { LegalPage, Section, List } from "@/components/site/LegalPage";
-import { absoluteUrl } from "@/lib/site";
+import { absoluteUrl, breadcrumbSchema } from "@/lib/site";
 import { teamChatUrl } from "@/lib/whatsapp";
 
 const TITLE = "Trust & Safety | PrepBuddy";
@@ -18,6 +18,12 @@ export const Route = createFileRoute("/trust-and-safety")({
       { property: "og:url", content: absoluteUrl("/trust-and-safety") },
     ],
     links: [{ rel: "canonical", href: absoluteUrl("/trust-and-safety") }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify(breadcrumbSchema([{ name: "Trust & Safety", path: "/trust-and-safety" }])),
+      },
+    ],
   }),
   component: TrustAndSafetyPage,
 });

@@ -100,8 +100,10 @@ export function Navbar() {
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3">
         <Link to="/" className="flex items-center gap-2 shrink-0">
           <img
-            src="/logo.png"
+            src="/logo-128.webp"
             alt="PrepBuddy logo"
+            width={40}
+            height={40}
             className="h-10 w-10 rounded-lg object-cover shadow-soft"
           />
 

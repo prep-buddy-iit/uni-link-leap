@@ -31,7 +31,7 @@ export function PrepCheckLaunchCard({
     <div className={"panel-raised rounded-3xl p-6 sm:p-7 " + className}>
       <div className="flex items-center gap-3">
         <img
-          src="/logo.png"
+          src="/logo-128.webp"
           alt=""
           className="h-10 w-10 rounded-full object-cover"
           aria-hidden="true"

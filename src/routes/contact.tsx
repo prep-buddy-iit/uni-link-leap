@@ -5,7 +5,7 @@ import { Footer } from "@/components/site/Footer";
 import { ContactForm } from "@/components/ContactForm";
 import { PageBackdrop } from "@/components/site/PageBackdrop";
 import { Breadcrumbs } from "@/components/site/Breadcrumbs";
-import { absoluteUrl } from "@/lib/site";
+import { SITE_URL, absoluteUrl, breadcrumbSchema } from "@/lib/site";
 import { teamChatUrl, CONTACT_PHONE_DISPLAY, CONTACT_PHONE_TEL } from "@/lib/whatsapp";
 
 const TITLE = "Contact Us - PrepBuddy JEE & NEET Mentorship";
@@ -25,32 +25,20 @@ export const Route = createFileRoute("/contact")({
     scripts: [
       {
         type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: "/" },
-            { "@type": "ListItem", position: 2, name: "Contact", item: "/contact" },
-          ],
-        }),
+        children: JSON.stringify(breadcrumbSchema([{ name: "Contact", path: "/contact" }])),
       },
       {
+        // ContactPage, not a second LocalBusiness: the root route already
+        // declares the one Organization (with the same address, phone and
+        // contact point), and mentorship is delivered online nationwide rather
+        // than from a premises students visit.
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
-          "@type": "LocalBusiness",
-          name: "PrepBuddy",
-          description:
-            "1-on-1 mentorship for JEE and NEET aspirants, delivered online across India.",
-          url: "/",
-          email: "hello@prepbuddy.co",
-          areaServed: "IN",
-          address: {
-            "@type": "PostalAddress",
-            addressLocality: "Hyderabad",
-            addressRegion: "Telangana",
-            addressCountry: "IN",
-          },
+          "@type": "ContactPage",
+          name: "Contact PrepBuddy",
+          url: absoluteUrl("/contact"),
+          mainEntity: { "@id": `${SITE_URL}/#organization` },
         }),
       },
     ],

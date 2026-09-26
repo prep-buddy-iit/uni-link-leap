@@ -5,7 +5,7 @@ import { Footer } from "@/components/site/Footer";
 import { PageBackdrop } from "@/components/site/PageBackdrop";
 import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 import { articleBySlug, AUTHORS, ARTICLES } from "@/lib/resources-content";
-import { absoluteUrl } from "@/lib/site";
+import { absoluteUrl, breadcrumbSchema } from "@/lib/site";
 
 export const Route = createFileRoute("/resources/$slug")({
   loader: ({ params }) => {
@@ -51,20 +51,15 @@ export const Route = createFileRoute("/resources/$slug")({
               alumniOf: { "@type": "CollegeOrUniversity", name: author.institute },
             },
             publisher: { "@type": "Organization", name: "PrepBuddy" },
-            mainEntityOfPage: url,
+            mainEntityOfPage: absoluteUrl(url),
           }),
         },
         {
           type: "application/ld+json",
-          children: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            itemListElement: [
-              { "@type": "ListItem", position: 1, name: "Home", item: "/" },
-              { "@type": "ListItem", position: 2, name: "Resources", item: "/resources" },
-              { "@type": "ListItem", position: 3, name: a.title, item: url },
-            ],
-          }),
+          children: JSON.stringify(breadcrumbSchema([
+            { name: "Resources", path: "/resources" },
+            { name: a.title, path: url },
+          ])),
         },
       ],
     };

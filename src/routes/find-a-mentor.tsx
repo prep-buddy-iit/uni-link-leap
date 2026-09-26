@@ -6,7 +6,7 @@ import { PageBackdrop } from "@/components/site/PageBackdrop";
 import { Breadcrumbs } from "@/components/site/Breadcrumbs";
 import { ALL_MENTORS } from "@/lib/exam-content";
 import type { ExamKey } from "@/components/ApplicationModal";
-import { absoluteUrl } from "@/lib/site";
+import { absoluteUrl, breadcrumbSchema } from "@/lib/site";
 
 const TITLE = "Meet Our Mentors - PrepBuddy JEE & NEET Mentors";
 const DESC = "Every PrepBuddy mentor is a verified topper - IITians for JEE, AIIMS/medical-college students for NEET. Browse mentor credentials; matching happens when you start your trial.";
@@ -24,14 +24,7 @@ export const Route = createFileRoute("/find-a-mentor")({
     scripts: [
       {
         type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: "/" },
-            { "@type": "ListItem", position: 2, name: "Find a Mentor", item: "/find-a-mentor" },
-          ],
-        }),
+        children: JSON.stringify(breadcrumbSchema([{ name: "Find a Mentor", path: "/find-a-mentor" }])),
       },
       {
         type: "application/ld+json",
