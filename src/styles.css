@@ -177,6 +177,48 @@
 }
 
 
+/* Mentor strip: a continuously scrolling showcase rather than a directory,
+   since students don't pick their own mentor - we allot one.
+
+   The roster is rendered twice, so translating the track by exactly half its
+   width lands back on the starting frame with no visible seam. Each card
+   carries its own trailing space instead of a flex `gap`: a gap sits *between*
+   items, which would make the two halves unequal widths and the loop would
+   visibly jump every cycle. */
+@keyframes mentor-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@utility mentor-marquee {
+  overflow: hidden;
+  /* Fade the strip out at both edges so cards enter and leave rather than
+     being sliced off by the viewport. */
+  mask-image: linear-gradient(
+    to right,
+    transparent, #000 4rem, #000 calc(100% - 4rem), transparent
+  );
+}
+
+@utility mentor-marquee-track {
+  width: max-content;
+  animation: mentor-marquee var(--marquee-duration, 40s) linear infinite;
+}
+
+/* WCAG 2.2.2: moving content that starts on its own needs a way to stop it.
+   Hover covers pointers, focus-within covers keyboard. */
+.mentor-marquee:hover .mentor-marquee-track,
+.mentor-marquee:focus-within .mentor-marquee-track {
+  animation-play-state: paused;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+
+  /* No motion at all: fall back to an ordinary swipeable row. */
+  .mentor-marquee {
+    overflow-x: auto;
+    mask-image: none;
+  }
+  .mentor-marquee-track { animation: none; }
 }

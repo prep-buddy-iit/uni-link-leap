@@ -71,7 +71,10 @@ export function examPageSchemas(key: ExamKey) {
     name: m.name,
     jobTitle: `${label} Mentor`,
     alumniOf: { "@type": "CollegeOrUniversity", name: m.institute },
-    description: `${m.rank} · ${m.specialty}`,
+    // Mirrors what the mentor strip actually shows. Rank and specialty were
+    // removed from the cards, so they must not be asserted here either -
+    // structured data has to describe visible content.
+    description: `${label} mentor from ${m.institute}.`,
     worksFor: { "@id": `${SITE_URL}/#organization` },
   }));
 

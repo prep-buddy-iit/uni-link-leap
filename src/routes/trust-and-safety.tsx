@@ -53,10 +53,14 @@ function TrustAndSafetyPage() {
         <p>
           Credentials shown on mentor profiles reflect what we verified at the time of onboarding.
           You can see the current roster on the{" "}
-          <Link to="/find-a-mentor" className="font-medium text-primary-strong hover:underline">
-            mentors page
-          </Link>
-          .
+          <Link to="/jee" hash="mentors" className="font-medium text-primary-strong hover:underline">
+            JEE
+          </Link>{" "}
+          and{" "}
+          <Link to="/neet" hash="mentors" className="font-medium text-primary-strong hover:underline">
+            NEET
+          </Link>{" "}
+          mentorship pages.
         </p>
       </Section>
 
@@ -127,12 +131,13 @@ function TrustAndSafetyPage() {
       <Section heading="Changing or ending a mentorship">
         <p>
           You never have to stay with a mentor who isn't the right fit, and you don't need a reason.
-          Ask us for a re-match and we'll move you to a different mentor. You can also stop an
-          ongoing plan at any time — see the{" "}
+          Ask us for a re-match and we'll move you to a different mentor at no extra cost. Plans
+          themselves cannot be cancelled or refunded once bought, though plans of 3 months and above
+          can be paused once for up to 15 days — see the{" "}
           <Link to="/terms" className="font-medium text-primary-strong hover:underline">
             terms
           </Link>{" "}
-          for how cancellation works.
+          for the full policy.
         </p>
       </Section>
     </LegalPage>

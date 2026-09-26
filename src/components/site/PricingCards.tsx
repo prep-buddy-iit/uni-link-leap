@@ -26,6 +26,7 @@ export function PricingCards({ exam }: { exam: ExamKey }) {
       badge: "Most Chosen", highlight: true,
       features: [
         "Everything in 1 Month",
+        "Pause once for up to 15 days",
         "Exclusive Notes & Chapter-Wise Mind Maps",
         "Monthly Parent–Mentor Meet",
         "Bi-weekly test analysis support with feedback",
@@ -48,7 +49,7 @@ export function PricingCards({ exam }: { exam: ExamKey }) {
       <div className="max-w-3xl">
         <p className="eyebrow">Plans + Pricing</p>
         <h2 className="mt-3 font-display text-3xl sm:text-4xl font-bold">
-          Pick a runway. <span className="text-primary">Cancel anytime.</span>
+          Pick a runway. <span className="text-primary">Stay accountable.</span>
         </h2>
         <p className="mt-3 text-ink-muted">
           All plans include your dedicated {ex.mentorNounShort} mentor and daily accountability.

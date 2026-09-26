@@ -20,14 +20,15 @@ PrepBuddy is not a coaching institute. It does not teach syllabus content, run b
 - 1 month mentorship: ₹1,599.
 - 3 months mentorship: ₹3,999.
 - 6 months mentorship: ₹5,999.
-- Cancellation: students can cancel any ongoing plan at any time. Mentor re-match is offered before cancellation.
+- Refunds and cancellation: none. All purchases are final — plans, the ₹99 trial and the ₹999 session are non-refundable, and plans cannot be cancelled part-way through.
+- Pausing: plans of 3 months and above can be paused once, for up to 15 days in total. The 1 month plan, the trial and the single session cannot be paused.
+- Mentor re-match: free and available at any point in a plan if the mentor fit isn't right.
 
 ## Key pages
 
 - [Home](/): overview of PrepBuddy, exam selector for JEE / NEET.
 - [JEE Mentorship](/jee): mentorship for JEE Main + Advanced, IITian mentors, JEE-specific FAQs and plans.
 - [NEET Mentorship](/neet): mentorship for NEET UG, AIIMS / medical-college mentors, NEET-specific FAQs and plans.
-- [Find a Mentor](/find-a-mentor): mentor profiles (credentialed toppers) across both exams.
 - [Become a Mentor](/become-a-mentor): application page for IITians and AIIMS/medical students who want to mentor.
 - [Contact](/contact): WhatsApp, email, contact form.
 - [Resources](/resources): free JEE and NEET preparation guides written by mentors — mock analysis, dropper strategy, revision planning.

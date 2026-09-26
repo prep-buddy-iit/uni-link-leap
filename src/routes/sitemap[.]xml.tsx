@@ -22,7 +22,6 @@ const ENTRIES: Entry[] = [
   ...(HAS_RESOURCES
     ? [{ path: "/resources", changefreq: "weekly", priority: "0.8" }]
     : []),
-  { path: "/find-a-mentor",    changefreq: "weekly",  priority: "0.7" },
   { path: "/become-a-mentor",  changefreq: "monthly", priority: "0.6" },
   { path: "/contact",          changefreq: "monthly", priority: "0.5" },
   { path: "/guidance-preview", changefreq: "monthly", priority: "0.5" },

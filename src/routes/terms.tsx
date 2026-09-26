@@ -4,7 +4,7 @@ import { absoluteUrl, breadcrumbSchema } from "@/lib/site";
 
 const TITLE = "Terms of Service | PrepBuddy";
 const DESC =
-  "The terms you agree to when you buy PrepBuddy mentorship: what the service is and isn't, plans and pricing, cancellation, mentor re-matching and conduct.";
+  "The terms you agree to when you buy PrepBuddy mentorship: what the service is and isn't, plans and pricing, our no-refund policy, pausing, mentor re-matching and conduct.";
 
 export const Route = createFileRoute("/terms")({
   head: () => ({
@@ -88,33 +88,38 @@ function TermsPage() {
         </p>
       </Section>
 
-      <Section heading="Cancellation and refunds">
+      <Section heading="Refunds, cancellation and pausing">
+        <p>
+          PrepBuddy does not offer refunds or mid-plan cancellation. Please choose your plan
+          carefully, and use the ₹99 trial first if you are unsure.
+        </p>
         <List
           items={[
-            "You can cancel an ongoing plan at any time. Cancel before a billing period begins and you are not charged for it.",
-            "If your mentor isn't the right fit, ask us for a re-match first — we will move you to a different mentor at no extra cost.",
-            "If you cancel part-way through a multi-month plan, we refund the unused whole months, minus any sessions already delivered.",
-            "The ₹99 trial and the ₹999 single session are not refundable once the call has taken place.",
+            "All purchases are final. Mentorship plans, the ₹99 trial and the ₹999 single session are non-refundable, whether or not the sessions are used.",
+            "Plans cannot be cancelled part-way through. Once a plan is bought it runs for its full duration.",
+            "If your mentor isn't the right fit, ask us for a re-match — we will move you to a different mentor at no extra cost, at any point in your plan.",
+            "Plans of 3 months and above can be paused once, for up to 15 days in total. Your plan resumes where it left off, so no mentoring time is lost.",
+            "The 1 month plan, the ₹99 trial and the ₹999 single session cannot be paused.",
           ]}
         />
         <p>
-          To cancel, message us on WhatsApp or write to{" "}
+          To request a re-match or a pause, message us on WhatsApp or write to{" "}
           <a
             href="mailto:hello@prepbuddy.co"
             className="font-medium text-primary-strong hover:underline"
           >
             hello@prepbuddy.co
           </a>
-          . Refunds are processed to the original payment method within 7 working days.
+          . Ask for a pause before you need it to start, not afterwards.
         </p>
       </Section>
 
       <Section heading="What we expect from you">
         <List
           items={[
-            "Turn up for your calls, or tell your mentor in advance. Repeatedly missed sessions are not refunded or rescheduled indefinitely.",
+            "Turn up for your calls, or tell your mentor in advance. Missed sessions are not refunded, and cannot be rescheduled indefinitely.",
             "Keep the plans, notes, mind maps and materials your mentor shares for your own use. Do not resell or redistribute them.",
-            "Treat your mentor with respect. Abusive or harassing behaviour ends the mentorship without a refund.",
+            "Treat your mentor with respect. Abusive or harassing behaviour ends the mentorship immediately, without a refund.",
           ]}
         />
       </Section>

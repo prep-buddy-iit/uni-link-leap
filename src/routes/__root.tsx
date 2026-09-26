@@ -56,12 +56,6 @@ function NotFoundComponent() {
             NEET Mentorship
           </Link>
           <Link
-            to="/find-a-mentor"
-            className="inline-flex items-center justify-center rounded-full border border-input bg-white px-5 py-2.5 text-sm font-semibold text-ink"
-          >
-            Meet Mentors
-          </Link>
-          <Link
             to="/contact"
             className="inline-flex items-center justify-center rounded-full border border-input bg-white px-5 py-2.5 text-sm font-semibold text-ink"
           >
